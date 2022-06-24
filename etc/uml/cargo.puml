@@ -1,0 +1,87 @@
+@startuml
+
+skinparam ArrowFontSize 10
+
+hide empty members
+hide stereotype
+
+skinparam class {
+    BackgroundColor<<Entity>> palegreen
+}
+
+skinparam cloud {
+    BorderColor lightblue
+    BackgroundColor %lighten(lightblue, 25)
+}
+
+cloud "Cargo"<<Cargo Aggregate>> {
+    class "Cargo" as CRG<Root><<(E,gold) Entity>>
+    class "Delivery" as DLV<<(V,lightblue) Value Object>>
+    class "HandlingActivity" as ACT<<(V,lightblue) Value Object>>
+    class "HandlingHistory" as HST<<(V,lightblue) Value Object>>
+    class "Itinerary" as ITN<<(V,lightblue) Value Object>>
+    class "RouteSpecification" as RTS<<(V,lightblue) Value Object>>
+    class "Leg" as LEG<Table><<(V,lightblue) Value Object>>
+}
+
+cloud "Handling"<<Handling Aggregate>> {
+    class "Handling Event" as EVT<Root><<(E,gold) Entity>>
+}
+
+cloud "Voyage"<<Voyage Aggregate>> {
+
+    class "Voyage" as VYG<Root><<(E,gold) Entity>>
+    class "CarrierMovement" as MVT<Table><<(V,lightblue) Value Object>>
+    class "Schedule" as SCH<<(V,lightblue) Value Object>>
+
+}
+
+cloud "Location"<<Location Aggregate>> {
+    class "Location" as LCT<Root><<(E,gold) Entity>>
+}
+
+'Relations
+
+CRG *--> LCT: origin
+CRG *--> RTS
+CRG *--> DLV
+CRG *--> ITN
+CRG ..> HST: "derive delivery\nhistory"
+
+ITN *--> LEG: "consist of"
+ITN ..> LCT: "initial departure,\nfinal destination"
+ITN ..> VYG: "is expected"
+
+VYG *--> SCH
+VYG ..> MVT: "builder"
+
+HST *--> EVT: "consist of"
+
+EVT *--> CRG
+EVT *--> LCT
+EVT *--> VYG
+
+DLV ..> HST: "derived from"
+DLV ..> RTS: "routing status,\nnext expected\nactivity"
+DLV ..> ITN: "ETA,\nnext expected\nactivity,\nmisdirected"
+DLV *--> EVT: "last event"
+DLV *--> ACT: "next expected\nactivity"
+DLV *--> VYG: "current voyage"
+DLV *--> LCT: "last known\nlocation"
+DLV ..> LEG: "next expected\nactivity"
+
+RTS ..> ITN: "is satisfied by"
+RTS *--> LCT: "origin,\ndestination"
+
+SCH *--> MVT: "consist of"
+
+MVT *--> LCT
+
+ACT ..> EVT: "type"
+ACT *--> LCT
+ACT *--> VYG
+
+LEG *--> VYG
+LEG *--> LCT
+
+@enduml
