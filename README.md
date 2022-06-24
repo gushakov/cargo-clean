@@ -23,3 +23,15 @@ Wherever possible, I'll try to mention the original code which was consulted for
 
 This application is a standard Spring Boot application. There is also a Docker compose file with a Postgres database,
 which should be started prior to the execution of the application.
+
+### Exploring DDDSample DB
+
+To be able to explore the relational model used by DDDSample, we can add an embedded web server to the original application.
+There is an example configuration available here: [HsqlDbServerConfig.java](./etc/db/HsqlDbServerConfig.java).
+
+To launch the server, you need `hsqldb-2.4.0.jar` (available from Maven central):
+
+> java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar org.hsqldb.util.DatabaseManagerSwing
+
+This should start the UI of the DB viewer. The type of connection to use is "HSQL Database Engine WebServer" and JDBC 
+URL to use is `jdbc:hsqldb:hsql://localhost/dddsample`.
