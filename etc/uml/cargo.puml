@@ -1,4 +1,5 @@
 @startuml
+title 'Domain model for original DDDSample'
 
 skinparam ArrowFontSize 10
 
