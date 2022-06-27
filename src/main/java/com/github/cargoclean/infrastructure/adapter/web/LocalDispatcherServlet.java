@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LocalDispatcherServlet extends DispatcherServlet {
 
     /*
-        We are calling this method from the Presenter ourselves.
+        We will be calling this method from Presenters.
      */
     @Override
     protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
