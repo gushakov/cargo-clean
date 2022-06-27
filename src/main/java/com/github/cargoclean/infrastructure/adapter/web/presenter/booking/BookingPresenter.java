@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,12 +28,12 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     }
 
     @Override
-    public void presentNewCargoBookingView(List<Location> locations, LocalDate dateNow) {
+    public void presentNewCargoBookingView(List<Location> locations) {
 
         // store the locations and the date in the map to be used in the view-model
 
         Map<String, Object> responseModel = Map.of("locations", locations,
-                "dateNow", dateNow);
+                "dateNow", new Date(System.currentTimeMillis()), "bookingForm", new BookingForm());
 
         presentModelAndView(responseModel, "book-new-cargo");
 

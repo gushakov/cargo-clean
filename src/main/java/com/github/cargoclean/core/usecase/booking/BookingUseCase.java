@@ -5,7 +5,6 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,10 +23,9 @@ public class BookingUseCase implements BookingInputPort {
             // retrieve all locations from the gateway
 
             final List<Location> locations = gatewayOps.allLocations();
-            final LocalDate dateNow = LocalDate.now();
 
             // present the view where we can enter new cargo information
-            presenter.presentNewCargoBookingView(locations, dateNow);
+            presenter.presentNewCargoBookingView(locations);
 
         } catch (Exception e) {
             // if anything went wrong: present the error

@@ -34,4 +34,9 @@ public class UnLocode {
     public static UnLocode of(String code){
         return UnLocode.builder().code(code).build();
     }
+
+    @Override
+    public String toString() {
+        return code;
+    }
 }
