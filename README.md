@@ -1,4 +1,4 @@
-## Cargo with CA
+## Cargo tracking with Clean DDD
 
 The idea behind this project is to build something similar to [DDDSample](https://github.com/citerus/dddsample-core).
 But using slightly different approach. I'll try to use ideas and principles behind:
@@ -7,8 +7,7 @@ But using slightly different approach. I'll try to use ideas and principles behi
 - Clean architecture
 - Use case driven development
 
-There should be series of companion articles on Medium which will detail the interesting points and decisions behind this
-application.
+There should be an articles on Medium which will detail the interesting points and decisions behind this application.
 
 ### Copyright notice
 
@@ -19,10 +18,11 @@ The original work is distributed under the MIT licence. I've included the origin
 
 Wherever possible, I'll try to mention the original code which was consulted for any specific implementation point.
 
-### How run
+### How to run
 
 This application is a standard Spring Boot application. There is also a Docker compose file with a Postgres database,
-which should be started prior to the execution of the application.
+which should be started prior to the execution of the application. You may need to start the database for some of
+the integration tests as well.
 
 ### Exploring DDDSample DB
 

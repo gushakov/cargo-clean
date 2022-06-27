@@ -3,15 +3,18 @@ package com.github.cargoclean.infrastructure.adapter.db;
 import com.github.cargoclean.CargoCleanApplication;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {CargoCleanApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class DbPersistenceGatewayTestIT {
@@ -37,9 +40,14 @@ public class DbPersistenceGatewayTestIT {
 
     @Test
     void should_load_all_locations() {
-        assertThat(dbGateway.allLocations())
+        final List<Location> locations = dbGateway.allLocations();
+        assertThat(locations)
                 .hasSize(13)
                 .extracting(Location::getUnLocode, Location::getName)
                 .contains(tuple(UnLocode.of("USNYC"), "New York"));
+
+        // locations should not be modifiable
+
+        assertThrows(UnsupportedOperationException.class, locations::clear);
     }
 }
