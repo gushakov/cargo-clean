@@ -17,7 +17,7 @@ by [Citerus AB](http://www.citerus.se/) and [Domain Language](https://www.domain
 
 The original work is distributed under the MIT licence. I've included the original licence with this project.
 
-Wherever possible, I'll try to mention the original code which was consulted for any specific implementation point. 
+Wherever possible, I'll try to mention the original code which was consulted for any specific implementation point.
 
 ### How run
 

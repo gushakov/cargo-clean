@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/cargodb"
+    username: postgres
+    password: postgres
+  flyway:
+    schemas: public
+
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc: debug
+        data:
+          jdbc: debug
