@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web;
+package com.github.cargoclean.infrastructure.adapter.web.presenter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Scope;

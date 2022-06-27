@@ -19,7 +19,7 @@ import java.util.Properties;
     References:
     ---------
 
-    1.  How to start HSQL DB web server: https://bit.ly/3xFOvn8
+    1.  How to start HSQL DB web server: https://stackoverflow.com/questions/40114231/how-to-start-hsqldb-in-server-mode-from-spring-boot-application
 
  */
 

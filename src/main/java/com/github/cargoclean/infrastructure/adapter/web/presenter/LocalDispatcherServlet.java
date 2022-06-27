@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web;
+package com.github.cargoclean.infrastructure.adapter.web.presenter;
 
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
     References:
     ----------
 
-    1.  Access DispatcherServlet: https://bit.ly/3NnIAcg
+    1.  Access DispatcherServlet: https://stackoverflow.com/questions/68376668/how-to-get-the-dispatcherservlet-from-spring-webapplicationcontext
  */
 
 public class LocalDispatcherServlet extends DispatcherServlet {
