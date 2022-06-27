@@ -7,9 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*
-    We are overriding the default DispatcherServlet so that we can have
+    Notes:
+    -----
+
+    1.  We are overriding the default DispatcherServlet so that we can have
     access to "render" (protected) method.
-    Based on this answer: https://stackoverflow.com/a/68536242
+
+    References:
+    ----------
+
+    1.  Access DispatcherServlet: https://bit.ly/3NnIAcg
  */
 
 public class LocalDispatcherServlet extends DispatcherServlet {
