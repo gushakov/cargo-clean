@@ -2,8 +2,11 @@ package com.github.cargoclean.infrastructure.config;
 
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
+import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -42,6 +45,13 @@ public class AppConfig {
     public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
                                                    PersistenceGatewayOutputPort gatewayOps) {
         return new BookingUseCase(presenter, gatewayOps);
+    }
+
+    @Bean
+    @Scope("prototype")
+    public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
+                                           PersistenceGatewayOutputPort gatewayOps){
+        return new RoutingUseCase(presenter, gatewayOps);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
 
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * Presenter for the view where we can enter information for booking of a new cargo.
  * Scope "request" is needed since we need to autowire the current {@code HttpServletRequest}
- * and {@code HttpServletResponse} objects.
+ * and {@code HttpServletResponse} objects (from the parent).
  *
  * @see AbstractWebPresenter
  */
@@ -30,12 +31,24 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     @Override
     public void presentNewCargoBookingView(List<Location> locations) {
 
-        // store the locations and the date in the map to be used in the view-model
+        // create the form bean which will be used in the view
+        final BookingForm bookingForm = BookingForm.builder()
+                .deliveryDeadline(new Date(System.currentTimeMillis()))
+                .locations(locations)
+                .build();
 
-        Map<String, Object> responseModel = Map.of("locations", locations,
-                "dateNow", new Date(System.currentTimeMillis()), "bookingForm", new BookingForm());
+        Map<String, Object> responseModel = Map.of("bookingForm", bookingForm);
 
+        // present view
         presentModelAndView(responseModel, "book-new-cargo");
+
+    }
+
+    @Override
+    public void presentResultOfNewCargoBooking(TrackingId trackingId) {
+
+        // redirect to cargo routing (show details of the cargo)
+        redirect("/showCargoDetails", Map.of("trackingId", "ADCBEFG1"));
 
     }
 }

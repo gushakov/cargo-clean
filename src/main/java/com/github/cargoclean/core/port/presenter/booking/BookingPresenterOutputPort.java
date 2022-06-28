@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.port.presenter.booking;
 
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 
@@ -9,4 +10,5 @@ public interface BookingPresenterOutputPort extends ErrorHandlingPresenterOutput
 
     void presentNewCargoBookingView(List<Location> locations);
 
+    void presentResultOfNewCargoBooking(TrackingId trackingId);
 }

@@ -1,10 +1,13 @@
 package com.github.cargoclean.infrastructure.adapter.web.controller.booking;
 
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
+import com.github.cargoclean.infrastructure.adapter.web.presenter.booking.BookingForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -13,20 +16,31 @@ public class BookingController {
 
     private final ApplicationContext appContext;
 
+    /*
+        Request to prepare new cargo booking (view). We need to
+        execute the use case which will load all the needed information.
+     */
+
     @RequestMapping("/bookNewCargo")
     @ResponseBody
     public void bookNewCargo() {
-        /*
-            Entry point to "Book new cargo" command processing. We get the input port
-            for the needed use case from the application context and we transfer the
-            control to the use case. There is no input to process or any request model
-            to pass to the use case.
-         */
 
         BookingInputPort useCase = appContext.getBean(BookingInputPort.class);
-
         useCase.prepareNewCargoBooking();
     }
 
+    /*
+        This is where we handle the booking request. The model attribute
+        "bookingForm" will contain the parameters for new booking set
+        by the user.
+     */
 
+    @RequestMapping(method = RequestMethod.POST, value = "/book")
+    @ResponseBody
+    public void book(@ModelAttribute BookingForm bookingForm){
+
+        BookingInputPort useCase = appContext.getBean(BookingInputPort.class);
+        useCase.bookCargo(bookingForm.getOrigin(), bookingForm.getDestination(), bookingForm.getDeliveryDeadline());
+
+    }
 }

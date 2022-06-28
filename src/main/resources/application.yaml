@@ -6,10 +6,15 @@ spring:
     password: postgres
   flyway:
     schemas: public
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 
 
 logging:
   level:
+    com:
+      github:
+        cargoclean: debug
     org:
       springframework:
         jdbc: debug

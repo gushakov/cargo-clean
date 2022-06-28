@@ -28,14 +28,12 @@
     <div class="row-cols-1 mt-3">
 
         <!--/*@thymesVar id="bookingForm" type="com.github.cargoclean.infrastructure.adapter.web.presenter.booking.BookingForm"*/-->
-        <!--/*@thymesVar id="locations" type="java.util.List<com.github.cargoclean.core.model.location.Location>"*/-->
-        <!--/*@thymesVar id="dateNow" type="java.util.Date"*/-->
 
-        <form method="get" action="#" th:action="@{/book}" th:object="${bookingForm}">
+        <form method="post" action="#" th:action="@{/book}" th:object="${bookingForm}">
             <div class="mb-3">
                 <label for="originLocation" class="form-label">Origin</label>
                 <select id="originLocation" class="form-select-sm">
-                    <option th:each="location : ${locations}"
+                    <option th:each="location : *{locations}"
                             th:field="*{origin}"
                             th:value="${location.unLocode}"
                             th:text="${location.unLocode}"></option>
@@ -45,7 +43,7 @@
             <div class="mb-3">
                 <label for="destinationLocation" class="form-label">Destination</label>
                 <select id="destinationLocation" class="form-select-sm">
-                    <option th:each="location : ${locations}"
+                    <option th:each="location : *{locations}"
                             th:field="*{destination}"
                             th:value="${location.unLocode}"
                             th:text="${location.unLocode}"></option>
@@ -55,8 +53,7 @@
             <div class="mb-3">
                 <label for="deliveryDeadline" class="form-label">Delivery deadline</label>
                 <input id="deliveryDeadline" type="date" class="form-control-sm"
-                       th:field="*{deliveryDeadline}"
-                       th:value="${dateNow}">
+                       th:field="*{deliveryDeadline}">
             </div>
 
             <div class="mb-3">
