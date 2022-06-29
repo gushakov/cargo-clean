@@ -51,7 +51,7 @@ public class BookingUseCase implements BookingInputPort {
         // TODO: create new Cargo, save new Cargo in the database
 
         final TrackingId trackingId = TrackingId.builder()
-                .id("ABCDE1")
+                .id("E93E0250")
                 .build();
 
         presenter.presentResultOfNewCargoBooking(trackingId);

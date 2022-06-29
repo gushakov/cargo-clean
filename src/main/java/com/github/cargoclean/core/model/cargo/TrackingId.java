@@ -10,6 +10,7 @@ package com.github.cargoclean.core.model.cargo;
     "original-license.txt", as well.
  */
 
+import com.github.cargoclean.core.annotation.Default;
 import lombok.Builder;
 import lombok.Value;
 
@@ -22,6 +23,7 @@ public class TrackingId {
     String id;
 
     @Builder
+    @Default
     public TrackingId(String id) {
         if (id == null || id.isEmpty() || id.isBlank()){
             throw new IllegalArgumentException("Invalid tracking ID: <%s>".formatted(id));
@@ -32,5 +34,11 @@ public class TrackingId {
     @Override
     public String toString() {
         return id;
+    }
+
+    public static TrackingId of(String id){
+        return TrackingId.builder()
+                .id(id)
+                .build();
     }
 }

@@ -24,4 +24,5 @@ public class Cargo {
 
     TrackingId trackingId;
     Location origin;
+    Delivery delivery;
 }
