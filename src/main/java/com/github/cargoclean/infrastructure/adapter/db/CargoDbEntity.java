@@ -3,7 +3,9 @@ package com.github.cargoclean.infrastructure.adapter.db;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 /*
@@ -19,8 +21,11 @@ import org.springframework.data.relational.core.mapping.Table;
 public class CargoDbEntity {
 
     @Id
+    private Integer id;
+
     private String trackingId;
 
+//    @Column("id")
     private LocationDbEntity origin;
 
     @Embedded.Nullable

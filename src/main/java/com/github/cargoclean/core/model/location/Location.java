@@ -20,6 +20,8 @@ import lombok.Value;
 @Builder
 public class Location {
 
+    // needed to map to auto-generated serial ID in the corresponding entity
+    Integer id;
     UnLocode unLocode;
     String name;
 

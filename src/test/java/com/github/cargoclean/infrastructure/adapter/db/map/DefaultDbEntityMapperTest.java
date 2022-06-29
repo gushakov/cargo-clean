@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -36,8 +37,8 @@ public class DefaultDbEntityMapperTest {
 
         assertThat(location)
                 .isNotNull()
-                .extracting(Location::getUnLocode, Location::getName)
-                .containsExactly(UnLocode.of("JNTKO"), "Tokyo");
+                .extracting(Location::getId, Location::getUnLocode, Location::getName)
+                .containsExactly(1, UnLocode.of("JNTKO"), "Tokyo");
     }
 
     @Test
@@ -71,20 +72,7 @@ public class DefaultDbEntityMapperTest {
     @Test
     void should_map_cargo_model_to_db_entity() {
 
-        final Cargo cargo = Cargo.builder()
-                .trackingId(TrackingId.builder()
-                        .id("75FC0BD4")
-                        .build())
-                .origin(Location.builder()
-                        .name("Dallas")
-                        .unLocode(UnLocode.builder()
-                                .code("USDAL")
-                                .build())
-                        .build())
-                .delivery(Delivery.builder()
-                        .transportStatus(TransportStatus.IN_PORT)
-                        .build())
-                .build();
+        final Cargo cargo = MockModels.cargo("75FC0BD4");
 
         final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
 

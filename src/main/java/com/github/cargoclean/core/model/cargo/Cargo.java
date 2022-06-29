@@ -22,7 +22,20 @@ import lombok.Value;
 @Builder
 public class Cargo {
 
+    Integer id;
     TrackingId trackingId;
     Location origin;
     Delivery delivery;
+
+    public Cargo withNullId(){
+        return newCargo().id(null).build();
+    }
+
+    private CargoBuilder newCargo(){
+        return builder()
+                .id(id)
+                .trackingId(trackingId)
+                .origin(origin)
+                .delivery(delivery);
+    }
 }
