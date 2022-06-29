@@ -93,7 +93,7 @@ public class DefaultDbEntityMapperTest {
 
         assertThat(cargoDbEntity.getOrigin())
                 .extracting(LocationDbEntity::getName, LocationDbEntity::getUnlocode)
-                .containsExactly("Dallas", UnLocode.of("USDAL"));
+                .containsExactly("Dallas", "USDAL");
 
 
     }

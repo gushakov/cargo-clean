@@ -9,6 +9,7 @@ import com.github.cargoclean.infrastructure.adapter.db.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.LocationDbEntity;
 import com.github.cargoclean.core.annotation.IgnoreForMapping;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -41,6 +42,9 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     @Mapping(target = "unLocode", source = "unlocode")
     abstract Location map(LocationDbEntity locationDbEntity);
+
+    @InheritInverseConfiguration
+    abstract LocationDbEntity map(Location location);
 
     abstract DeliveryDbEntity map(Delivery delivery);
 
