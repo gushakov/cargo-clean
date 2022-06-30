@@ -3,14 +3,12 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.infrastructure.adapter.db.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.LocationDbEntity;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -80,8 +78,7 @@ public class DefaultDbEntityMapperTest {
                 .isEqualTo("75FC0BD4");
 
         assertThat(cargoDbEntity.getOrigin())
-                .extracting(LocationDbEntity::getName, LocationDbEntity::getUnlocode)
-                .containsExactly("Dallas", "USDAL");
+                .isEqualTo(cargo.getOrigin().getId());
 
 
     }

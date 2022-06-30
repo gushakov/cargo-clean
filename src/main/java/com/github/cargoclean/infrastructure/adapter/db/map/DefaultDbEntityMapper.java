@@ -16,29 +16,9 @@ import org.mapstruct.Mapping;
 /**
  * MapStruct will generate a mapper for us in {@code com.github.cargoclean.infrastructure.adapter.db.map.DefaultDbEntityMapperImpl}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = MapStructConverters.class)
 public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
-    // we need to tell MapStruct how to map some value objects
-
-    protected String map(UnLocode unLocode){
-        return unLocode.toString();
-    }
-
-    protected UnLocode map(String unlocode) {
-        return UnLocode.builder()
-                .code(unlocode)
-                .build();
-    }
-
-    protected String map(TrackingId trackingId){
-        return trackingId.toString();
-    }
-    protected TrackingId mapToTrackingId(String id){
-        return TrackingId.builder()
-                .id(id)
-                .build();
-    }
 
     @Mapping(target = "unLocode", source = "unlocode")
     abstract Location map(LocationDbEntity locationDbEntity);
@@ -52,6 +32,7 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract CargoDbEntity map(Cargo cargo);
 
+    @Mapping(target = "origin", ignore = true)
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
     @IgnoreForMapping

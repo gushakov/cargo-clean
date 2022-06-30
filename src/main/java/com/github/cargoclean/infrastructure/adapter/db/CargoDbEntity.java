@@ -25,8 +25,7 @@ public class CargoDbEntity {
 
     private String trackingId;
 
-//    @Column("id")
-    private LocationDbEntity origin;
+    private Integer origin;
 
     @Embedded.Nullable
     private DeliveryDbEntity delivery;

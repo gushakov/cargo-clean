@@ -12,19 +12,51 @@ import java.util.Optional;
 
 public class MockModels {
 
+    private static Map<String, Location> allLocations() {
+        return Map.of(
+                "JNTKO",
+                Location.builder()
+                        .id(1)
+                        .name("Tokyo")
+                        .unLocode(UnLocode.builder()
+                                .code("JNTKO")
+                                .build())
+                        .build(),
+
+                "NLRTM",
+                Location.builder()
+                        .id(2)
+                        .name("Rotterdam")
+                        .unLocode(UnLocode.builder()
+                                .code("NLRTM")
+                                .build())
+                        .build(),
+
+                "USDAL",
+                Location.builder()
+                        .id(3)
+                        .name("Dallas")
+                        .unLocode(UnLocode.builder()
+                                .code("USDAL")
+                                .build())
+                        .build()
+        );
+    }
+
+    public static Location location(String unlocode) {
+        return Optional.ofNullable(allLocations().get(unlocode))
+                .orElseThrow();
+    }
+
     private static Map<String, Cargo> allCargos() {
         return Map.of(
                 "75FC0BD4",
                 Cargo.builder()
+                        .id(1)
                         .trackingId(TrackingId.builder()
                                 .id("75FC0BD4")
                                 .build())
-                        .origin(Location.builder()
-                                .name("Dallas")
-                                .unLocode(UnLocode.builder()
-                                        .code("USDAL")
-                                        .build())
-                                .build())
+                        .origin(location("USDAL"))
                         .delivery(Delivery.builder()
                                 .transportStatus(TransportStatus.IN_PORT)
                                 .build())
@@ -32,7 +64,7 @@ public class MockModels {
         );
     }
 
-    public static Cargo cargo(String trackingId){
+    public static Cargo cargo(String trackingId) {
         return Optional.ofNullable(allCargos().get(trackingId))
                 .orElseThrow();
     }
