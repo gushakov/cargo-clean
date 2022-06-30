@@ -1,2 +1,11 @@
-<div xmlns:th="http://www.thymeleaf.org" class="row" th:text="${errorMessage}" style="color: orangered">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+    <div class="row" th:text="${errorMessage}" style="color: orangered">
+    </div>
 </div>
+<th:block th:replace="fragments :: scripts"></th:block>
+</body>
+</html>

@@ -1,6 +1,5 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
 
-import com.github.cargoclean.core.model.location.Location;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,10 +11,10 @@ import java.util.List;
 @Builder
 public class BookingForm {
 
-    private List<Location> locations;
+    private List<String> locations;
 
-    private Location origin;
-    private Location destination;
+    private String origin;
+    private String destination;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date deliveryDeadline;

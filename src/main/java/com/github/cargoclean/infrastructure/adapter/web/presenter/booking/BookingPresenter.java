@@ -1,7 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
@@ -29,12 +28,12 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     }
 
     @Override
-    public void presentNewCargoBookingView(List<Location> locations) {
+    public void presentNewCargoBookingView(List<String> allUnLocodes) {
 
         // create the form bean which will be used in the view
         final BookingForm bookingForm = BookingForm.builder()
                 .deliveryDeadline(new Date(System.currentTimeMillis()))
-                .locations(locations)
+                .locations(allUnLocodes)
                 .build();
 
         Map<String, Object> responseModel = Map.of("bookingForm", bookingForm);

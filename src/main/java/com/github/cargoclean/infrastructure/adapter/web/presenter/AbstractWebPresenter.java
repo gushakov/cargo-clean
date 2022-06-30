@@ -25,12 +25,8 @@ public abstract class AbstractWebPresenter {
     private final HttpServletResponse httpResponse;
 
     public void presentError(Exception e) {
-        final ModelAndView errorMav = new ModelAndView("error", Map.of("errorMessage", e.getMessage()));
-        try {
-            dispatcher.render(errorMav, httpRequest, httpResponse);
-        } catch (Exception ex) {
-            throw new RuntimeException(e);
-        }
+        // redirect to special error handling controller
+        redirect("/error", Map.of("errorMessage", e.getMessage()));
     }
 
     protected void presentModelAndView(Map<String, Object> responseModel, String viewName) {

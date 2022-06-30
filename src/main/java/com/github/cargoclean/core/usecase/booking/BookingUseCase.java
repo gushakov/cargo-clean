@@ -5,6 +5,7 @@ import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +33,9 @@ public class BookingUseCase implements BookingInputPort {
 
             final List<Location> locations = gatewayOps.allLocations();
 
-            /*
-                Present the view where we can enter new cargo information.
-                We are passing an immutable list of locations as is (value
-                objects) to be used by the presenter. In general, according
-                to CA, we may need to create a Response Model (DTO) object
-                instead.
-             */
-            presenter.presentNewCargoBookingView(locations);
+            List<String> allUnlocodes = locations.stream().map(Location::getUnLocode).map(UnLocode::getCode).toList();
+
+            presenter.presentNewCargoBookingView(allUnlocodes);
 
         } catch (Exception e) {
             // if anything went wrong: present the error
@@ -50,24 +46,32 @@ public class BookingUseCase implements BookingInputPort {
 
     @Transactional
     @Override
-    public void bookCargo(Location origin, Location destination, Date deliveryDeadline) {
+    public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
 
-        // Create new Cargo object here, for now we are just
-        // creating some related objects manually (Delivery).
+        // This is where we are going to create new Cargo model object (aggregate)
+        // with all necessary related objects (entities).
 
-        final TrackingId trackingId = gatewayOps.nextTrackingId();
-        final Cargo cargo = Cargo.builder()
-                .origin(origin)
-                .trackingId(trackingId)
-                .delivery(Delivery.builder()
-                        .transportStatus(TransportStatus.NOT_RECEIVED)
-                        .build())
-                .build();
+        try {
+            Location origin = gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode));
 
-        gatewayOps.save(cargo);
+            final TrackingId trackingId = gatewayOps.nextTrackingId();
+            final Cargo cargo = Cargo.builder()
+                    .origin(origin)
+                    .trackingId(trackingId)
+                    .delivery(Delivery.builder()
+                            .transportStatus(TransportStatus.NOT_RECEIVED)
+                            .build())
+                    .build();
 
-        log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
+            // Here we can validate Cargo aggregate if needed.
 
-        presenter.presentResultOfNewCargoBooking(trackingId);
+            gatewayOps.saveCargo(cargo);
+
+            log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
+
+            presenter.presentResultOfNewCargoBooking(trackingId);
+        } catch (Exception e) {
+            presenter.presentError(e);
+        }
     }
 }

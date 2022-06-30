@@ -33,18 +33,18 @@
             <div class="mb-3">
                 <label for="originLocation" class="form-label">Origin</label>
                 <select id="originLocation" class="form-select-sm" th:field="*{origin}">
-                    <option th:each="location : *{locations}"
-                            th:value="${location}"
-                            th:text="${location.unLocode}"></option>
+                    <option th:each="unlocode : *{locations}"
+                            th:value="${unlocode}"
+                            th:text="${unlocode}"></option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="destinationLocation" class="form-label">Destination</label>
                 <select id="destinationLocation" class="form-select-sm" th:field="*{destination}">
-                    <option th:each="location : *{locations}"
-                            th:value="${location}"
-                            th:text="${location.unLocode}"></option>
+                    <option th:each="unlocode : *{locations}"
+                            th:value="${unlocode}"
+                            th:text="${unlocode}"></option>
                 </select>
             </div>
 

@@ -14,6 +14,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,12 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     }
 
     @Override
-    public Cargo save(Cargo cargoToSave) {
+    public Location obtainLocationByUnLocode(UnLocode unLocode) {
+        return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
+    }
+
+    @Override
+    public Cargo saveCargo(Cargo cargoToSave) {
 
         final CargoDbEntity cargoDbEntity = dbMapper.convert(cargoToSave);
 
@@ -68,7 +74,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     }
 
     @Override
-    public Cargo obtainByTrackingId(TrackingId trackingId) {
+    public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
         return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()));
     }
 
