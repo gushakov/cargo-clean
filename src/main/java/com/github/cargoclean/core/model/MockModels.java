@@ -39,7 +39,17 @@ public class MockModels {
                         .unLocode(UnLocode.builder()
                                 .code("USDAL")
                                 .build())
+                        .build(),
+
+                "FIHEL",
+                Location.builder()
+                        .id(10)
+                        .name("Helsinki")
+                        .unLocode(UnLocode.builder()
+                                .code("FIHEL")
+                                .build())
                         .build()
+
         );
     }
 
@@ -59,6 +69,17 @@ public class MockModels {
                         .origin(location("USDAL"))
                         .delivery(Delivery.builder()
                                 .transportStatus(TransportStatus.IN_PORT)
+                                .build())
+                        .build(),
+                "695CF30D",
+                Cargo.builder()
+                        .id(2)
+                        .trackingId(TrackingId.builder()
+                                .id("695CF30D")
+                                .build())
+                        .origin(location("FIHEL"))
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.CLAIMED)
                                 .build())
                         .build()
         );

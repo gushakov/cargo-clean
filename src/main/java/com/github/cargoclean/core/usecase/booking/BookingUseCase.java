@@ -1,12 +1,16 @@
 package com.github.cargoclean.core.usecase.booking;
 
+import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -44,15 +48,25 @@ public class BookingUseCase implements BookingInputPort {
 
     }
 
+    @Transactional
     @Override
     public void bookCargo(Location origin, Location destination, Date deliveryDeadline) {
-        log.debug("Actually book new cargo here...");
 
-        // TODO: create new Cargo, save new Cargo in the database
+        // Create new Cargo object here, for now we are just
+        // creating some related objects manually (Delivery).
 
-        final TrackingId trackingId = TrackingId.builder()
-                .id("E93E0250")
+        final TrackingId trackingId = gatewayOps.nextTrackingId();
+        final Cargo cargo = Cargo.builder()
+                .origin(origin)
+                .trackingId(trackingId)
+                .delivery(Delivery.builder()
+                        .transportStatus(TransportStatus.NOT_RECEIVED)
+                        .build())
                 .build();
+
+        gatewayOps.save(cargo);
+
+        log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
         presenter.presentResultOfNewCargoBooking(trackingId);
     }

@@ -48,7 +48,7 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     public void presentResultOfNewCargoBooking(TrackingId trackingId) {
 
         // redirect to cargo routing (show details of the cargo)
-        redirect("/showCargoDetails", Map.of("trackingId", "ADCBEFG1"));
+        redirect("/showCargoDetails", Map.of("trackingId", trackingId.getId()));
 
     }
 }

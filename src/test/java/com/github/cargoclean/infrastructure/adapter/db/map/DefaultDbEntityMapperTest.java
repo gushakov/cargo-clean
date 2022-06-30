@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class})
+@SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class, MapStructConverters.class})
 public class DefaultDbEntityMapperTest {
 
     @Autowired

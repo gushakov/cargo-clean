@@ -12,30 +12,47 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.model.location.Location;
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Cargo".
  */
-@Value
+
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class Cargo {
 
+    @EqualsAndHashCode.Include(rank = 1)
     Integer id;
+    @EqualsAndHashCode.Include(rank = 2)
     TrackingId trackingId;
     Location origin;
     Delivery delivery;
 
-    public Cargo withNullId(){
+    public Cargo withNullId() {
         return newCargo().id(null).build();
     }
 
-    private CargoBuilder newCargo(){
+    public Cargo withOrigin(Location origin) {
+        return newCargo().origin(origin).build();
+    }
+
+    private CargoBuilder newCargo() {
         return builder()
                 .id(id)
                 .trackingId(trackingId)
                 .origin(origin)
                 .delivery(delivery);
+    }
+
+    @Override
+    public String toString() {
+        return "Cargo{" +
+                "trackingId=" + trackingId +
+                '}';
     }
 }

@@ -32,20 +32,18 @@
         <form method="post" action="#" th:action="@{/book}" th:object="${bookingForm}">
             <div class="mb-3">
                 <label for="originLocation" class="form-label">Origin</label>
-                <select id="originLocation" class="form-select-sm">
+                <select id="originLocation" class="form-select-sm" th:field="*{origin}">
                     <option th:each="location : *{locations}"
-                            th:field="*{origin}"
-                            th:value="${location.unLocode}"
+                            th:value="${location}"
                             th:text="${location.unLocode}"></option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="destinationLocation" class="form-label">Destination</label>
-                <select id="destinationLocation" class="form-select-sm">
+                <select id="destinationLocation" class="form-select-sm" th:field="*{destination}">
                     <option th:each="location : *{locations}"
-                            th:field="*{destination}"
-                            th:value="${location.unLocode}"
+                            th:value="${location}"
                             th:text="${location.unLocode}"></option>
                 </select>
             </div>

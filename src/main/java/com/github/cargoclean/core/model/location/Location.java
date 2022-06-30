@@ -10,19 +10,30 @@ package com.github.cargoclean.core.model.location;
     "original-license.txt", as well.
  */
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.location.Location".
  */
-@Value
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class Location {
 
     // needed to map to auto-generated serial ID in the corresponding entity
+    @EqualsAndHashCode.Include(rank = 1)
     Integer id;
+    @EqualsAndHashCode.Include(rank = 2)
     UnLocode unLocode;
     String name;
 
+    @Override
+    public String toString() {
+        return "Location{" +
+                "unLocode=" + unLocode +
+                '}';
+    }
 }

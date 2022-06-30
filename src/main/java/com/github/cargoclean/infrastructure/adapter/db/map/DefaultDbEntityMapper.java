@@ -19,7 +19,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = MapStructConverters.class)
 public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
-
     @Mapping(target = "unLocode", source = "unlocode")
     abstract Location map(LocationDbEntity locationDbEntity);
 

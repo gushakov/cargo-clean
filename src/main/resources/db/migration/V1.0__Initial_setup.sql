@@ -3,8 +3,8 @@ CREATE TABLE public.location
     id       serial4 NOT NULL,
     unlocode varchar NOT NULL,
     "name"   varchar NULL,
-    CONSTRAINT newtable_pk PRIMARY KEY (id),
-    CONSTRAINT unlocode_unique UNIQUE (unlocode)
+    CONSTRAINT location_id_pk PRIMARY KEY (id),
+    CONSTRAINT location_unlocode_unique UNIQUE (unlocode)
 );
 
 INSERT INTO public.location (unlocode, "name")
