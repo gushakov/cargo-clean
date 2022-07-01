@@ -28,17 +28,20 @@ public class BookingUseCase implements BookingInputPort {
     @Override
     public void prepareNewCargoBooking() {
 
+        final List<Location> locations;
         try {
             // retrieve all locations from the gateway
 
-            final List<Location> locations = gatewayOps.allLocations();
-
-            presenter.presentNewCargoBookingView(locations);
+            locations = gatewayOps.allLocations();
 
         } catch (Exception e) {
-            // if anything went wrong: present the error
+            // if anything went wrong: present the error and return
             presenter.presentError(e);
+            return;
         }
+
+        // if everything is OK, present the list of locations
+        presenter.presentNewCargoBookingView(locations);
 
     }
 
@@ -48,11 +51,11 @@ public class BookingUseCase implements BookingInputPort {
 
         // This is where we are going to create new Cargo model object (aggregate)
         // with all necessary related objects (entities).
-
+        final TrackingId trackingId;
         try {
             Location origin = gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode));
 
-            final TrackingId trackingId = gatewayOps.nextTrackingId();
+            trackingId = gatewayOps.nextTrackingId();
             final Cargo cargo = Cargo.builder()
                     .origin(origin)
                     .trackingId(trackingId)
@@ -67,9 +70,12 @@ public class BookingUseCase implements BookingInputPort {
 
             log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
-            presenter.presentResultOfNewCargoBooking(trackingId);
+
         } catch (Exception e) {
             presenter.presentError(e);
+            return;
         }
+
+        presenter.presentResultOfNewCargoBooking(trackingId);
     }
 }
