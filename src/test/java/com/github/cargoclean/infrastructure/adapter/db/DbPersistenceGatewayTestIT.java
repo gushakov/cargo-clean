@@ -7,6 +7,8 @@ import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -53,9 +55,10 @@ public class DbPersistenceGatewayTestIT {
         assertThrows(UnsupportedOperationException.class, locations::clear);
     }
 
-    @Test
-    void should_save_cargo_initially() {
-        final Cargo cargoToSave = MockModels.cargo("75FC0BD4").withNullId();
+    @ParameterizedTest
+    @ValueSource(strings = {"75FC0BD4", "695CF30D"})
+    void should_save_cargo_successfully(String unlocode) {
+        final Cargo cargoToSave = MockModels.cargo(unlocode).withNullId();
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
         assertThat(savedCargo.getId()).isGreaterThan(0);
         assertThat(savedCargo)
@@ -66,12 +69,15 @@ public class DbPersistenceGatewayTestIT {
 
     @Test
     void should_obtain_cargo_by_tracking_id() {
-        final TrackingId trackingId = TrackingId.of("75FC0BD4");
-//        final TrackingId trackingId = TrackingId.of("695CF30D");
-        final Cargo cargo = dbGateway.obtainCargoByTrackingId(trackingId);
 
-        assertThat(cargo.getId()).isGreaterThan(0);
-        assertThat(cargo.getTrackingId()).isEqualTo(trackingId);
-        assertThat(cargo.getOrigin()).isEqualTo(MockModels.location("FIHEL"));
+        final Cargo refCargo = MockModels.cargo("75FC0BD4");
+
+        final Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(refCargo.getTrackingId());
+
+        assertThat(loadedCargo.getId()).isGreaterThan(0);
+        assertThat(loadedCargo.getTrackingId()).isEqualTo(refCargo.getTrackingId());
+        assertThat(loadedCargo.getOrigin()).isEqualTo(refCargo.getOrigin());
+        assertThat(loadedCargo.getDelivery()).isEqualTo(refCargo.getDelivery());
+        assertThat(loadedCargo.getRouteSpecification()).isEqualTo(refCargo.getRouteSpecification());
     }
 }

@@ -82,11 +82,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()));
+        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()).orElseThrow());
     }
 
-    private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity){
-        final Cargo partialCargo = dbMapper.convert(cargoRepository.save(cargoDbEntity));
+    private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
+        final Cargo partialCargo = dbMapper.convert(cargoDbEntity);
         final Location origin = dbMapper.convert(locationRepository.findById(cargoDbEntity.getOrigin()).orElseThrow());
         final Delivery delivery = convertAndLoadRelations(cargoDbEntity.getDelivery());
         final RouteSpecification routeSpec = convertAndLoadRelations(cargoDbEntity.getRouteSpecification());
@@ -95,17 +95,16 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
                 .withRouteSpecification(routeSpec);
     }
 
-    private Delivery convertAndLoadRelations(DeliveryDbEntity deliveryDbEntity){
+    private Delivery convertAndLoadRelations(DeliveryDbEntity deliveryDbEntity) {
         return dbMapper.convert(deliveryDbEntity);
     }
 
-    private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity){
+    private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity) {
         RouteSpecification partialRouteSpec = dbMapper.convert(specDbEntity);
         final Location origin = dbMapper.convert(locationRepository
                 .findById(specDbEntity.getOrigin()).orElseThrow());
         final Location destination = dbMapper.convert(locationRepository
-                .findById(specDbEntity.getOrigin()).orElseThrow());
-
+                .findById(specDbEntity.getDestination()).orElseThrow());
         return partialRouteSpec.withOrigin(origin)
                 .withDestination(destination);
     }
