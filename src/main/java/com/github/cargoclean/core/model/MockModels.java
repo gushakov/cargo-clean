@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,9 +117,13 @@ public class MockModels {
         );
     }
 
-    private static ZonedDateTime localDate(String date) {
+    public static ZonedDateTime localDate(String date) {
         return ZonedDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
                 Constants.DEFAULT_ZONE_ID);
+    }
+
+    public static Instant localInstant(String date){
+        return localDate(date).toInstant();
     }
 
     public static Cargo cargo(String trackingId) {

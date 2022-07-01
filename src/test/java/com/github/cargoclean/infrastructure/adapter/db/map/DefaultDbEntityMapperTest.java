@@ -5,15 +5,25 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import static com.github.cargoclean.core.model.MockModels.localInstant;
 import static org.assertj.core.api.Assertions.assertThat;
+
+/*
+    References:
+    ----------
+
+    1.  AssertJ, describe messages: https://stackoverflow.com/questions/28994316/can-you-add-a-custom-message-to-assertj-assertthat
+
+ */
 
 @SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class, MapStructConverters.class})
 public class DefaultDbEntityMapperTest {
@@ -74,11 +84,24 @@ public class DefaultDbEntityMapperTest {
         final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
 
         assertThat(cargoDbEntity.getTrackingId())
+                .as("Cargo tracking ID")
                 .isEqualTo("75FC0BD4");
 
         assertThat(cargoDbEntity.getOrigin())
+                .as("Cargo origin location")
                 .isEqualTo(cargo.getOrigin().getId());
 
+        assertThat(cargoDbEntity.getDelivery().getTransportStatus())
+                .as("Delivery, transport status")
+                .isEqualTo(TransportStatus.IN_PORT.name());
+
+        assertThat(cargoDbEntity.getRouteSpecification())
+                .as("Routing specification")
+                .extracting(RouteSpecificationDbEntity::getOrigin,
+                        RouteSpecificationDbEntity::getDestination,
+                        RouteSpecificationDbEntity::getArrivalDeadline)
+                .containsExactly(3, 13, localInstant("24-08-2022"));
 
     }
+
 }
