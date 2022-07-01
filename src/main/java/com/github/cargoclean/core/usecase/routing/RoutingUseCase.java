@@ -24,13 +24,13 @@ public class RoutingUseCase implements RoutingInputPort {
             cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
         } catch (NoSuchElementException e) {
+            // we should be using domain exceptions here
             presenter.presentError(new Exception("Cannot find cargo with tracking ID: %s".formatted(trackingId)));
             return;
         } catch (Exception e){
             presenter.presentError(e);
             return;
         }
-
 
         presenter.presentCargoForRouting(cargo);
 

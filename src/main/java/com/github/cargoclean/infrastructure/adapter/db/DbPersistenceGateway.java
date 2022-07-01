@@ -34,8 +34,14 @@ import java.util.stream.StreamSupport;
 
 /**
  * Default implementation of the persistence gateway. It uses one Spring Data JDBC
- * repository for each aggregate. And it relies on MapStruct mapper to map between
+ * repository for each aggregate root. And it relies on MapStruct mapper to map between
  * DB entities and models.
+ * <p>
+ * This is a classical "Repository pattern" implementation. We have a greater control
+ * over the mapping between database rows and domain entities than if we were using
+ * an ORM (Hibernate).
+ *
+ * @see DbEntityMapper
  */
 @Service
 @RequiredArgsConstructor
@@ -84,6 +90,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
         return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()).orElseThrow());
     }
+
+    /*
+        This is where we have to implement (eager) loading of the relations
+        ourselves, since we are not using ORM.
+     */
 
     private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
         final Cargo partialCargo = dbMapper.convert(cargoDbEntity);

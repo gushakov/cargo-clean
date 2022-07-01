@@ -1,5 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.controller.routing;
 
+import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -18,9 +20,11 @@ public class RoutingController {
     @RequestMapping("/showCargoDetails")
     @ResponseBody
     public void showCargoDetails(@RequestParam String trackingId) {
-        log.debug("[Routing] Show cargo details of tracking ID: {}", trackingId);
+        log.debug("[Routing] Showing cargo details of tracking ID: {}", trackingId);
 
-        // TODO: call use case to get the cargo with given tracking ID
+        RoutingInputPort useCase = appContext.getBean(RoutingInputPort.class);
+
+        useCase.showCargo(TrackingId.of(trackingId));
 
     }
 

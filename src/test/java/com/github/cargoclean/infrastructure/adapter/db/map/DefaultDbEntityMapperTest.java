@@ -9,7 +9,7 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
-import org.assertj.core.api.Assertions;
+import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
  */
 
-@SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class, MapStructConverters.class})
+@SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class, CommonMapStructConverters.class})
 public class DefaultDbEntityMapperTest {
 
     @Autowired

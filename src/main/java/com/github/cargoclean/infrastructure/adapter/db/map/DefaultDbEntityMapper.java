@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.annotation.IgnoreForMapping;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
@@ -8,15 +9,14 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
-import com.github.cargoclean.core.annotation.IgnoreForMapping;
-import org.mapstruct.InheritInverseConfiguration;
+import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
  * MapStruct will generate a mapper for us in {@code com.github.cargoclean.infrastructure.adapter.db.map.DefaultDbEntityMapperImpl}.
  */
-@Mapper(componentModel = "spring", uses = MapStructConverters.class)
+@Mapper(componentModel = "spring", uses = CommonMapStructConverters.class)
 public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     @Mapping(target = "unLocode", source = "unlocode")
