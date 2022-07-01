@@ -1,0 +1,6 @@
+This work is based heavily on DDDSample implementation available at https://github.com/citerus/dddsample-core.
+Please, see the COPYRIGHT notice in DDDSample repository. Also, please, read the README.md file in this project.
+
+Original work lists the following authors (accessed on 01.07.2022):
+- Citerus AB: http://www.citerus.se/
+- Domain Language: https://www.domainlanguage.com/

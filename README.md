@@ -14,7 +14,8 @@ There should be an articles on Medium which will detail the interesting points a
 This application is based heavily on the original [DDDSample](https://github.com/citerus/dddsample-core) application
 by [Citerus AB](http://www.citerus.se/) and [Domain Language](https://www.domainlanguage.com/).
 
-The original work is distributed under the MIT licence. I've included the original licence with this project.
+The original work is distributed under the MIT licence. I've included [the original licence](./original-license.txt) with 
+this project.
 
 Wherever possible, I'll try to mention the original code which was consulted for any specific implementation point.
 
