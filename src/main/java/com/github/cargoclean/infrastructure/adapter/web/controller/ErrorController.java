@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ErrorController {
 
+    /*
+        For errors we are using standard view resolution schema from Spring MVC.
+     */
+
     @RequestMapping("/error")
     public String onError(@RequestParam(required = false) String errorMessage, Model model){
 

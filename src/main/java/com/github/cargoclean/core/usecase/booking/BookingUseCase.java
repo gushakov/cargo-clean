@@ -1,9 +1,7 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.Constants;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
@@ -12,8 +10,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+
+/*
+    References:
+    ----------
+
+    1.  Convert Date to ZonedDateTime: https://stackoverflow.com/questions/25376242/java8-java-util-date-conversion-to-java-time-zoneddatetime
+ */
 
 @RequiredArgsConstructor
 @Slf4j
@@ -54,6 +61,7 @@ public class BookingUseCase implements BookingInputPort {
         final TrackingId trackingId;
         try {
             Location origin = gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode));
+            Location destination = gatewayOps.obtainLocationByUnLocode(UnLocode.of(destinationUnLocode));
 
             trackingId = gatewayOps.nextTrackingId();
             final Cargo cargo = Cargo.builder()
@@ -61,6 +69,12 @@ public class BookingUseCase implements BookingInputPort {
                     .trackingId(trackingId)
                     .delivery(Delivery.builder()
                             .transportStatus(TransportStatus.NOT_RECEIVED)
+                            .build())
+                    .routeSpecification(RouteSpecification.builder()
+                            .origin(origin)
+                            .destination(destination)
+                            .arrivalDeadline(ZonedDateTime.ofInstant(deliveryDeadline.toInstant(),
+                                    Constants.DEFAULT_ZONE_ID))
                             .build())
                     .build();
 

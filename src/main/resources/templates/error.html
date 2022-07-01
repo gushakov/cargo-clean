@@ -3,9 +3,10 @@
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="container-fluid">
-    <div class="row" th:text="${errorMessage}" style="color: orangered">
+    <div th:replace="fragments :: header"></div>
+    <div class="row mt-3" th:text="${errorMessage}" style="color: orangered">
     </div>
 </div>
-<th:block th:replace="fragments :: scripts"></th:block>
+<th:block th:replace="fragments :: footer"></th:block>
 </body>
 </html>
