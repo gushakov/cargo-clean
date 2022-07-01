@@ -33,10 +33,9 @@ public class DefaultDbEntityMapperTest {
 
         final Location location = mapper.convert(dbEntity);
 
-        assertThat(location)
-                .isNotNull()
-                .extracting(Location::getId, Location::getUnLocode, Location::getName)
-                .containsExactly(1, UnLocode.of("JNTKO"), "Tokyo");
+        Location example = MockModels.location("JNTKO");
+        assertThat(location).isEqualTo(example);
+        assertThat(location.getName()).isEqualTo(example.getName());
     }
 
     @Test

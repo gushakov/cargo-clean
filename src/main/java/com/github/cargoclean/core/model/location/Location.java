@@ -28,6 +28,7 @@ public class Location {
     Integer id;
     @EqualsAndHashCode.Include(rank = 2)
     UnLocode unLocode;
+
     String name;
 
     @Override

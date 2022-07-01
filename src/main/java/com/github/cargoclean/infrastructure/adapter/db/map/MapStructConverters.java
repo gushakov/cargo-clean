@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -15,8 +16,6 @@ import java.time.ZonedDateTime;
  */
 @Mapper(componentModel = "spring")
 public class MapStructConverters {
-
-    private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Zurich");
 
     String mapUnLocodeToCode(UnLocode unLocode) {
         return unLocode.toString();
@@ -47,7 +46,7 @@ public class MapStructConverters {
     }
 
     ZonedDateTime convertInstantToZonedDateTime(Instant instant){
-        return ZonedDateTime.ofInstant(instant, DEFAULT_ZONE);
+        return ZonedDateTime.ofInstant(instant, Constants.DEFAULT_ZONE_ID);
     }
 
 }

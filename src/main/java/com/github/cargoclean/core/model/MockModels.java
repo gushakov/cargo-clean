@@ -1,15 +1,19 @@
 package com.github.cargoclean.core.model;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * These models are examples of a fully specified graphs of models with
+ * realistic data. They will be used in unit tests.
+ */
 public class MockModels {
 
     private static Map<String, Location> allLocations() {
@@ -48,7 +52,18 @@ public class MockModels {
                         .unLocode(UnLocode.builder()
                                 .code("FIHEL")
                                 .build())
+                        .build(),
+
+                "AUMEL",
+                Location.builder()
+                        .id(13)
+                        .name("Melbourne")
+                        .unLocode(UnLocode.builder()
+                                .code("AUMEL")
+                                .build())
                         .build()
+
+
 
         );
     }
@@ -60,6 +75,9 @@ public class MockModels {
 
     private static Map<String, Cargo> allCargos() {
         return Map.of(
+
+                // ---------------------------------------------------------------
+
                 "75FC0BD4",
                 Cargo.builder()
                         .id(1)
@@ -70,7 +88,15 @@ public class MockModels {
                         .delivery(Delivery.builder()
                                 .transportStatus(TransportStatus.IN_PORT)
                                 .build())
+                        .routeSpecification(RouteSpecification.builder()
+                                .origin(location("USDAL"))
+                                .destination(location("AUMEL"))
+                                .arrivalDeadline(localDate("24-08-2022"))
+                                .build())
                         .build(),
+
+                // ---------------------------------------------------------------
+
                 "695CF30D",
                 Cargo.builder()
                         .id(2)
@@ -79,10 +105,20 @@ public class MockModels {
                                 .build())
                         .origin(location("FIHEL"))
                         .delivery(Delivery.builder()
-                                .transportStatus(TransportStatus.CLAIMED)
+                                .transportStatus(TransportStatus.ONBOARD_CARRIER)
+                                .build())
+                        .routeSpecification(RouteSpecification.builder()
+                                .origin(location("FIHEL"))
+                                .destination(location("NLRTM"))
+                                .arrivalDeadline(localDate("16-08-2022"))
                                 .build())
                         .build()
         );
+    }
+
+    private static ZonedDateTime localDate(String date) {
+        return ZonedDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
+                Constants.DEFAULT_ZONE_ID);
     }
 
     public static Cargo cargo(String trackingId) {
