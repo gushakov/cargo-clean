@@ -33,9 +33,7 @@ public class BookingUseCase implements BookingInputPort {
 
             final List<Location> locations = gatewayOps.allLocations();
 
-            List<String> allUnlocodes = locations.stream().map(Location::getUnLocode).map(UnLocode::getCode).toList();
-
-            presenter.presentNewCargoBookingView(allUnlocodes);
+            presenter.presentNewCargoBookingView(locations);
 
         } catch (Exception e) {
             // if anything went wrong: present the error

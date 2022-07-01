@@ -1,11 +1,10 @@
-package com.github.cargoclean.infrastructure.adapter.db;
+package com.github.cargoclean.infrastructure.adapter.db.cargo;
 
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 /*
@@ -30,5 +29,8 @@ public class CargoDbEntity {
 
     @Embedded.Nullable
     private DeliveryDbEntity delivery;
+
+    @Embedded.Nullable
+    private RouteSpecificationDbEntity routeSpecification;
 
 }

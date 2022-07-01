@@ -5,8 +5,18 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import org.mapstruct.Mapper;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+/**
+ * MapStruct converters for common value objects and primitives. These are package-private
+ * since they will only be accessed from the generated mapper implementation.
+ */
 @Mapper(componentModel = "spring")
 public class MapStructConverters {
+
+    private static final ZoneId DEFAULT_ZONE = ZoneId.of("Europe/Zurich");
 
     String mapUnLocodeToCode(UnLocode unLocode) {
         return unLocode.toString();
@@ -30,6 +40,14 @@ public class MapStructConverters {
 
     Integer mapLocationToId(Location location) {
         return location.getId();
+    }
+
+    Instant convertZonedDateTimeToInstant(ZonedDateTime dateTime){
+        return dateTime.toInstant();
+    }
+
+    ZonedDateTime convertInstantToZonedDateTime(Instant instant){
+        return ZonedDateTime.ofInstant(instant, DEFAULT_ZONE);
     }
 
 }

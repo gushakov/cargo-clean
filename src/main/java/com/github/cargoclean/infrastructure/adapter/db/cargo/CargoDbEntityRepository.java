@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.db;
+package com.github.cargoclean.infrastructure.adapter.db.cargo;
 
 import org.springframework.data.repository.CrudRepository;
 

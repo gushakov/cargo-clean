@@ -12,10 +12,17 @@ package com.github.cargoclean.infrastructure.adapter.db;
 
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -81,7 +88,26 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity){
         final Cargo partialCargo = dbMapper.convert(cargoRepository.save(cargoDbEntity));
         final Location origin = dbMapper.convert(locationRepository.findById(cargoDbEntity.getOrigin()).orElseThrow());
-        return partialCargo.withOrigin(origin);
+        final Delivery delivery = convertAndLoadRelations(cargoDbEntity.getDelivery());
+        final RouteSpecification routeSpec = convertAndLoadRelations(cargoDbEntity.getRouteSpecification());
+        return partialCargo.withOrigin(origin)
+                .withDelivery(delivery)
+                .withRouteSpecification(routeSpec);
+    }
+
+    private Delivery convertAndLoadRelations(DeliveryDbEntity deliveryDbEntity){
+        return dbMapper.convert(deliveryDbEntity);
+    }
+
+    private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity){
+        RouteSpecification partialRouteSpec = dbMapper.convert(specDbEntity);
+        final Location origin = dbMapper.convert(locationRepository
+                .findById(specDbEntity.getOrigin()).orElseThrow());
+        final Location destination = dbMapper.convert(locationRepository
+                .findById(specDbEntity.getOrigin()).orElseThrow());
+
+        return partialRouteSpec.withOrigin(origin)
+                .withDestination(destination);
     }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {

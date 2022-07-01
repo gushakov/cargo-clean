@@ -33,6 +33,8 @@ public class Cargo {
     Location origin;
     Delivery delivery;
 
+    RouteSpecification routeSpecification;
+
     public Cargo withNullId() {
         return newCargo().id(null).build();
     }
@@ -41,12 +43,21 @@ public class Cargo {
         return newCargo().origin(origin).build();
     }
 
+    public Cargo withRouteSpecification(RouteSpecification routeSpec) {
+        return newCargo().routeSpecification(routeSpec).build();
+    }
+
+    public Cargo withDelivery(Delivery delivery){
+        return newCargo().delivery(delivery).build();
+    }
+
     private CargoBuilder newCargo() {
         return builder()
                 .id(id)
                 .trackingId(trackingId)
                 .origin(origin)
-                .delivery(delivery);
+                .delivery(delivery)
+                .routeSpecification(routeSpecification);
     }
 
     @Override

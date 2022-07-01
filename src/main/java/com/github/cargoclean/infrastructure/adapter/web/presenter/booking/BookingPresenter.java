@@ -1,9 +1,11 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
+import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +30,21 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     }
 
     @Override
-    public void presentNewCargoBookingView(List<String> allUnLocodes) {
+    public void presentNewCargoBookingView(List<Location> locations) {
 
-        // create the form bean which will be used in the view
+        /*
+            Notice that here we are deviating from the CA principles:
+            this Presenter actually received a list of domain models,
+            and it is here that we shall create the "Response Model"
+            based on the need of a specific mode of presentation:
+            Thymeleaf template with a backing bean.
+         */
+
+        final List<String> allUnlocodes = locations.stream().map(Location::getUnLocode).map(UnLocode::getCode).toList();
+
         final BookingForm bookingForm = BookingForm.builder()
                 .deliveryDeadline(new Date(System.currentTimeMillis()))
-                .locations(allUnLocodes)
+                .locations(allUnlocodes)
                 .build();
 
         Map<String, Object> responseModel = Map.of("bookingForm", bookingForm);

@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.db;
+package com.github.cargoclean.infrastructure.adapter.db.location;
 
 import lombok.Builder;
 import lombok.Data;
