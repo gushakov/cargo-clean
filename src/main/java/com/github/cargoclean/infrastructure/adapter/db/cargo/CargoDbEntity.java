@@ -20,8 +20,10 @@ import org.springframework.data.relational.core.mapping.Table;
 public class CargoDbEntity {
 
     @Id
+    @Column("id")
     private Integer id;
 
+    @Column("tracking_id")
     private String trackingId;
 
     @Column("origin_id")

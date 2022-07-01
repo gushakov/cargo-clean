@@ -55,19 +55,19 @@ public class DbPersistenceGatewayTestIT {
 
     @Test
     void should_save_cargo_initially() {
-
-//        final Cargo cargoToSave = MockModels.cargo("75FC0BD4").withNullId();
-        final Cargo cargoToSave = MockModels.cargo("695CF30D").withNullId();
-
+        final Cargo cargoToSave = MockModels.cargo("75FC0BD4").withNullId();
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
-
         assertThat(savedCargo.getId()).isGreaterThan(0);
-
+        assertThat(savedCargo)
+                .extracting(Cargo::getTrackingId,
+                        Cargo::getOrigin)
+                .containsExactly(cargoToSave.getTrackingId(), cargoToSave.getOrigin());
     }
 
     @Test
     void should_obtain_cargo_by_tracking_id() {
-        final TrackingId trackingId = TrackingId.of("695CF30D");
+        final TrackingId trackingId = TrackingId.of("75FC0BD4");
+//        final TrackingId trackingId = TrackingId.of("695CF30D");
         final Cargo cargo = dbGateway.obtainCargoByTrackingId(trackingId);
 
         assertThat(cargo.getId()).isGreaterThan(0);
