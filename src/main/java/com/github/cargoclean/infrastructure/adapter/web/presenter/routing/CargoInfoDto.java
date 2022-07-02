@@ -10,5 +10,5 @@ public class CargoInfoDto {
     private String trackingId;
     private String origin;
     private String destination;
-    private String arrivalDate;
+    private String arrivalDeadline;
 }

@@ -81,6 +81,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         // save cargo
         cargoRepository.save(cargoDbEntity);
 
+        // simulate error for testing
+        if (cargoToSave.getOrigin().getUnLocode().getCode().equals("ERROR")){
+            throw new RuntimeException("Testing error from the gateway: save cargo");
+        }
+
         // convert and load relations
         return obtainCargoByTrackingId(cargoToSave.getTrackingId());
 

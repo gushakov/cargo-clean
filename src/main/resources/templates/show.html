@@ -14,6 +14,7 @@
     ==========
 
     1.  Based on the similar Thymeleaf view: "admin/show.html" in the original DDDSample.
+    2.  Bootstrap form layout: https://getbootstrap.com/docs/5.2/forms/layout/
 -->
 
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
@@ -27,9 +28,32 @@
     <!--/*@thymesVar id="cargo" type="com.github.cargoclean.infrastructure.adapter.web.presenter.routing.CargoInfoDto"*/-->
     <div class="row-cols-1 mt-3" th:object="${cargo}">
 
-        <div class="mb-3">
-            Details for cargo:
-            <span style="font-weight: bold" th:text="*{trackingId}"></span>
+        <div class="row mb-3">
+            <label for="trackingId" class="col-2 col-form-label">Details for cargo</label>
+            <div class="col-1">
+                <span id="trackingId" class="form-control-plaintext fw-bold" th:text="*{trackingId}"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="origin" class="col-2 col-form-label">Origin</label>
+            <div class="col-1">
+                <input id="origin" class="form-control" th:value="*{origin}" readonly="readonly">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="destination" class="col-2 col-form-label">Destination</label>
+            <div class="col-1">
+                <input id="destination" class="form-control" th:value="*{destination}" readonly="readonly">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="arrivalDeadline" class="col-2 col-form-label">Arrival deadline</label>
+            <div class="col-2">
+                <input id="arrivalDeadline" class="form-control" th:value="*{arrivalDeadline}" readonly="readonly">
+            </div>
         </div>
 
     </div>

@@ -3,21 +3,26 @@ package com.github.cargoclean.infrastructure.adapter.web.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 @Controller
 public class ErrorController {
 
     /*
-        For errors we are using standard view resolution schema from Spring MVC.
+        When handling errors, we are using standard way to resolve views in Spring MVC.
      */
 
     @RequestMapping("/error")
-    public String onError(@RequestParam(required = false) String errorMessage, Model model){
+    public String onError(@SessionAttribute(required = false) String errorMessage, Model model,
+                          HttpServletRequest request) {
 
-        if (errorMessage != null){
-            model.addAttribute("errorMessage", errorMessage);
-        }
+        model.addAttribute("errorMessage",
+                Objects.requireNonNullElse(errorMessage, "Unknown error"));
+
+        request.getSession().removeAttribute("errorMessage");
 
         return "error";
     }

@@ -35,7 +35,7 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
                 .trackingId(cargo.getTrackingId().getId())
                 .origin(cargo.getOrigin().getUnLocode().getCode())
                 .destination(cargo.getRouteSpecification().getDestination().getUnLocode().getCode())
-                .arrivalDate(cargo.getRouteSpecification().getArrivalDeadline()
+                .arrivalDeadline(cargo.getRouteSpecification().getArrivalDeadline()
                         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
 
