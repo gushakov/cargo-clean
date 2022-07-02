@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Presenter for the view where we can enter information for booking of a new cargo.
  * Scope "request" is needed since we need to autowire the current {@code HttpServletRequest}
- * and {@code HttpServletResponse} objects (from the parent).
+ * and {@code HttpServletResponse} objects (declared in the parent).
  *
  * @see AbstractWebPresenter
  */
