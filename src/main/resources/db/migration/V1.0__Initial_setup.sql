@@ -46,6 +46,3 @@ VALUES ('CNSHA', 'Shanghai');
 INSERT INTO public.location (unlocode, "name")
 VALUES ('AUMEL', 'Melbourne');
 
-INSERT INTO public.location (unlocode, "name")
-VALUES ('ERROR', 'Error check');
-

@@ -10,6 +10,12 @@ package com.github.cargoclean.infrastructure.adapter.db;
     "original-license.txt", as well.
  */
 
+/*
+    References:
+    ----------
+
+    1.  Hikari CP, connection timeout: https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby
+ */
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
@@ -18,6 +24,7 @@ import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
@@ -64,36 +71,47 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public List<Location> allLocations() {
-        return toStream(locationRepository.findAll())
-                .map(dbMapper::convert).toList();
+        try {
+            return toStream(locationRepository.findAll())
+                    .map(dbMapper::convert).toList();
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
+        }
     }
 
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
-        return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
+        try {
+            return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
+        }
     }
 
     @Override
     public Cargo saveCargo(Cargo cargoToSave) {
 
-        final CargoDbEntity cargoDbEntity = dbMapper.convert(cargoToSave);
+        try {
+            final CargoDbEntity cargoDbEntity = dbMapper.convert(cargoToSave);
 
-        // save cargo
-        cargoRepository.save(cargoDbEntity);
+            // save cargo
+            cargoRepository.save(cargoDbEntity);
 
-        // simulate error for testing
-        if (cargoToSave.getOrigin().getUnLocode().getCode().equals("ERROR")){
-            throw new RuntimeException("Testing error from the gateway: save cargo");
+            // convert and load relations
+            return obtainCargoByTrackingId(cargoToSave.getTrackingId());
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
         }
-
-        // convert and load relations
-        return obtainCargoByTrackingId(cargoToSave.getTrackingId());
 
     }
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()).orElseThrow());
+        try {
+            return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()).orElseThrow());
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
+        }
     }
 
     /*

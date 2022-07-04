@@ -4,6 +4,8 @@ spring:
     url: "jdbc:postgresql://localhost:5432/cargodb"
     username: postgres
     password: postgres
+    hikari:
+      connection-timeout: 5000
   flyway:
     schemas: public
   autoconfigure:
