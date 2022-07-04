@@ -23,7 +23,7 @@ public class BeanValidator implements Validator {
 
         // domain object should not be null
 
-        if (toBeValidated == null){
+        if (toBeValidated == null) {
             throw new InvalidDomainObjectError("Domain object cannot be null");
         }
 
@@ -32,7 +32,7 @@ public class BeanValidator implements Validator {
         Set<ConstraintViolation<T>> constraintViolations = delegate.validate(toBeValidated);
         Optional<ConstraintViolation<T>> firstOpt = constraintViolations.stream().findFirst();
 
-        if (firstOpt.isPresent()){
+        if (firstOpt.isPresent()) {
             ConstraintViolation<T> error = firstOpt.get();
             throw new InvalidDomainObjectError("Invalid domain object: <%s>, property: <%s>, invalid value: <%s>, error: %s"
                     .formatted(toBeValidated.getClass().getSimpleName(),
@@ -43,8 +43,8 @@ public class BeanValidator implements Validator {
 
         // perform any custom error checking depending on the type of the domain object
 
-        if (Cargo.class.isAssignableFrom(toBeValidated.getClass())){
-           return (T) validateCargo((Cargo) toBeValidated);
+        if (Cargo.class.isAssignableFrom(toBeValidated.getClass())) {
+            return (T) validateCargo((Cargo) toBeValidated);
         }
 
         // consider valid
@@ -52,16 +52,21 @@ public class BeanValidator implements Validator {
         return toBeValidated;
     }
 
-    private Cargo validateCargo(Cargo cargo){
+    private Cargo validateCargo(Cargo cargo) {
 
         // cargo origin and destination locations should be different
 
         Location destination = cargo.getRouteSpecification().getDestination();
-        if (cargo.getOrigin().equals(destination)){
+        if (cargo.getOrigin().equals(destination)) {
             throw new InvalidDestinationSpecificationError(cargo.getTrackingId(),
                     cargo.getOrigin().getUnLocode(),
                     destination.getUnLocode());
         }
+
+        // We can do some more validation here. We can check, for example,
+        // that if Cargo has not been received yet, the arrival deadline
+        // should not be in the future. This will depend on specific
+        // business requirements.
 
         return cargo;
 

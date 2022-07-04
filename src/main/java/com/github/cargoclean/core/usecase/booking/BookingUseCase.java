@@ -60,12 +60,21 @@ public class BookingUseCase implements BookingInputPort {
     @Override
     public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
 
-        // This is where we are going to create new Cargo model object (aggregate)
-        // with all necessary related objects (entities).
         final TrackingId trackingId;
         try {
+
+            // we validate the inputs to the use case
+            if (deliveryDeadline == null){
+                throw new InvalidDestinationSpecificationError("arrival deadline must not be null");
+            }
+
+            // we obtain all the related aggregates or we query for any related information from
+            // the persistence store
+
             Location origin = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode)));
             Location destination = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(destinationUnLocode)));
+
+            // we create new Cargo object
 
             trackingId = validator.validate(gatewayOps.nextTrackingId());
             final Cargo cargo = Cargo.builder()
@@ -85,6 +94,7 @@ public class BookingUseCase implements BookingInputPort {
             // validate newly constructed Cargo domain object
             validator.validate(cargo);
 
+            // save Cargo to the database
             gatewayOps.saveCargo(cargo);
 
             log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());

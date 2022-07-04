@@ -25,11 +25,16 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Location {
 
-    // needed to map to auto-generated serial ID in the corresponding entity
-    @EqualsAndHashCode.Include(rank = 1)
+    /*
+        This ID will be mapped from a generated (auto-increment) ID by the database.
+        In case of Location it will be set during the initialization and should
+        never be null.
+     */
+
+    @EqualsAndHashCode.Include
     @NotNull
     Integer id;
-    @EqualsAndHashCode.Include(rank = 2)
+    @EqualsAndHashCode.Include
             @NotNull
     UnLocode unLocode;
 

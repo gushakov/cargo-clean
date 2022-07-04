@@ -28,12 +28,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Cargo {
 
-    @NotNull
-    @EqualsAndHashCode.Include(rank = 1)
+    /*
+        Cargo's ID can be null for newly created Cargo objects. And should never be
+        null for the instances loaded and mapped from the database.
+     */
+    @EqualsAndHashCode.Include
     Integer id;
 
     @NotNull
-    @EqualsAndHashCode.Include(rank = 2)
+    @EqualsAndHashCode.Include
     TrackingId trackingId;
 
     @NotNull
@@ -57,7 +60,7 @@ public class Cargo {
         return newCargo().routeSpecification(routeSpec).build();
     }
 
-    public Cargo withDelivery(Delivery delivery){
+    public Cargo withDelivery(Delivery delivery) {
         return newCargo().delivery(delivery).build();
     }
 

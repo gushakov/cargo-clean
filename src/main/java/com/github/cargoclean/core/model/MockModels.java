@@ -65,7 +65,6 @@ public class MockModels {
                         .build()
 
 
-
         );
     }
 
@@ -76,8 +75,6 @@ public class MockModels {
 
     private static Map<String, Cargo> allCargos() {
         return Map.of(
-
-                // ---------------------------------------------------------------
 
                 "75FC0BD4",
                 Cargo.builder()
@@ -95,8 +92,6 @@ public class MockModels {
                                 .arrivalDeadline(localDate("24-08-2022"))
                                 .build())
                         .build(),
-
-                // ---------------------------------------------------------------
 
                 "695CF30D",
                 Cargo.builder()
@@ -122,7 +117,7 @@ public class MockModels {
                 Constants.DEFAULT_ZONE_ID);
     }
 
-    public static Instant localInstant(String date){
+    public static Instant localInstant(String date) {
         return localDate(date).toInstant();
     }
 
