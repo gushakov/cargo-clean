@@ -3,3 +3,4 @@
 *.iml
 *.ipr
 target
+/etc/doc/booking-use-case.drawio
