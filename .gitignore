@@ -2,5 +2,7 @@
 *.iws
 *.iml
 *.ipr
+*.bkp
+*.dtmp
 target
 /etc/doc/booking-use-case.drawio

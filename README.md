@@ -7,7 +7,8 @@ But using slightly different approach. I'll try to use ideas and principles behi
 - Clean architecture
 - Use case driven development
 
-There should be an articles on Medium which will detail the interesting points and decisions behind this application.
+Here is [an article on Medium](https://github.com/gushakov/cargo-clean) which will detail the interesting points and 
+decisions behind this application.
 
 ### Copyright notice
 
