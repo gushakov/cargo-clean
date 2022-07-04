@@ -14,18 +14,23 @@ import com.github.cargoclean.core.annotation.Default;
 import lombok.Builder;
 import lombok.Value;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.TrackingId".
  */
 @Value
 public class TrackingId {
 
+    @NotNull
+    @NotBlank
     String id;
 
     @Builder
     @Default
     public TrackingId(String id) {
-        if (id == null || id.isEmpty() || id.isBlank()){
+        if (id == null || id.isEmpty() || id.isBlank()) {
             throw new IllegalArgumentException("Invalid tracking ID: <%s>".formatted(id));
         }
         this.id = id;
@@ -36,7 +41,7 @@ public class TrackingId {
         return id;
     }
 
-    public static TrackingId of(String id){
+    public static TrackingId of(String id) {
         return TrackingId.builder()
                 .id(id)
                 .build();

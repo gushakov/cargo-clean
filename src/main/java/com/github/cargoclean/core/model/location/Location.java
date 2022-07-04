@@ -13,6 +13,8 @@ package com.github.cargoclean.core.model.location;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.location.Location".
  */
@@ -25,10 +27,13 @@ public class Location {
 
     // needed to map to auto-generated serial ID in the corresponding entity
     @EqualsAndHashCode.Include(rank = 1)
+    @NotNull
     Integer id;
     @EqualsAndHashCode.Include(rank = 2)
+            @NotNull
     UnLocode unLocode;
 
+    @NotNull
     String name;
 
     @Override

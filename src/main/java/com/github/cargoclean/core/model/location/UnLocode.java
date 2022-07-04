@@ -13,12 +13,17 @@ package com.github.cargoclean.core.model.location;
 import lombok.Builder;
 import lombok.Value;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.location.UnLocode".
  */
 @Value
 public class UnLocode {
 
+    @NotNull
+    @NotBlank
     String code;
 
     @Builder

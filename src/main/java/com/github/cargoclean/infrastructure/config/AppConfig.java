@@ -7,6 +7,8 @@ import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
+import com.github.cargoclean.core.validator.BeanValidator;
+import com.github.cargoclean.core.validator.Validator;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -35,6 +37,15 @@ public class AppConfig {
     }
 
     /*
+        Create validator service to be used in use cases.
+     */
+
+    @Bean
+    public Validator validator(){
+        return new BeanValidator();
+    }
+
+    /*
         Here we specify all the use cases for our application. Notice the prototype scope.
         This way each request processing thread will get its own instance of each use case
         when it is looked up from the application context (in the controller).
@@ -43,15 +54,17 @@ public class AppConfig {
     @Bean
     @Scope("prototype")
     public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
+                                                   Validator validator,
                                                    PersistenceGatewayOutputPort gatewayOps) {
-        return new BookingUseCase(presenter, gatewayOps);
+        return new BookingUseCase(presenter, validator, gatewayOps);
     }
 
     @Bean
     @Scope("prototype")
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
+                                           Validator validator,
                                            PersistenceGatewayOutputPort gatewayOps){
-        return new RoutingUseCase(presenter, gatewayOps);
+        return new RoutingUseCase(presenter, validator, gatewayOps);
     }
 
 }

@@ -6,6 +6,7 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +30,9 @@ public class BookingUseCase implements BookingInputPort {
     // here is our Presenter
     private final BookingPresenterOutputPort presenter;
 
+    // validation service
+    private final Validator validator;
+
     // here is our gateway
     private final PersistenceGatewayOutputPort gatewayOps;
 
@@ -39,7 +43,7 @@ public class BookingUseCase implements BookingInputPort {
         try {
             // retrieve all locations from the gateway
 
-            locations = gatewayOps.allLocations();
+            locations =  validator.validate(gatewayOps.allLocations());
 
         } catch (Exception e) {
             // if anything went wrong: present the error and return
@@ -60,10 +64,10 @@ public class BookingUseCase implements BookingInputPort {
         // with all necessary related objects (entities).
         final TrackingId trackingId;
         try {
-            Location origin = gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode));
-            Location destination = gatewayOps.obtainLocationByUnLocode(UnLocode.of(destinationUnLocode));
+            Location origin = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode)));
+            Location destination = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(destinationUnLocode)));
 
-            trackingId = gatewayOps.nextTrackingId();
+            trackingId = validator.validate(gatewayOps.nextTrackingId());
             final Cargo cargo = Cargo.builder()
                     .origin(origin)
                     .trackingId(trackingId)
@@ -78,7 +82,8 @@ public class BookingUseCase implements BookingInputPort {
                             .build())
                     .build();
 
-            // Here we can validate Cargo aggregate if needed.
+            // validate newly constructed Cargo domain object
+            validator.validate(cargo);
 
             gatewayOps.saveCargo(cargo);
 

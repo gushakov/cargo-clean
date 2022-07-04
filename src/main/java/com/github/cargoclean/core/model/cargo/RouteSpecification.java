@@ -15,6 +15,7 @@ import com.github.cargoclean.core.model.location.Location;
 import lombok.Builder;
 import lombok.Value;
 
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**
@@ -24,8 +25,13 @@ import java.time.ZonedDateTime;
 @Builder
 public class RouteSpecification {
 
+    @NotNull
     Location origin;
+
+    @NotNull
     Location destination;
+
+    @NotNull
     ZonedDateTime arrivalDeadline;
 
     public RouteSpecification withOrigin(Location origin){

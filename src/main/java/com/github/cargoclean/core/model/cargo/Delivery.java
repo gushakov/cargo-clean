@@ -14,6 +14,8 @@ package com.github.cargoclean.core.model.cargo;
 import lombok.Builder;
 import lombok.Value;
 
+import javax.validation.constraints.NotNull;
+
 
 /**
  * Modeled after "se.citerus.dddsample.domain.model.cargo.Delivery".
@@ -22,6 +24,7 @@ import lombok.Value;
 @Builder
 public class Delivery {
 
+    @NotNull
     TransportStatus transportStatus;
 
 }

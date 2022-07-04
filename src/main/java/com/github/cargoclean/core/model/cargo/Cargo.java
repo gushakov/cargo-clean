@@ -15,6 +15,8 @@ import com.github.cargoclean.core.model.location.Location;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Cargo".
  */
@@ -26,13 +28,21 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class Cargo {
 
+    @NotNull
     @EqualsAndHashCode.Include(rank = 1)
     Integer id;
+
+    @NotNull
     @EqualsAndHashCode.Include(rank = 2)
     TrackingId trackingId;
+
+    @NotNull
     Location origin;
+
+    @NotNull
     Delivery delivery;
 
+    @NotNull
     RouteSpecification routeSpecification;
 
     public Cargo withNullId() {

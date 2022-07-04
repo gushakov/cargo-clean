@@ -107,11 +107,10 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        try {
-            return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId()).orElseThrow());
-        } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
-        }
+        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId())
+                .orElseThrow(() -> new PersistenceOperationError("Cannot find Cargo with tracking ID: <%s>"
+                        .formatted(trackingId))));
+
     }
 
     /*
