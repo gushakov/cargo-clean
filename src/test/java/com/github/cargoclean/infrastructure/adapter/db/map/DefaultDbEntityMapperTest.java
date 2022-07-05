@@ -8,16 +8,21 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.List;
+
 import static com.github.cargoclean.core.model.MockModels.localInstant;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 /*
     References:
@@ -117,5 +122,46 @@ public class DefaultDbEntityMapperTest {
                 .extracting(VoyageDbEntity::getId, VoyageDbEntity::getVoyageNumber)
                 .containsExactly(voyage.getId(), voyage.getVoyageNumber().getNumber());
 
+    }
+
+    @Test
+    void should_map_voyage_db_entity_to_model() {
+
+        VoyageDbEntity voyageDbEntity = VoyageDbEntity.builder()
+                .voyageNumber("AB001")
+                .id(1)
+                .build();
+
+        Voyage voyage = mapper.convert(voyageDbEntity);
+
+        assertThat(voyage).isEqualTo(MockModels.voyage("AB001"));
+
+    }
+
+    @Test
+    void should_map_cargo_itinerary_to_list_of_legs_db_entities() {
+
+        // cargo with itinerary
+        Cargo cargo = MockModels.cargo("8E062F47");
+
+        List<LegDbEntity> legDbEntities = mapper.convertItinerary(cargo);
+
+        assertThat(legDbEntities)
+                .extracting(LegDbEntity::getId,
+                        LegDbEntity::getVoyageId,
+                        LegDbEntity::getLoadLocationId,
+                        LegDbEntity::getUnloadLocationId,
+                        LegDbEntity::getCargoId,
+                        LegDbEntity::getLegIndex)
+                .containsExactly(tuple(1, 1, 3, 13, 3, 0),
+                        tuple(2, 2, 13, 1, 3, 1));
+
+        assertThat(legDbEntities)
+                .extracting(LegDbEntity::getLoadTime,
+                        LegDbEntity::getUnloadTime)
+                .containsExactly(Tuple.tuple(MockModels.localDate("05-07-2022").toInstant(),
+                                MockModels.localDate("23-07-2022").toInstant()),
+                        tuple(MockModels.localDate("25-07-2022").toInstant(),
+                                MockModels.localDate("05-08-2022").toInstant()));
     }
 }

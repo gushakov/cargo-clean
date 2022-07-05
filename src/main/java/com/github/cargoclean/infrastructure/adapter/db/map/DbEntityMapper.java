@@ -2,14 +2,18 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
+
+import java.util.List;
 
 public interface DbEntityMapper {
 
@@ -30,5 +34,7 @@ public interface DbEntityMapper {
     Voyage convert(VoyageDbEntity voyageDbEntity);
 
     VoyageDbEntity convert(Voyage voyage);
+
+    List<LegDbEntity> convertItinerary(Cargo cargoWithItinerary);
 
 }

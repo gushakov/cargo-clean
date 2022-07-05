@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,6 +46,15 @@ public class MockModels {
                         .name("Dallas")
                         .unLocode(UnLocode.builder()
                                 .code("USDAL")
+                                .build())
+                        .build(),
+
+                "SEGOT",
+                Location.builder()
+                        .id(4)
+                        .name("Göteborg")
+                        .unLocode(UnLocode.builder()
+                                .code("SEGOT")
                                 .build())
                         .build(),
 
@@ -110,10 +120,34 @@ public class MockModels {
                                 .destination(location("NLRTM"))
                                 .arrivalDeadline(localDate("16-08-2022"))
                                 .build())
+                        .build(),
+
+                "8E062F47",
+                Cargo.builder()
+                        .id(3)
+                        .trackingId(TrackingId.builder()
+                                .id("8E062F47")
+                                .build())
+                        .origin(location("USDAL"))
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.ONBOARD_CARRIER)
+                                .build())
+                        .routeSpecification(RouteSpecification.builder()
+                                .origin(location("USDAL"))
+                                .destination(location("JNTKO"))
+                                .arrivalDeadline(localDate("10-08-2022"))
+                                .build())
+                        .itinerary(itinerary(1, 2))
                         .build()
         );
     }
 
+    /**
+     * Converts string in format "dd-MM-yyyy" to an instance of {@link ZonedDateTime}
+     *
+     * @param date local date as sting
+     * @return date and time at the start of the day with the default timezone
+     */
     public static ZonedDateTime localDate(String date) {
         return ZonedDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
                 Constants.DEFAULT_ZONE_ID);
@@ -135,11 +169,50 @@ public class MockModels {
                     .voyageNumber(VoyageNumber.builder()
                             .number("AB001")
                             .build())
+                    .build(),
+
+            "AB002",
+            Voyage.builder()
+                    .id(2)
+                    .voyageNumber(VoyageNumber.builder()
+                            .number("AB002")
+                            .build())
                     .build()
     );
 
-    public static Voyage voyage(String voyageNumber){
+    public static Voyage voyage(String voyageNumber) {
         return Optional.ofNullable(allVoyages.get(voyageNumber)).orElseThrow();
+    }
+
+    private static final Map<Integer, Leg> allLegs = Map.of(
+            1,
+            Leg.builder()
+                    .id(1)
+                    .voyage(MockModels.voyage("AB001"))
+                    .loadLocation(MockModels.location("USDAL"))
+                    .loadTime(localDate("05-07-2022"))
+                    .unloadLocation(MockModels.location("AUMEL"))
+                    .unloadTime(localDate("23-07-2022"))
+                    .build(),
+            2,
+            Leg.builder()
+                    .id(2)
+                    .voyage(MockModels.voyage("AB002"))
+                    .loadLocation(MockModels.location("AUMEL"))
+                    .loadTime(localDate("25-07-2022"))
+                    .unloadLocation(MockModels.location("JNTKO"))
+                    .unloadTime(localDate("05-08-2022"))
+                    .build()
+    );
+
+    public static Leg leg(Integer id) {
+        return Optional.ofNullable(allLegs.get(id)).orElseThrow();
+    }
+
+    public static Itinerary itinerary(Integer... legs) {
+        return Itinerary.builder()
+                .legs(Arrays.stream(legs).map(MockModels::leg).toList())
+                .build();
     }
 
 }

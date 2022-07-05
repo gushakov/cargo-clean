@@ -48,6 +48,8 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
+    Itinerary itinerary;
+
     public Cargo withNullId() {
         return newCargo().id(null).build();
     }
@@ -65,12 +67,16 @@ public class Cargo {
     }
 
     private CargoBuilder newCargo() {
-        return builder()
+        CargoBuilder builder = Cargo.builder()
                 .id(id)
                 .trackingId(trackingId)
                 .origin(origin)
                 .delivery(delivery)
                 .routeSpecification(routeSpecification);
+        if (itinerary != null){
+            builder.itinerary(itinerary);
+        }
+        return builder;
     }
 
     @Override
