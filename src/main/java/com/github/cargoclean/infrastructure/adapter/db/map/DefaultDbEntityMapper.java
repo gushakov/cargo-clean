@@ -1,6 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.annotation.IgnoreForMapping;
+import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
