@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.annotation;
+package com.github.cargoclean.infrastructure.adapter.map;
 
 /*
     References:

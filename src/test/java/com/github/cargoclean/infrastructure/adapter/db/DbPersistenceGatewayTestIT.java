@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
     These are integrations tests intended to be run from the IDE to
     verify the workings of the persistence gateway with the running
     Postgres database (using local Docker instance).
+
+    _IMPORTANT_: some of these tests will attempt to modify the database.
  */
 
 @SpringBootTest(classes = {CargoCleanApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
