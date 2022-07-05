@@ -66,6 +66,10 @@ public class Cargo {
         return newCargo().delivery(delivery).build();
     }
 
+    public Cargo withItinerary(Itinerary itinerary) {
+        return newCargo().itinerary(itinerary).build();
+    }
+
     private CargoBuilder newCargo() {
         CargoBuilder builder = Cargo.builder()
                 .id(id)
