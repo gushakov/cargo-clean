@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.mapstruct.Mapper;
 
 import java.time.Instant;
@@ -34,6 +35,16 @@ public class CommonMapStructConverters {
     public TrackingId mapIdToTrackingId(String id) {
         return TrackingId.builder()
                 .id(id)
+                .build();
+    }
+
+    public String mapVoyageNumberToNumber(VoyageNumber voyageNumber){
+        return voyageNumber.getNumber();
+    }
+
+    public VoyageNumber mapNumberToVoyageNumber(String number){
+        return VoyageNumber.builder()
+                .number(number)
                 .build();
     }
 
