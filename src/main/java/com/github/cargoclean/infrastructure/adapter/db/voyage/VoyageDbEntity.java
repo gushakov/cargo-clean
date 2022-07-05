@@ -16,6 +16,6 @@ public class VoyageDbEntity {
     private Integer id;
 
     @Column("voyage_number")
-    private Integer voyageNumber;
+    private String voyageNumber;
 
 }

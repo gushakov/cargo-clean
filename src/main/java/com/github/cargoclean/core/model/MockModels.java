@@ -3,6 +3,8 @@ package com.github.cargoclean.core.model;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.Voyage;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -124,6 +126,20 @@ public class MockModels {
     public static Cargo cargo(String trackingId) {
         return Optional.ofNullable(allCargos().get(trackingId))
                 .orElseThrow();
+    }
+
+    private static final Map<String, Voyage> allVoyages = Map.of(
+            "AB001",
+            Voyage.builder()
+                    .id(1)
+                    .voyageNumber(VoyageNumber.builder()
+                            .number("AB001")
+                            .build())
+                    .build()
+    );
+
+    public static Voyage voyage(String voyageNumber){
+        return Optional.ofNullable(allVoyages.get(voyageNumber)).orElseThrow();
     }
 
 }

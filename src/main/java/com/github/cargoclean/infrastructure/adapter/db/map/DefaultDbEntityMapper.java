@@ -1,5 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.model.voyage.Voyage;
+import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
@@ -50,6 +52,10 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Mapping(target = "routeSpecification", ignore = true)
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
+    abstract VoyageDbEntity map(Voyage voyage);
+
+    abstract Voyage map(VoyageDbEntity voyageDbEntity);
+
     @IgnoreForMapping
     @Override
     public Location convert(LocationDbEntity locationDbEntity) {
@@ -92,4 +98,14 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
         return map(routeSpecification);
     }
 
+    @IgnoreForMapping
+    @Override
+    public Voyage convert(VoyageDbEntity voyageDbEntity) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public VoyageDbEntity convert(Voyage voyage) {
+        return map(voyage);
+    }
 }

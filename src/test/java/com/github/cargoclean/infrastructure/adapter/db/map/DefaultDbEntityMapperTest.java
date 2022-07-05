@@ -5,10 +5,12 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,4 +106,16 @@ public class DefaultDbEntityMapperTest {
 
     }
 
+    @Test
+    void should_map_voyage_model_to_db_entity() {
+
+        Voyage voyage = MockModels.voyage("AB001");
+
+        VoyageDbEntity voyageDbEntity = mapper.convert(voyage);
+
+        assertThat(voyageDbEntity)
+                .extracting(VoyageDbEntity::getId, VoyageDbEntity::getVoyageNumber)
+                .containsExactly(voyage.getId(), voyage.getVoyageNumber().getNumber());
+
+    }
 }
