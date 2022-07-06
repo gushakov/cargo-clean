@@ -7,8 +7,8 @@ But using slightly different approach. I'll try to use ideas and principles behi
 - Clean architecture
 - Use case driven development
 
-Here is [an article on Medium](https://github.com/gushakov/cargo-clean) which will detail the interesting points and 
-decisions behind this application.
+Here is [an article on Medium](https://medium.com/@gushakov/revisiting-cargo-tracking-application-using-clean-ddd-4ed16c0e6ae1) 
+which will comment on the interesting points and decisions behind this implementation.
 
 ### Copyright notice
 
