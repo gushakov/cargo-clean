@@ -23,6 +23,8 @@ import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.Voyage;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
@@ -31,6 +33,8 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
+import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +48,9 @@ import java.util.stream.StreamSupport;
  * repository for each aggregate root. And it relies on MapStruct mapper to map between
  * DB entities and models.
  * <p>
- * This is a classical "Repository pattern" implementation. We have a greater control
- * over the mapping between database rows and domain entities than if we were using
- * an ORM (Hibernate).
+ * This is a classical "Repository pattern" implementation. We have a full control
+ * over the mapping between database rows and domain entities, but since we are not
+ * using Hibernate, we load (eagerly) all relations for each aggregate.
  *
  * @see DbEntityMapper
  */
@@ -56,6 +60,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
+
+    private final VoyageDbEntityRepository voyageRepository;
     private final DbEntityMapper dbMapper;
 
     @Override
@@ -75,7 +81,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             return toStream(locationRepository.findAll())
                     .map(dbMapper::convert).toList();
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot retrieve all locations", e);
         }
     }
 
@@ -84,7 +90,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         try {
             return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot load location with UnLocode: <%s>"
+                    .formatted(unLocode), e);
         }
     }
 
@@ -100,7 +107,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             // convert and load relations
             return obtainCargoByTrackingId(cargoToSave.getTrackingId());
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot save cargo with tracking ID: <%s>"
+                    .formatted(cargoToSave.getTrackingId()), e);
         }
 
     }
@@ -113,10 +121,30 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     }
 
-    /*
-        This is where we have to implement (eager) loading of the relations
-        ourselves, since we are not using ORM.
-     */
+    @Override
+    public Voyage saveVoyage(Voyage voyage) {
+        try {
+
+            VoyageDbEntity voyageDbEntity = dbMapper.convert(voyage);
+            voyageRepository.save(voyageDbEntity);
+
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot save voyage with number <%s>".formatted(e.getMessage()), e);
+        }
+
+        return obtainVoyageByNumber(voyage.getVoyageNumber());
+    }
+
+    @Override
+    public Voyage obtainVoyageByNumber(VoyageNumber voyageNumber) {
+        return convertAndLoadRelations(voyageRepository.findByVoyageNumber(voyageNumber.getNumber())
+                .orElseThrow(() -> new PersistenceOperationError("Cannot load voyage with number: <%s>"
+                        .formatted(voyageNumber))));
+    }
+
+    private Voyage convertAndLoadRelations(VoyageDbEntity voyageDbEntity) {
+        return dbMapper.convert(voyageDbEntity);
+    }
 
     private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
         final Cargo partialCargo = dbMapper.convert(cargoDbEntity);

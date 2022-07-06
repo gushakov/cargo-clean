@@ -6,6 +6,8 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.Voyage;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,6 +18,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.cargoclean.core.model.MockModels.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,7 +63,7 @@ public class DbPersistenceGatewayTestIT {
     @ParameterizedTest
     @ValueSource(strings = {"75FC0BD4", "695CF30D"})
     void should_save_cargo_successfully(String unlocode) {
-        final Cargo cargoToSave = MockModels.cargo(unlocode).withNullId();
+        final Cargo cargoToSave = cargo(unlocode).withNullId();
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
         assertThat(savedCargo.getId()).isGreaterThan(0);
         assertThat(savedCargo)
@@ -72,7 +75,7 @@ public class DbPersistenceGatewayTestIT {
     @Test
     void should_obtain_cargo_by_tracking_id() {
 
-        final Cargo refCargo = MockModels.cargo("75FC0BD4");
+        final Cargo refCargo = cargo("75FC0BD4");
 
         final Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(refCargo.getTrackingId());
 
@@ -81,5 +84,23 @@ public class DbPersistenceGatewayTestIT {
         assertThat(loadedCargo.getOrigin()).isEqualTo(refCargo.getOrigin());
         assertThat(loadedCargo.getDelivery()).isEqualTo(refCargo.getDelivery());
         assertThat(loadedCargo.getRouteSpecification()).isEqualTo(refCargo.getRouteSpecification());
+    }
+
+    @Test
+    void should_save_new_voyage() {
+        Voyage voyage = voyage("AB001").withNullId();
+        Voyage voyageSaved = dbGateway.saveVoyage(voyage);
+        assertThat(voyageSaved.getId()).isGreaterThan(0);
+        assertThat(voyageSaved.getVoyageNumber())
+                .isEqualTo(VoyageNumber.of("AB001"));
+
+    }
+
+    @Test
+    void should_load_existing_voyage_by_number() {
+        Voyage voyage = dbGateway.obtainVoyageByNumber(VoyageNumber.of("AB001"));
+        assertThat(voyage)
+                .extracting(Voyage::getId, Voyage::getVoyageNumber)
+                .containsExactly(1, VoyageNumber.of("AB001"));
     }
 }

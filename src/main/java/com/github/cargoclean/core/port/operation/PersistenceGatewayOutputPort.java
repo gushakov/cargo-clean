@@ -4,6 +4,8 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.Voyage;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 
 import java.util.List;
 
@@ -37,5 +39,19 @@ public interface PersistenceGatewayOutputPort {
      * @return fully resolved {@code Cargo} instance
      */
     Cargo obtainCargoByTrackingId(TrackingId trackingId);
+
+    /**
+     * Persist {@code Voyage} aggregate.
+     * @param voyage voyage aggregate
+     * @return fully resolved {@code Voyage} instance
+     */
+    Voyage saveVoyage(Voyage voyage);
+
+    /**
+     * Load {@code Voyage} with matching {@code voyageNumber} from the persistence store.
+     * @param voyageNumber voyage number
+     * @return fully resolved {@code Voyage} instance
+     */
+    Voyage obtainVoyageByNumber(VoyageNumber voyageNumber);
 
 }

@@ -31,7 +31,6 @@ public class Leg {
      * ID used for storage (primary key).
      */
     @EqualsAndHashCode.Exclude
-    @NotNull
     Integer id;
 
     @NotNull

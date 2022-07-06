@@ -188,19 +188,19 @@ public class MockModels {
             1,
             Leg.builder()
                     .id(1)
-                    .voyage(MockModels.voyage("AB001"))
-                    .loadLocation(MockModels.location("USDAL"))
+                    .voyage(voyage("AB001"))
+                    .loadLocation(location("USDAL"))
                     .loadTime(localDate("05-07-2022"))
-                    .unloadLocation(MockModels.location("AUMEL"))
+                    .unloadLocation(location("AUMEL"))
                     .unloadTime(localDate("23-07-2022"))
                     .build(),
             2,
             Leg.builder()
                     .id(2)
-                    .voyage(MockModels.voyage("AB002"))
-                    .loadLocation(MockModels.location("AUMEL"))
+                    .voyage(voyage("AB002"))
+                    .loadLocation(location("AUMEL"))
                     .loadTime(localDate("25-07-2022"))
-                    .unloadLocation(MockModels.location("JNTKO"))
+                    .unloadLocation(location("JNTKO"))
                     .unloadTime(localDate("05-08-2022"))
                     .build()
     );

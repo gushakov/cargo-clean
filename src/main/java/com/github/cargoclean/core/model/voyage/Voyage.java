@@ -32,4 +32,14 @@ public class Voyage {
     @EqualsAndHashCode.Include
     VoyageNumber voyageNumber;
 
+    public Voyage withNullId(){
+        return newVoyage().id(null).build();
+    }
+
+    private VoyageBuilder newVoyage(){
+        return Voyage.builder()
+                .id(id)
+                .voyageNumber(voyageNumber);
+    }
+
 }

@@ -1,0 +1,23 @@
+CREATE TABLE public.voyage
+(
+    id            serial NOT NULL,
+    voyage_number varchar NULL,
+    CONSTRAINT voyage_pk PRIMARY KEY (id),
+    CONSTRAINT voyage_number_unique UNIQUE (voyage_number)
+);
+
+CREATE TABLE public.leg
+(
+    id                   serial    NOT NULL,
+    voyage_id            int NULL,
+    load_location_id     int NULL,
+    load_location_time   timestamp NOT NULL,
+    unload_location_id   int NULL,
+    unload_location_time timestamp NOT NULL,
+    cargo_id             int NULL,
+    leg_index            int NULL,
+    CONSTRAINT leg_pk PRIMARY KEY (id),
+    CONSTRAINT leg_load_location_fk FOREIGN KEY (load_location_id) REFERENCES public."location" (id),
+    CONSTRAINT leg_itinerary_fk FOREIGN KEY (cargo_id) REFERENCES public.cargo (id),
+    CONSTRAINT leg_unload_location_fk FOREIGN KEY (unload_location_id) REFERENCES public."location" (id)
+);

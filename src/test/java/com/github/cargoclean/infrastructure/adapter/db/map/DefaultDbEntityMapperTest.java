@@ -1,6 +1,5 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
@@ -13,14 +12,13 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationD
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
 
-import static com.github.cargoclean.core.model.MockModels.localInstant;
+import static com.github.cargoclean.core.model.MockModels.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -50,7 +48,7 @@ public class DefaultDbEntityMapperTest {
 
         final Location location = mapper.convert(dbEntity);
 
-        Location example = MockModels.location("JNTKO");
+        Location example = location("JNTKO");
         assertThat(location).isEqualTo(example);
         assertThat(location.getName()).isEqualTo(example.getName());
     }
@@ -86,7 +84,7 @@ public class DefaultDbEntityMapperTest {
     @Test
     void should_map_cargo_model_to_db_entity() {
 
-        final Cargo cargo = MockModels.cargo("75FC0BD4");
+        final Cargo cargo = cargo("75FC0BD4");
 
         final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
 
@@ -114,7 +112,7 @@ public class DefaultDbEntityMapperTest {
     @Test
     void should_map_voyage_model_to_db_entity() {
 
-        Voyage voyage = MockModels.voyage("AB001");
+        Voyage voyage = voyage("AB001");
 
         VoyageDbEntity voyageDbEntity = mapper.convert(voyage);
 
@@ -134,7 +132,7 @@ public class DefaultDbEntityMapperTest {
 
         Voyage voyage = mapper.convert(voyageDbEntity);
 
-        assertThat(voyage).isEqualTo(MockModels.voyage("AB001"));
+        assertThat(voyage).isEqualTo(voyage("AB001"));
 
     }
 
@@ -142,7 +140,7 @@ public class DefaultDbEntityMapperTest {
     void should_map_cargo_itinerary_to_list_of_legs_db_entities() {
 
         // cargo with itinerary
-        Cargo cargo = MockModels.cargo("8E062F47");
+        Cargo cargo = cargo("8E062F47");
 
         List<LegDbEntity> legDbEntities = mapper.convertItinerary(cargo);
 
@@ -159,9 +157,9 @@ public class DefaultDbEntityMapperTest {
         assertThat(legDbEntities)
                 .extracting(LegDbEntity::getLoadTime,
                         LegDbEntity::getUnloadTime)
-                .containsExactly(Tuple.tuple(MockModels.localDate("05-07-2022").toInstant(),
-                                MockModels.localDate("23-07-2022").toInstant()),
-                        tuple(MockModels.localDate("25-07-2022").toInstant(),
-                                MockModels.localDate("05-08-2022").toInstant()));
+                .containsExactly(tuple(localDate("05-07-2022").toInstant(),
+                                localDate("23-07-2022").toInstant()),
+                        tuple(localDate("25-07-2022").toInstant(),
+                                localDate("05-08-2022").toInstant()));
     }
 }

@@ -26,4 +26,10 @@ public class VoyageNumber {
     @NotNull
     @NotBlank
     String number;
+
+    public static VoyageNumber of(String number){
+        return VoyageNumber.builder()
+                .number(number)
+                .build();
+    }
 }
