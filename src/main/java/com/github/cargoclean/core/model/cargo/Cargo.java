@@ -17,6 +17,13 @@ import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
 
+/*
+    References:
+    ----------
+
+    1.  Spring Data entity state detection strategy: https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#is-new-state-detection
+ */
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Cargo".
  */
@@ -32,9 +39,6 @@ public class Cargo {
     @EqualsAndHashCode.Include
     TrackingId trackingId;
 
-    @Getter(AccessLevel.NONE)
-    Integer version;
-
     @NotNull
     UnLocode origin;
 
@@ -44,8 +48,10 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
+    String version;
+
     public boolean exists() {
-        return version != null && version != 0;
+        return version != null;
     }
 
     public Cargo withOrigin(UnLocode origin) {

@@ -24,9 +24,6 @@ public class CargoDbEntity {
     @Column("tracking_id")
     private String trackingId;
 
-    @Version
-    private Integer version;
-
     @Column("origin")
     private String origin;
 
@@ -35,5 +32,8 @@ public class CargoDbEntity {
 
     @Embedded.Nullable
     private RouteSpecificationDbEntity routeSpecification;
+
+    @Version
+    private String version;
 
 }

@@ -28,26 +28,20 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = CommonMapStructConverters.class)
 public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
-    @Mapping(target = "unLocode", source = "unlocode")
     abstract Location map(LocationDbEntity locationDbEntity);
 
-    @Mapping(target = "unlocode", source = "unLocode")
     abstract LocationDbEntity map(Location location);
 
     abstract DeliveryDbEntity map(Delivery delivery);
 
     abstract Delivery map(DeliveryDbEntity deliveryDbEntity);
 
-    @Mapping(target = "origin", ignore = true)  // relation, load from gateway
-    @Mapping(target = "destination", ignore = true) // relation, load from gateway
     abstract RouteSpecification map(RouteSpecificationDbEntity routeSpecificationDbEntity);
 
     abstract RouteSpecificationDbEntity map(RouteSpecification routeSpecification);
 
     abstract CargoDbEntity map(Cargo cargo);
 
-    @Mapping(target = "origin", ignore = true) // relation, load from gateway
-    @Mapping(target = "routeSpecification", ignore = true) // relation, load from gateway
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
     @IgnoreForMapping

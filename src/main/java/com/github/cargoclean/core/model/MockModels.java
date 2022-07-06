@@ -22,7 +22,7 @@ public class MockModels {
                 "JNTKO",
                 Location.builder()
                         .name("Tokyo")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("JNTKO")
                                 .build())
                         .build(),
@@ -30,7 +30,7 @@ public class MockModels {
                 "NLRTM",
                 Location.builder()
                         .name("Rotterdam")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("NLRTM")
                                 .build())
                         .build(),
@@ -38,7 +38,7 @@ public class MockModels {
                 "USDAL",
                 Location.builder()
                         .name("Dallas")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("USDAL")
                                 .build())
                         .build(),
@@ -46,7 +46,7 @@ public class MockModels {
                 "SEGOT",
                 Location.builder()
                         .name("Göteborg")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("SEGOT")
                                 .build())
                         .build(),
@@ -54,7 +54,7 @@ public class MockModels {
                 "FIHEL",
                 Location.builder()
                         .name("Helsinki")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("FIHEL")
                                 .build())
                         .build(),
@@ -62,7 +62,7 @@ public class MockModels {
                 "AUMEL",
                 Location.builder()
                         .name("Melbourne")
-                        .unLocode(UnLocode.builder()
+                        .unlocode(UnLocode.builder()
                                 .code("AUMEL")
                                 .build())
                         .build()

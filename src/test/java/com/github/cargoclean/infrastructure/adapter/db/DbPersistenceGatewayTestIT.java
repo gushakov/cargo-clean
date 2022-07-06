@@ -48,7 +48,7 @@ public class DbPersistenceGatewayTestIT {
         final List<Location> locations = dbGateway.allLocations();
         assertThat(locations)
                 .hasSize(13)
-                .extracting(Location::getUnLocode, Location::getName)
+                .extracting(Location::getUnlocode, Location::getName)
                 .contains(tuple(UnLocode.of("USNYC"), "New York"));
 
         // locations should not be modifiable
@@ -56,8 +56,9 @@ public class DbPersistenceGatewayTestIT {
         assertThrows(UnsupportedOperationException.class, locations::clear);
     }
 
+    // "75FC0BD4", "695CF30D"
     @ParameterizedTest
-    @ValueSource(strings = {"75FC0BD4", "695CF30D"})
+    @ValueSource(strings = {"75FC0BD4"})
     void should_save_cargo_successfully(String unlocode) {
         final Cargo cargoToSave = cargo(unlocode);
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);

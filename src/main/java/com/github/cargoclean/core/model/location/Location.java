@@ -27,7 +27,7 @@ public class Location {
 
     @EqualsAndHashCode.Include
     @NotNull
-    UnLocode unLocode;
+    UnLocode unlocode;
 
     @NotNull
     String name;
@@ -35,7 +35,7 @@ public class Location {
     @Override
     public String toString() {
         return "Location{" +
-                "unLocode=" + unLocode +
+                "unlocode=" + unlocode +
                 '}';
     }
 }

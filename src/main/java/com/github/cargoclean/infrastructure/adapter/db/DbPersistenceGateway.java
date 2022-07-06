@@ -50,6 +50,8 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
+    private static final String VERSION = "1";
+
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
 
@@ -103,9 +105,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        return dbMapper.convert(cargoRepository.findById(trackingId.getId())
+        CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId())
                 .orElseThrow(() -> new PersistenceOperationError("Cannot find Cargo with tracking ID: <%s>"
-                        .formatted(trackingId))));
+                        .formatted(trackingId)));
+//        cargoDbEntity.setVersion(VERSION);
+        return dbMapper.convert(cargoDbEntity);
 
     }
 

@@ -6,6 +6,7 @@ CREATE TABLE public.cargo
     spec_origin           varchar   NOT NULL,
     spec_destination      varchar   NOT NULL,
     spec_arrival_deadline timestamp NOT NULL,
+    "version"             varchar   NOT NULL DEFAULT '1':: character varying,
     CONSTRAINT cargo_tracking_id_pk PRIMARY KEY (tracking_id)
 );
 

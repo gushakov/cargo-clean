@@ -2,8 +2,10 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
@@ -94,8 +96,29 @@ public class DefaultDbEntityMapperTest {
                 .extracting(RouteSpecificationDbEntity::getOrigin,
                         RouteSpecificationDbEntity::getDestination,
                         RouteSpecificationDbEntity::getArrivalDeadline)
-                .containsExactly(3, 13, localInstant("24-08-2022"));
+                .containsExactly("USDAL", "AUMEL", localInstant("24-08-2022"));
 
     }
 
+    @Test
+    void should_map_cargo_db_entity_to_model() {
+        CargoDbEntity cargoDbEntity = CargoDbEntity.builder()
+                .trackingId("ABCDEF12")
+                .origin("USDAL")
+                .delivery(DeliveryDbEntity.builder()
+                        .transportStatus(TransportStatus.IN_PORT.name())
+                        .build())
+                .routeSpecification(RouteSpecificationDbEntity.builder()
+                        .origin("USDAL")
+                        .destination("AUMEL")
+                        .arrivalDeadline(localInstant("10-10-2022"))
+                        .build())
+                .build();
+
+        Cargo cargo = mapper.convert(cargoDbEntity);
+
+        assertThat(cargo.getTrackingId()).isEqualTo(TrackingId.of("ABCDEF12"));
+        assertThat(cargo.getOrigin()).isEqualTo(UnLocode.of("USDAL"));
+
+    }
 }
