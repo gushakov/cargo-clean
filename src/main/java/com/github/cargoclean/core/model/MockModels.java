@@ -188,7 +188,6 @@ public class MockModels {
             1,
             Leg.builder()
                     .id(1)
-                    .voyage(voyage("AB001"))
                     .loadLocation(location("USDAL"))
                     .loadTime(localDate("05-07-2022"))
                     .unloadLocation(location("AUMEL"))
@@ -197,7 +196,6 @@ public class MockModels {
             2,
             Leg.builder()
                     .id(2)
-                    .voyage(voyage("AB002"))
                     .loadLocation(location("AUMEL"))
                     .loadTime(localDate("25-07-2022"))
                     .unloadLocation(location("JNTKO"))

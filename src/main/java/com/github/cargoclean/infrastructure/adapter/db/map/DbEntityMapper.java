@@ -35,6 +35,4 @@ public interface DbEntityMapper {
 
     VoyageDbEntity convert(Voyage voyage);
 
-    List<LegDbEntity> convertItinerary(Cargo cargoWithItinerary);
-
 }

@@ -1,9 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.Leg;
-import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
@@ -14,19 +11,17 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity
 import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import org.mapstruct.MappingTarget;
 
 /*
     References:
     ----------
 
     1.  Iterate over Stream with indexes: https://www.baeldung.com/java-stream-indices
+    2.  Issue with AfterMapping and Lombok builders: https://github.com/mapstruct/mapstruct/issues/1454
  */
 
 
@@ -52,15 +47,18 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract RouteSpecificationDbEntity map(RouteSpecification routeSpecification);
 
+    @Mapping(target = "legs", ignore = true)
     abstract CargoDbEntity map(Cargo cargo);
 
-    /*
-        Notice how we are ignoring member entities when mapping
-        the aggregate route (Cargo), they will be mapped by
-        the persistence gateway which will have to look up
-        and convert any related entities from the database
-        (Location, etc.).
-     */
+    @AfterMapping
+    protected void doAfterMapping(Cargo cargo, @MappingTarget CargoDbEntity.CargoDbEntityBuilder cargoDbEntityBuilder) {
+        if (cargo.getItinerary() == null) {
+            return;
+        }
+        cargoDbEntityBuilder.legs(cargo.getItinerary().getLegs().stream()
+                .map(this::map)
+                .toList());
+    }
 
     @Mapping(target = "origin", ignore = true)
     @Mapping(target = "delivery", ignore = true)
@@ -68,16 +66,28 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Mapping(target = "itinerary", ignore = true)
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
+    @AfterMapping
+    protected void doAfterMapping(CargoDbEntity cargoDbEntity, @MappingTarget Cargo.CargoBuilder cargoBuilder) {
+        cargoBuilder.itinerary(Itinerary.builder()
+                .legs(cargoDbEntity.getLegs().stream()
+                        .map(this::map)
+                        .toList())
+                .build());
+    }
+
     abstract VoyageDbEntity map(Voyage voyage);
 
     abstract Voyage map(VoyageDbEntity voyageDbEntity);
 
     @Mapping(target = "unloadLocationId", source = "unloadLocation.id")
     @Mapping(target = "loadLocationId", source = "loadLocation.id")
-    @Mapping(target = "voyageId", ignore = true)
     @Mapping(target = "legIndex", ignore = true)
     @Mapping(target = "cargoId", ignore = true)
     abstract LegDbEntity map(Leg leg);
+
+    @Mapping(target = "unloadLocation", ignore = true)
+    @Mapping(target = "loadLocation", ignore = true)
+    abstract Leg map(LegDbEntity legDbEntity);
 
     @IgnoreForMapping
     @Override
@@ -131,29 +141,5 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Override
     public VoyageDbEntity convert(Voyage voyage) {
         return map(voyage);
-    }
-
-    @IgnoreForMapping
-    @Override
-    public List<LegDbEntity> convertItinerary(Cargo cargoWithItinerary) {
-
-        if (cargoWithItinerary.getItinerary() == null) {
-            return List.of();
-        }
-
-        List<Leg> legs = cargoWithItinerary.getItinerary().getLegs();
-        return streamWithIndex(legs)
-                .map(entry -> {
-                    LegDbEntity legDbEntity = this.map(entry.getValue());
-                    legDbEntity.setCargoId(cargoWithItinerary.getId());
-                    legDbEntity.setLegIndex(entry.getKey());
-                    return legDbEntity;
-                }).toList();
-    }
-
-    private <T> Stream<Map.Entry<Integer, T>> streamWithIndex(List<T> list) {
-        return IntStream.range(0, list.size())
-                .boxed()
-                .map(i -> Map.entry(i, list.get(i)));
     }
 }

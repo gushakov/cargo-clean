@@ -17,9 +17,6 @@ public class LegDbEntity {
     @Column("id")
     private Integer id;
 
-    @Column("voyage_id")
-    private Integer voyageId;
-
     @Column("load_location_id")
     private Integer loadLocationId;
 
@@ -32,9 +29,19 @@ public class LegDbEntity {
     @Column("unload_time")
     private Instant unloadTime;
 
+    /**
+     * Foreign key matching ID for {@code Cargo} which itinerary this leg is part of.
+     * Also see {@code MappedCollection} annotation in {@code CargoDbEntity} where
+     * ID column name is customized.
+     */
     @Column("cargo_id")
     private Integer cargoId;
 
+    /**
+     * Index of this leg in the intinerary of the related {@code Cargo}. Also see
+     * {@code MappedCollection} annotation in {@code CargoDbEntity} where key column
+     * name is customized.
+     */
     @Column("leg_index")
     private Integer legIndex;
 

@@ -136,30 +136,4 @@ public class DefaultDbEntityMapperTest {
 
     }
 
-    @Test
-    void should_map_cargo_itinerary_to_list_of_legs_db_entities() {
-
-        // cargo with itinerary
-        Cargo cargo = cargo("8E062F47");
-
-        List<LegDbEntity> legDbEntities = mapper.convertItinerary(cargo);
-
-        assertThat(legDbEntities)
-                .extracting(LegDbEntity::getId,
-                        LegDbEntity::getVoyageId,
-                        LegDbEntity::getLoadLocationId,
-                        LegDbEntity::getUnloadLocationId,
-                        LegDbEntity::getCargoId,
-                        LegDbEntity::getLegIndex)
-                .containsExactly(tuple(1, 1, 3, 13, 3, 0),
-                        tuple(2, 2, 13, 1, 3, 1));
-
-        assertThat(legDbEntities)
-                .extracting(LegDbEntity::getLoadTime,
-                        LegDbEntity::getUnloadTime)
-                .containsExactly(tuple(localDate("05-07-2022").toInstant(),
-                                localDate("23-07-2022").toInstant()),
-                        tuple(localDate("25-07-2022").toInstant(),
-                                localDate("05-08-2022").toInstant()));
-    }
 }

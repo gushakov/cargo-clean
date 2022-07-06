@@ -101,12 +101,6 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             // save cargo
             cargoRepository.save(cargoDbEntity);
 
-            // save itinerary
-            if (cargoToSave.getItinerary() != null){
-                List<LegDbEntity> legDbEntities = dbMapper.convertItinerary(cargoToSave);
-
-            }
-
             // convert and load relations
             return obtainCargoByTrackingId(cargoToSave.getTrackingId());
         } catch (Exception e) {

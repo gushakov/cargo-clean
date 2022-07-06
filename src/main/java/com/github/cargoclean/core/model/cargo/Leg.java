@@ -34,9 +34,6 @@ public class Leg {
     Integer id;
 
     @NotNull
-    Voyage voyage;
-
-    @NotNull
     Location loadLocation;
 
     @NotNull
@@ -55,7 +52,6 @@ public class Leg {
     private LegBuilder newLeg() {
         return Leg.builder()
                 .id(id)
-                .voyage(voyage)
                 .loadLocation(loadLocation)
                 .unloadLocation(unloadLocation)
                 .loadTime(loadTime)

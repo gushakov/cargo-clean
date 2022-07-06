@@ -1,15 +1,6 @@
-CREATE TABLE public.voyage
-(
-    id            serial NOT NULL,
-    voyage_number varchar NULL,
-    CONSTRAINT voyage_pk PRIMARY KEY (id),
-    CONSTRAINT voyage_number_unique UNIQUE (voyage_number)
-);
-
 CREATE TABLE public.leg
 (
     id                   serial    NOT NULL,
-    voyage_id            int NULL,
     load_location_id     int NULL,
     load_location_time   timestamp NOT NULL,
     unload_location_id   int NULL,

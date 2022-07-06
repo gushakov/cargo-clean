@@ -5,7 +5,10 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.List;
 
 /*
     References:
@@ -34,5 +37,8 @@ public class CargoDbEntity {
 
     @Embedded.Nullable
     private RouteSpecificationDbEntity routeSpecification;
+
+    @MappedCollection(idColumn = "cargo_id", keyColumn = "leg_index")
+    private List<LegDbEntity> legs;
 
 }
