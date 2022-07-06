@@ -73,13 +73,13 @@ public class BookingUseCaseTest {
 
         Cargo cargo = cargoArg.getValue();
 
-        // new cargo should have null ID
-        assertThat(cargo.getId()).isNull();
+        // new cargo have null version
+        assertThat(cargo.exists()).isFalse();
 
         // verify new cargo object
         assertThat(cargo.getTrackingId()).isEqualTo(trackingId);
-        assertThat(cargo.getOrigin().getUnLocode()).isEqualTo(UnLocode.of("USDAL"));
-        assertThat(cargo.getRouteSpecification().getDestination().getUnLocode())
+        assertThat(cargo.getOrigin()).isEqualTo(UnLocode.of("USDAL"));
+        assertThat(cargo.getRouteSpecification().getDestination())
                 .isEqualTo(UnLocode.of("AUMEL"));
         assertThat(cargo.getRouteSpecification().getArrivalDeadline())
                 .isEqualToIgnoringSeconds(ZonedDateTime.ofInstant(monthFromNow.toInstant(),

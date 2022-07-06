@@ -11,7 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
-import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -28,19 +28,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Cargo {
 
-    /*
-        Cargo's ID can be null for newly created Cargo objects. And should never be
-        null for the instances loaded and mapped from the database.
-     */
-    @EqualsAndHashCode.Include
-    Integer id;
-
     @NotNull
     @EqualsAndHashCode.Include
     TrackingId trackingId;
 
+    @Getter(AccessLevel.NONE)
+    Integer version;
+
     @NotNull
-    Location origin;
+    UnLocode origin;
 
     @NotNull
     Delivery delivery;
@@ -48,13 +44,11 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
-    Itinerary itinerary;
-
-    public Cargo withNullId() {
-        return newCargo().id(null).build();
+    public boolean exists() {
+        return version != null && version != 0;
     }
 
-    public Cargo withOrigin(Location origin) {
+    public Cargo withOrigin(UnLocode origin) {
         return newCargo().origin(origin).build();
     }
 
@@ -66,21 +60,13 @@ public class Cargo {
         return newCargo().delivery(delivery).build();
     }
 
-    public Cargo withItinerary(Itinerary itinerary) {
-        return newCargo().itinerary(itinerary).build();
-    }
-
     private CargoBuilder newCargo() {
-        CargoBuilder builder = Cargo.builder()
-                .id(id)
+
+        return Cargo.builder()
                 .trackingId(trackingId)
                 .origin(origin)
                 .delivery(delivery)
                 .routeSpecification(routeSpecification);
-        if (itinerary != null){
-            builder.itinerary(itinerary);
-        }
-        return builder;
     }
 
     @Override

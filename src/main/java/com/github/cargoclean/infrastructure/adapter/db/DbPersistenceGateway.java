@@ -18,20 +18,15 @@ package com.github.cargoclean.infrastructure.adapter.db;
  */
 
 import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
-import com.github.cargoclean.core.model.voyage.Voyage;
-import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.*;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
-import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +53,6 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
 
-    private final VoyageDbEntityRepository voyageRepository;
     private final DbEntityMapper dbMapper;
 
     @Override
@@ -84,12 +78,9 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
-        try {
-            return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
-        } catch (Exception e) {
-            throw new PersistenceOperationError("Cannot load location with UnLocode: <%s>"
-                    .formatted(unLocode), e);
-        }
+        return dbMapper.convert(locationRepository.findById(unLocode.getCode())
+                .orElseThrow(() -> new PersistenceOperationError("Cannot load location with UnLocode: <%s>"
+                        .formatted(unLocode))));
     }
 
     @Override
@@ -112,54 +103,12 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId())
+        return dbMapper.convert(cargoRepository.findById(trackingId.getId())
                 .orElseThrow(() -> new PersistenceOperationError("Cannot find Cargo with tracking ID: <%s>"
                         .formatted(trackingId))));
 
     }
 
-    @Override
-    public Voyage saveVoyage(Voyage voyage) {
-        try {
-
-            VoyageDbEntity voyageDbEntity = dbMapper.convert(voyage);
-            voyageRepository.save(voyageDbEntity);
-
-        } catch (Exception e) {
-            throw new PersistenceOperationError("Cannot save voyage with number <%s>".formatted(e.getMessage()), e);
-        }
-
-        return obtainVoyageByNumber(voyage.getVoyageNumber());
-    }
-
-    @Override
-    public Voyage obtainVoyageByNumber(VoyageNumber voyageNumber) {
-        return convertAndLoadRelations(voyageRepository.findByVoyageNumber(voyageNumber.getNumber())
-                .orElseThrow(() -> new PersistenceOperationError("Cannot load voyage with number: <%s>"
-                        .formatted(voyageNumber))));
-    }
-
-    private Voyage convertAndLoadRelations(VoyageDbEntity voyageDbEntity) {
-        return dbMapper.convert(voyageDbEntity);
-    }
-
-    private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
-        final Cargo partialCargo = dbMapper.convert(cargoDbEntity);
-        final Location origin = dbMapper.convert(locationRepository.findById(cargoDbEntity.getOrigin()).orElseThrow());
-        final RouteSpecification routeSpec = convertAndLoadRelations(cargoDbEntity.getRouteSpecification());
-        return partialCargo.withOrigin(origin)
-                .withRouteSpecification(routeSpec);
-    }
-
-    private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity) {
-        RouteSpecification partialRouteSpec = dbMapper.convert(specDbEntity);
-        final Location origin = dbMapper.convert(locationRepository
-                .findById(specDbEntity.getOrigin()).orElseThrow());
-        final Location destination = dbMapper.convert(locationRepository
-                .findById(specDbEntity.getDestination()).orElseThrow());
-        return partialRouteSpec.withOrigin(origin)
-                .withDestination(destination);
-    }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);

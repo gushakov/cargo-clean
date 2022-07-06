@@ -36,7 +36,7 @@ public class UnLocode {
         this.code = code.toUpperCase();
     }
 
-    public static UnLocode of(String code){
+    public static UnLocode of(String code) {
         return UnLocode.builder().code(code).build();
     }
 

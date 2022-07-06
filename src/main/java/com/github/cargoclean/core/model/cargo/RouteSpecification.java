@@ -11,7 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
-import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
 import lombok.Value;
 
@@ -26,23 +26,23 @@ import java.time.ZonedDateTime;
 public class RouteSpecification {
 
     @NotNull
-    Location origin;
+    UnLocode origin;
 
     @NotNull
-    Location destination;
+    UnLocode destination;
 
     @NotNull
     ZonedDateTime arrivalDeadline;
 
-    public RouteSpecification withOrigin(Location origin){
+    public RouteSpecification withOrigin(UnLocode origin) {
         return newRouteSpecification().origin(origin).build();
     }
 
-    public RouteSpecification withDestination(Location destination){
+    public RouteSpecification withDestination(UnLocode destination) {
         return newRouteSpecification().destination(destination).build();
     }
 
-    private RouteSpecificationBuilder newRouteSpecification(){
+    private RouteSpecificationBuilder newRouteSpecification() {
         return RouteSpecification.builder()
                 .origin(origin)
                 .destination(destination)

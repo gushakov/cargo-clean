@@ -1,20 +1,17 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 /*
     References:
@@ -47,46 +44,11 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract RouteSpecificationDbEntity map(RouteSpecification routeSpecification);
 
-    @Mapping(target = "legs", ignore = true) // map afterwards
     abstract CargoDbEntity map(Cargo cargo);
-
-    @AfterMapping
-    protected void doAfterMapping(Cargo cargo, @MappingTarget CargoDbEntity.CargoDbEntityBuilder cargoDbEntityBuilder) {
-        if (cargo.getItinerary() == null) {
-            return;
-        }
-        cargoDbEntityBuilder.legs(cargo.getItinerary().getLegs().stream()
-                .map(this::map)
-                .toList());
-    }
 
     @Mapping(target = "origin", ignore = true) // relation, load from gateway
     @Mapping(target = "routeSpecification", ignore = true) // relation, load from gateway
-    @Mapping(target = "itinerary", ignore = true) // map afterwards
     abstract Cargo map(CargoDbEntity cargoDbEntity);
-
-    @AfterMapping
-    protected void doAfterMapping(CargoDbEntity cargoDbEntity, @MappingTarget Cargo.CargoBuilder cargoBuilder) {
-        cargoBuilder.itinerary(Itinerary.builder()
-                .legs(cargoDbEntity.getLegs().stream()
-                        .map(this::map)
-                        .toList())
-                .build());
-    }
-
-    abstract VoyageDbEntity map(Voyage voyage);
-
-    abstract Voyage map(VoyageDbEntity voyageDbEntity);
-
-    @Mapping(target = "unloadLocationId", source = "unloadLocation.id")
-    @Mapping(target = "loadLocationId", source = "loadLocation.id")
-    @Mapping(target = "legIndex", ignore = true)
-    @Mapping(target = "cargoId", ignore = true)
-    abstract LegDbEntity map(Leg leg);
-
-    @Mapping(target = "unloadLocation", ignore = true)
-    @Mapping(target = "loadLocation", ignore = true)
-    abstract Leg map(LegDbEntity legDbEntity);
 
     @IgnoreForMapping
     @Override
@@ -130,15 +92,4 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
         return map(routeSpecification);
     }
 
-    @IgnoreForMapping
-    @Override
-    public Voyage convert(VoyageDbEntity voyageDbEntity) {
-        return map(voyageDbEntity);
-    }
-
-    @IgnoreForMapping
-    @Override
-    public VoyageDbEntity convert(Voyage voyage) {
-        return map(voyage);
-    }
 }

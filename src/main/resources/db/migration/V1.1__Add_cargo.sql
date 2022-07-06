@@ -1,10 +1,17 @@
-CREATE TABLE public.cargo (
-                              id serial4 NOT NULL,
-                              tracking_id varchar NULL,
-                              origin_id int4 NULL,
-                              transport_status varchar NOT NULL,
-                              CONSTRAINT cargo_id_pk PRIMARY KEY (id),
-                              CONSTRAINT cargo_tracking_id_unique UNIQUE (tracking_id)
+CREATE TABLE public.cargo
+(
+    tracking_id           varchar   NOT NULL,
+    origin                varchar   NOT NULL,
+    transport_status      varchar   NOT NULL,
+    spec_origin           varchar   NOT NULL,
+    spec_destination      varchar   NOT NULL,
+    spec_arrival_deadline timestamp NOT NULL,
+    CONSTRAINT cargo_tracking_id_pk PRIMARY KEY (tracking_id)
 );
 
-ALTER TABLE public.cargo ADD CONSTRAINT cargo_origin_fk FOREIGN KEY (origin_id) REFERENCES public."location"(id);
+ALTER TABLE public.cargo
+    ADD CONSTRAINT cargo_origin_fk FOREIGN KEY (origin) REFERENCES public."location" (unlocode);
+ALTER TABLE public.cargo
+    ADD CONSTRAINT cargo_spec_destination_fk FOREIGN KEY (spec_destination) REFERENCES public."location" (unlocode);
+ALTER TABLE public.cargo
+    ADD CONSTRAINT cargo_spec_origin_fk FOREIGN KEY (spec_origin) REFERENCES public."location" (unlocode);

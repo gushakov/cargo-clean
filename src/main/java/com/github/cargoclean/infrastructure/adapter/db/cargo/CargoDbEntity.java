@@ -3,12 +3,10 @@ package com.github.cargoclean.infrastructure.adapter.db.cargo;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.util.List;
 
 /*
     References:
@@ -23,22 +21,19 @@ import java.util.List;
 public class CargoDbEntity {
 
     @Id
-    @Column("id")
-    private Integer id;
-
     @Column("tracking_id")
     private String trackingId;
 
-    @Column("origin_id")
-    private Integer origin;
+    @Version
+    private Integer version;
+
+    @Column("origin")
+    private String origin;
 
     @Embedded.Nullable
     private DeliveryDbEntity delivery;
 
     @Embedded.Nullable
     private RouteSpecificationDbEntity routeSpecification;
-
-    @MappedCollection(idColumn = "cargo_id", keyColumn = "leg_index")
-    private List<LegDbEntity> legs;
 
 }

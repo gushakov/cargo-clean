@@ -68,6 +68,7 @@ public abstract class AbstractWebPresenter {
             throw new RuntimeException(e);
         }
     }
+
     protected void redirectError(String errorMessage) {
         try {
             httpRequest.getSession().setAttribute("errorMessage", errorMessage);
