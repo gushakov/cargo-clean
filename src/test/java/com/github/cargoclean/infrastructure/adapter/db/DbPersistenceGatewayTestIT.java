@@ -2,6 +2,9 @@ package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.CargoCleanApplication;
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import org.junit.jupiter.api.Test;
@@ -56,10 +59,12 @@ public class DbPersistenceGatewayTestIT {
         assertThrows(UnsupportedOperationException.class, locations::clear);
     }
 
-    // "75FC0BD4", "695CF30D"
     @ParameterizedTest
     @ValueSource(strings = {"75FC0BD4"})
     void should_save_cargo_successfully(String unlocode) {
+
+        dbGateway.deleteCargo(TrackingId.of(unlocode));
+
         final Cargo cargoToSave = cargo(unlocode);
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
         assertThat(savedCargo.exists()).isTrue();
@@ -70,17 +75,17 @@ public class DbPersistenceGatewayTestIT {
     }
 
     @Test
-    void should_obtain_cargo_by_tracking_id() {
+    void should_save_cargo_load_update_and_save_again() {
+        TrackingId trackingId = TrackingId.of("75FC0BD4");
+        dbGateway.deleteCargo(trackingId);
 
-        final Cargo refCargo = cargo("75FC0BD4");
-
-        final Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(refCargo.getTrackingId());
-
-        assertThat(loadedCargo.exists()).isTrue();
-        assertThat(loadedCargo.getTrackingId()).isEqualTo(refCargo.getTrackingId());
-        assertThat(loadedCargo.getOrigin()).isEqualTo(refCargo.getOrigin());
-        assertThat(loadedCargo.getDelivery()).isEqualTo(refCargo.getDelivery());
-        assertThat(loadedCargo.getRouteSpecification()).isEqualTo(refCargo.getRouteSpecification());
+        final Cargo cargoToSave = cargo(trackingId.getId());
+        final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
+        final Cargo updatedCargo = savedCargo.withDelivery(Delivery.builder()
+                        .transportStatus(TransportStatus.CLAIMED)
+                .build());
+        Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
+        assertThat(savedAgainCargo.getDelivery().getTransportStatus())
+                .isEqualTo(TransportStatus.CLAIMED);
     }
-
 }

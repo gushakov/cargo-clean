@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
     References:
     ----------
 
-    1.  Spring Data JDBC, embedded entites: https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#jdbc.entity-persistence.embedded-entities
+    1.  Spring Data JDBC, embedded entities: https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#jdbc.entity-persistence.embedded-entities
  */
 
 @Data
@@ -33,7 +33,10 @@ public class CargoDbEntity {
     @Embedded.Nullable
     private RouteSpecificationDbEntity routeSpecification;
 
+    /**
+     * Needed by Spring Data JDBC, see {@code Cargo}.
+     */
     @Version
-    private String version;
+    private Integer version;
 
 }

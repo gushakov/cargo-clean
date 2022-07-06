@@ -48,7 +48,12 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
-    String version;
+    /**
+     * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
+     * which will be used by Spring Data JDBC to determine the state (new, existing) of
+     * the persistent entity.
+     */
+    Integer version;
 
     public boolean exists() {
         return version != null;
@@ -72,7 +77,8 @@ public class Cargo {
                 .trackingId(trackingId)
                 .origin(origin)
                 .delivery(delivery)
-                .routeSpecification(routeSpecification);
+                .routeSpecification(routeSpecification)
+                .version(version);
     }
 
     @Override

@@ -42,5 +42,10 @@ public interface PersistenceGatewayOutputPort {
      */
     Cargo obtainCargoByTrackingId(TrackingId trackingId);
 
-
+    /**
+     * Delete {@code Cargo} with matching tracking ID.
+     *
+     * @param trackingId tracking ID of the cargo
+     */
+    void deleteCargo(TrackingId trackingId);
 }
