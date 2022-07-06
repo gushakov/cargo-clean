@@ -13,9 +13,9 @@ import java.time.Instant;
 @Builder
 public class LegDbEntity {
 
-    @Id
-    @Column("id")
-    private Integer id;
+//    @Id
+//    @Column("id")
+//    private Integer id;
 
     @Column("load_location_id")
     private Integer loadLocationId;

@@ -187,7 +187,6 @@ public class MockModels {
     private static final Map<Integer, Leg> allLegs = Map.of(
             1,
             Leg.builder()
-                    .id(1)
                     .loadLocation(location("USDAL"))
                     .loadTime(localDate("05-07-2022"))
                     .unloadLocation(location("AUMEL"))
@@ -195,7 +194,6 @@ public class MockModels {
                     .build(),
             2,
             Leg.builder()
-                    .id(2)
                     .loadLocation(location("AUMEL"))
                     .loadTime(localDate("25-07-2022"))
                     .unloadLocation(location("JNTKO"))

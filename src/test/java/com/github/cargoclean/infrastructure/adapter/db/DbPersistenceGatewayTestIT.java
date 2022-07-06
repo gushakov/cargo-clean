@@ -74,16 +74,10 @@ public class DbPersistenceGatewayTestIT {
 
     @Test
     void should_save_cargo_with_itinerary() {
-        Cargo cargo = cargo("8E062F47");
-        Cargo cargoToSave = cargo.withNullId()
-                .withItinerary(Itinerary.builder()
-                                .legs(cargo.getItinerary().getLegs().stream()
-                                        .map(Leg::withNullId)
-                                        .toList())
-                                .build());
-        Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
+        Cargo cargo = cargo("8E062F47").withNullId();
+        Cargo savedCargo = dbGateway.saveCargo(cargo);
         assertThat(savedCargo.getId()).isGreaterThan(0);
-
+        assertThat(savedCargo.getItinerary().getLegs()).hasSize(2);
     }
 
     @Test

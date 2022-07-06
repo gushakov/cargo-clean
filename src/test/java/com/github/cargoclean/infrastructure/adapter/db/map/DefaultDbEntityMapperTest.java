@@ -110,6 +110,19 @@ public class DefaultDbEntityMapperTest {
     }
 
     @Test
+    void should_map_cargo_with_itinerary_to_db_entity() {
+
+        final Cargo cargo = cargo("8E062F47");
+
+        final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
+
+        assertThat(cargoDbEntity.getLegs())
+                .extracting(LegDbEntity::getLoadLocationId, LegDbEntity::getUnloadLocationId)
+                .containsExactly(tuple(3, 13),
+                        tuple(13, 1));
+    }
+
+    @Test
     void should_map_voyage_model_to_db_entity() {
 
         Voyage voyage = voyage("AB001");

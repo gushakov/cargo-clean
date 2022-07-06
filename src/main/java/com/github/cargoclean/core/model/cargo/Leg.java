@@ -12,9 +12,7 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.model.voyage.Voyage;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
@@ -26,12 +24,6 @@ import java.time.ZonedDateTime;
 @Value
 @Builder
 public class Leg {
-
-    /**
-     * ID used for storage (primary key).
-     */
-    @EqualsAndHashCode.Exclude
-    Integer id;
 
     @NotNull
     Location loadLocation;
@@ -51,22 +43,14 @@ public class Leg {
 
     private LegBuilder newLeg() {
         return Leg.builder()
-                .id(id)
                 .loadLocation(loadLocation)
                 .unloadLocation(unloadLocation)
                 .loadTime(loadTime)
                 .unloadTime(unloadTime);
     }
 
-    public Leg withId(Integer id) {
-        return newLeg().id(id).build();
-    }
-
     public Leg withLoadTime(ZonedDateTime loadTime) {
         return newLeg().loadTime(loadTime).build();
     }
 
-    public Leg withNullId() {
-        return newLeg().id(null).build();
-    }
 }
