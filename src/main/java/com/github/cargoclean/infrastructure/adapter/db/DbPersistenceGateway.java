@@ -146,15 +146,9 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
         final Cargo partialCargo = dbMapper.convert(cargoDbEntity);
         final Location origin = dbMapper.convert(locationRepository.findById(cargoDbEntity.getOrigin()).orElseThrow());
-        final Delivery delivery = convertAndLoadRelations(cargoDbEntity.getDelivery());
         final RouteSpecification routeSpec = convertAndLoadRelations(cargoDbEntity.getRouteSpecification());
         return partialCargo.withOrigin(origin)
-                .withDelivery(delivery)
                 .withRouteSpecification(routeSpec);
-    }
-
-    private Delivery convertAndLoadRelations(DeliveryDbEntity deliveryDbEntity) {
-        return dbMapper.convert(deliveryDbEntity);
     }
 
     private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity) {

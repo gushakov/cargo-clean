@@ -41,13 +41,13 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract Delivery map(DeliveryDbEntity deliveryDbEntity);
 
-    @Mapping(target = "origin", ignore = true)
-    @Mapping(target = "destination", ignore = true)
+    @Mapping(target = "origin", ignore = true)  // relation, load from gateway
+    @Mapping(target = "destination", ignore = true) // relation, load from gateway
     abstract RouteSpecification map(RouteSpecificationDbEntity routeSpecificationDbEntity);
 
     abstract RouteSpecificationDbEntity map(RouteSpecification routeSpecification);
 
-    @Mapping(target = "legs", ignore = true)
+    @Mapping(target = "legs", ignore = true) // map afterwards
     abstract CargoDbEntity map(Cargo cargo);
 
     @AfterMapping
@@ -60,10 +60,9 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
                 .toList());
     }
 
-    @Mapping(target = "origin", ignore = true)
-    @Mapping(target = "delivery", ignore = true)
-    @Mapping(target = "routeSpecification", ignore = true)
-    @Mapping(target = "itinerary", ignore = true)
+    @Mapping(target = "origin", ignore = true) // relation, load from gateway
+    @Mapping(target = "routeSpecification", ignore = true) // relation, load from gateway
+    @Mapping(target = "itinerary", ignore = true) // map afterwards
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
     @AfterMapping

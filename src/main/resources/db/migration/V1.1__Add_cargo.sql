@@ -7,4 +7,4 @@ CREATE TABLE public.cargo (
                               CONSTRAINT cargo_tracking_id_unique UNIQUE (tracking_id)
 );
 
-ALTER TABLE public.cargo ADD CONSTRAINT cargo_fk FOREIGN KEY (origin_id) REFERENCES public."location"(id);
+ALTER TABLE public.cargo ADD CONSTRAINT cargo_origin_fk FOREIGN KEY (origin_id) REFERENCES public."location"(id);
