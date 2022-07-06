@@ -41,7 +41,7 @@ public class AppConfig {
      */
 
     @Bean
-    public Validator validator(){
+    public Validator validator() {
         return new BeanValidator();
     }
 
@@ -63,7 +63,7 @@ public class AppConfig {
     @Scope("prototype")
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
                                            Validator validator,
-                                           PersistenceGatewayOutputPort gatewayOps){
+                                           PersistenceGatewayOutputPort gatewayOps) {
         return new RoutingUseCase(presenter, validator, gatewayOps);
     }
 

@@ -10,11 +10,11 @@ import java.time.Instant;
 @Builder
 public class RouteSpecificationDbEntity {
 
-    @Column("spec_origin_id")
-    Integer origin;
+    @Column("spec_origin")
+    String origin;
 
-    @Column("spec_destination_id")
-    Integer destination;
+    @Column("spec_destination")
+    String destination;
 
     @Column("spec_arrival_deadline")
     Instant arrivalDeadline;

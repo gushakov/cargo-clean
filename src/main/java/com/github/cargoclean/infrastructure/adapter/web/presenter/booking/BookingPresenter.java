@@ -40,7 +40,7 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
             Thymeleaf template with a backing bean.
          */
 
-        final List<String> allUnlocodes = locations.stream().map(Location::getUnLocode).map(UnLocode::getCode).toList();
+        final List<String> allUnlocodes = locations.stream().map(Location::getUnlocode).map(UnLocode::getCode).toList();
 
         final BookingForm bookingForm = BookingForm.builder()
                 .deliveryDeadline(new Date(System.currentTimeMillis()))

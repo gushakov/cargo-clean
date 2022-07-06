@@ -1,9 +1,10 @@
 package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.CargoCleanApplication;
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.cargoclean.core.model.MockModels.cargo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,7 +51,7 @@ public class DbPersistenceGatewayTestIT {
         final List<Location> locations = dbGateway.allLocations();
         assertThat(locations)
                 .hasSize(13)
-                .extracting(Location::getUnLocode, Location::getName)
+                .extracting(Location::getUnlocode, Location::getName)
                 .contains(tuple(UnLocode.of("USNYC"), "New York"));
 
         // locations should not be modifiable
@@ -58,11 +60,14 @@ public class DbPersistenceGatewayTestIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"75FC0BD4", "695CF30D"})
+    @ValueSource(strings = {"75FC0BD4"})
     void should_save_cargo_successfully(String unlocode) {
-        final Cargo cargoToSave = MockModels.cargo(unlocode).withNullId();
+
+        dbGateway.deleteCargo(TrackingId.of(unlocode));
+
+        final Cargo cargoToSave = cargo(unlocode);
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
-        assertThat(savedCargo.getId()).isGreaterThan(0);
+        assertThat(savedCargo.exists()).isTrue();
         assertThat(savedCargo)
                 .extracting(Cargo::getTrackingId,
                         Cargo::getOrigin)
@@ -70,16 +75,17 @@ public class DbPersistenceGatewayTestIT {
     }
 
     @Test
-    void should_obtain_cargo_by_tracking_id() {
+    void should_save_cargo_load_update_and_save_again() {
+        TrackingId trackingId = TrackingId.of("75FC0BD4");
+        dbGateway.deleteCargo(trackingId);
 
-        final Cargo refCargo = MockModels.cargo("75FC0BD4");
-
-        final Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(refCargo.getTrackingId());
-
-        assertThat(loadedCargo.getId()).isGreaterThan(0);
-        assertThat(loadedCargo.getTrackingId()).isEqualTo(refCargo.getTrackingId());
-        assertThat(loadedCargo.getOrigin()).isEqualTo(refCargo.getOrigin());
-        assertThat(loadedCargo.getDelivery()).isEqualTo(refCargo.getDelivery());
-        assertThat(loadedCargo.getRouteSpecification()).isEqualTo(refCargo.getRouteSpecification());
+        final Cargo cargoToSave = cargo(trackingId.getId());
+        final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
+        final Cargo updatedCargo = savedCargo.withDelivery(Delivery.builder()
+                        .transportStatus(TransportStatus.CLAIMED)
+                .build());
+        Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
+        assertThat(savedAgainCargo.getDelivery().getTransportStatus())
+                .isEqualTo(TransportStatus.CLAIMED);
     }
 }

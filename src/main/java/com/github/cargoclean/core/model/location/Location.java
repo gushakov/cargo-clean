@@ -25,18 +25,9 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Location {
 
-    /*
-        This ID will be mapped from a generated (auto-increment) ID by the database.
-        In case of Location it will be set during the initialization and should
-        never be null.
-     */
-
     @EqualsAndHashCode.Include
     @NotNull
-    Integer id;
-    @EqualsAndHashCode.Include
-            @NotNull
-    UnLocode unLocode;
+    UnLocode unlocode;
 
     @NotNull
     String name;
@@ -44,7 +35,7 @@ public class Location {
     @Override
     public String toString() {
         return "Location{" +
-                "unLocode=" + unLocode +
+                "unlocode=" + unlocode +
                 '}';
     }
 }

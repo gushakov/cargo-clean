@@ -81,6 +81,18 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
+        <!--
+            Pathfinder service from original DDDSample,
+            packaged as a Maven dependency.
+         -->
+        <dependency>
+            <groupId>com.pathfinder</groupId>
+            <artifactId>dddsample-pathfinder</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/etc/pathfinder/dddsample-pathfinder-1.0.jar</systemPath>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok-mapstruct-binding</artifactId>

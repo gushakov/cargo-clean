@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +42,7 @@ public class BookingUseCase implements BookingInputPort {
         try {
             // retrieve all locations from the gateway
 
-            locations =  validator.validate(gatewayOps.allLocations());
+            locations = validator.validate(gatewayOps.allLocations());
 
         } catch (Exception e) {
             // if anything went wrong: present the error and return
@@ -64,15 +63,12 @@ public class BookingUseCase implements BookingInputPort {
         try {
 
             // we validate the inputs to the use case
-            if (deliveryDeadline == null){
+            if (deliveryDeadline == null) {
                 throw new InvalidDestinationSpecificationError("arrival deadline must not be null");
             }
 
-            // we obtain all the related aggregates or we query for any related information from
-            // the persistence store
-
-            Location origin = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(originUnLocode)));
-            Location destination = validator.validate(gatewayOps.obtainLocationByUnLocode(UnLocode.of(destinationUnLocode)));
+            UnLocode origin = UnLocode.of(originUnLocode);
+            UnLocode destination = UnLocode.of(destinationUnLocode);
 
             // we create new Cargo object
 

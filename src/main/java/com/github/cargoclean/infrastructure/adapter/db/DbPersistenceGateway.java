@@ -18,8 +18,6 @@ package com.github.cargoclean.infrastructure.adapter.db;
  */
 
 import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -27,8 +25,6 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +40,9 @@ import java.util.stream.StreamSupport;
  * repository for each aggregate root. And it relies on MapStruct mapper to map between
  * DB entities and models.
  * <p>
- * This is a classical "Repository pattern" implementation. We have a greater control
- * over the mapping between database rows and domain entities than if we were using
- * an ORM (Hibernate).
+ * This is a classical "Repository pattern" implementation. We have a full control
+ * over the mapping between database rows and domain entities, but since we are not
+ * using Hibernate, we load (eagerly) all relations for each aggregate.
  *
  * @see DbEntityMapper
  */
@@ -56,6 +52,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
+
     private final DbEntityMapper dbMapper;
 
     @Override
@@ -75,17 +72,15 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             return toStream(locationRepository.findAll())
                     .map(dbMapper::convert).toList();
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot retrieve all locations", e);
         }
     }
 
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
-        try {
-            return dbMapper.convert(locationRepository.findByUnlocode(unLocode.getCode()));
-        } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
-        }
+        return dbMapper.convert(locationRepository.findById(unLocode.getCode())
+                .orElseThrow(() -> new PersistenceOperationError("Cannot load location with UnLocode: <%s>"
+                        .formatted(unLocode))));
     }
 
     @Override
@@ -100,46 +95,24 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             // convert and load relations
             return obtainCargoByTrackingId(cargoToSave.getTrackingId());
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot save cargo with tracking ID: <%s>"
+                    .formatted(cargoToSave.getTrackingId()), e);
         }
 
     }
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        return convertAndLoadRelations(cargoRepository.findByTrackingId(trackingId.getId())
+        CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId())
                 .orElseThrow(() -> new PersistenceOperationError("Cannot find Cargo with tracking ID: <%s>"
-                        .formatted(trackingId))));
+                        .formatted(trackingId)));
+        return dbMapper.convert(cargoDbEntity);
 
     }
 
-    /*
-        This is where we have to implement (eager) loading of the relations
-        ourselves, since we are not using ORM.
-     */
-
-    private Cargo convertAndLoadRelations(CargoDbEntity cargoDbEntity) {
-        final Cargo partialCargo = dbMapper.convert(cargoDbEntity);
-        final Location origin = dbMapper.convert(locationRepository.findById(cargoDbEntity.getOrigin()).orElseThrow());
-        final Delivery delivery = convertAndLoadRelations(cargoDbEntity.getDelivery());
-        final RouteSpecification routeSpec = convertAndLoadRelations(cargoDbEntity.getRouteSpecification());
-        return partialCargo.withOrigin(origin)
-                .withDelivery(delivery)
-                .withRouteSpecification(routeSpec);
-    }
-
-    private Delivery convertAndLoadRelations(DeliveryDbEntity deliveryDbEntity) {
-        return dbMapper.convert(deliveryDbEntity);
-    }
-
-    private RouteSpecification convertAndLoadRelations(RouteSpecificationDbEntity specDbEntity) {
-        RouteSpecification partialRouteSpec = dbMapper.convert(specDbEntity);
-        final Location origin = dbMapper.convert(locationRepository
-                .findById(specDbEntity.getOrigin()).orElseThrow());
-        final Location destination = dbMapper.convert(locationRepository
-                .findById(specDbEntity.getDestination()).orElseThrow());
-        return partialRouteSpec.withOrigin(origin)
-                .withDestination(destination);
+    @Override
+    public void deleteCargo(TrackingId trackingId) {
+        cargoRepository.deleteById(trackingId.getId());
     }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {

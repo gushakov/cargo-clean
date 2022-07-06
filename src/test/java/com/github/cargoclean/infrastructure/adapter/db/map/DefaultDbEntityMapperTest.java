@@ -1,10 +1,11 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static com.github.cargoclean.core.model.MockModels.localInstant;
+import static com.github.cargoclean.core.model.MockModels.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /*
@@ -36,14 +37,13 @@ public class DefaultDbEntityMapperTest {
         assertThat(mapper).isNotNull();
 
         final LocationDbEntity dbEntity = LocationDbEntity.builder()
-                .id(1)
                 .unlocode("JNTKO")
                 .name("Tokyo")
                 .build();
 
         final Location location = mapper.convert(dbEntity);
 
-        Location example = MockModels.location("JNTKO");
+        Location example = location("JNTKO");
         assertThat(location).isEqualTo(example);
         assertThat(location.getName()).isEqualTo(example.getName());
     }
@@ -79,17 +79,13 @@ public class DefaultDbEntityMapperTest {
     @Test
     void should_map_cargo_model_to_db_entity() {
 
-        final Cargo cargo = MockModels.cargo("75FC0BD4");
+        final Cargo cargo = cargo("75FC0BD4");
 
         final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
 
         assertThat(cargoDbEntity.getTrackingId())
                 .as("Cargo tracking ID")
                 .isEqualTo("75FC0BD4");
-
-        assertThat(cargoDbEntity.getOrigin())
-                .as("Cargo origin location")
-                .isEqualTo(cargo.getOrigin().getId());
 
         assertThat(cargoDbEntity.getDelivery().getTransportStatus())
                 .as("Delivery, transport status")
@@ -100,8 +96,29 @@ public class DefaultDbEntityMapperTest {
                 .extracting(RouteSpecificationDbEntity::getOrigin,
                         RouteSpecificationDbEntity::getDestination,
                         RouteSpecificationDbEntity::getArrivalDeadline)
-                .containsExactly(3, 13, localInstant("24-08-2022"));
+                .containsExactly("USDAL", "AUMEL", localInstant("24-08-2022"));
 
     }
 
+    @Test
+    void should_map_cargo_db_entity_to_model() {
+        CargoDbEntity cargoDbEntity = CargoDbEntity.builder()
+                .trackingId("ABCDEF12")
+                .origin("USDAL")
+                .delivery(DeliveryDbEntity.builder()
+                        .transportStatus(TransportStatus.IN_PORT.name())
+                        .build())
+                .routeSpecification(RouteSpecificationDbEntity.builder()
+                        .origin("USDAL")
+                        .destination("AUMEL")
+                        .arrivalDeadline(localInstant("10-10-2022"))
+                        .build())
+                .build();
+
+        Cargo cargo = mapper.convert(cargoDbEntity);
+
+        assertThat(cargo.getTrackingId()).isEqualTo(TrackingId.of("ABCDEF12"));
+        assertThat(cargo.getOrigin()).isEqualTo(UnLocode.of("USDAL"));
+
+    }
 }

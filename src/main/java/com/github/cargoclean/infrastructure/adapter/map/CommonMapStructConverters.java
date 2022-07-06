@@ -2,7 +2,6 @@ package com.github.cargoclean.infrastructure.adapter.map;
 
 import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import org.mapstruct.Mapper;
 
@@ -35,10 +34,6 @@ public class CommonMapStructConverters {
         return TrackingId.builder()
                 .id(id)
                 .build();
-    }
-
-    public Integer mapLocationToId(Location location) {
-        return location.getId();
     }
 
     public Instant convertZonedDateTimeToInstant(ZonedDateTime dateTime) {

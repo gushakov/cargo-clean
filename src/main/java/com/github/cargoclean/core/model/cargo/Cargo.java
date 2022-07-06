@@ -11,11 +11,18 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
-import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+
+/*
+    References:
+    ----------
+
+    1.  Spring Data entity state detection strategy: https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#is-new-state-detection
+ */
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Cargo".
@@ -28,19 +35,12 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Cargo {
 
-    /*
-        Cargo's ID can be null for newly created Cargo objects. And should never be
-        null for the instances loaded and mapped from the database.
-     */
-    @EqualsAndHashCode.Include
-    Integer id;
-
     @NotNull
     @EqualsAndHashCode.Include
     TrackingId trackingId;
 
     @NotNull
-    Location origin;
+    UnLocode origin;
 
     @NotNull
     Delivery delivery;
@@ -48,11 +48,18 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
-    public Cargo withNullId() {
-        return newCargo().id(null).build();
+    /**
+     * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
+     * which will be used by Spring Data JDBC to determine the state (new, existing) of
+     * the persistent entity.
+     */
+    Integer version;
+
+    public boolean exists() {
+        return version != null;
     }
 
-    public Cargo withOrigin(Location origin) {
+    public Cargo withOrigin(UnLocode origin) {
         return newCargo().origin(origin).build();
     }
 
@@ -65,12 +72,13 @@ public class Cargo {
     }
 
     private CargoBuilder newCargo() {
-        return builder()
-                .id(id)
+
+        return Cargo.builder()
                 .trackingId(trackingId)
                 .origin(origin)
                 .delivery(delivery)
-                .routeSpecification(routeSpecification);
+                .routeSpecification(routeSpecification)
+                .version(version);
     }
 
     @Override

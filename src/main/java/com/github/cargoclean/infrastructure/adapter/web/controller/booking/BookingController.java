@@ -37,7 +37,7 @@ public class BookingController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/book")
     @ResponseBody
-    public void book(@ModelAttribute BookingForm bookingForm){
+    public void book(@ModelAttribute BookingForm bookingForm) {
 
         BookingInputPort useCase = appContext.getBean(BookingInputPort.class);
         useCase.bookCargo(bookingForm.getOrigin(), bookingForm.getDestination(), bookingForm.getDeliveryDeadline());

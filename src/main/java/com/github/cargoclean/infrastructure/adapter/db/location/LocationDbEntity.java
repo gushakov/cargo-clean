@@ -15,9 +15,6 @@ import org.springframework.data.relational.core.mapping.Table;
 public class LocationDbEntity {
 
     @Id
-    @Column("id")
-    private Integer id;
-
     @Column("unlocode")
     private String unlocode;
 

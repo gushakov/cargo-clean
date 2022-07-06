@@ -2,7 +2,7 @@ package com.github.cargoclean.core.validator;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.InvalidDestinationSpecificationError;
-import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -56,11 +56,10 @@ public class BeanValidator implements Validator {
 
         // cargo origin and destination locations should be different
 
-        Location destination = cargo.getRouteSpecification().getDestination();
+        UnLocode destination = cargo.getRouteSpecification().getDestination();
         if (cargo.getOrigin().equals(destination)) {
             throw new InvalidDestinationSpecificationError(cargo.getTrackingId(),
-                    cargo.getOrigin().getUnLocode(),
-                    destination.getUnLocode());
+                    cargo.getOrigin(), destination);
         }
 
         // We can do some more validation here. We can check, for example,
