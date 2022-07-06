@@ -27,10 +27,7 @@ import com.github.cargoclean.core.model.voyage.Voyage;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.*;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.voyage.VoyageDbEntity;
@@ -103,6 +100,12 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
             // save cargo
             cargoRepository.save(cargoDbEntity);
+
+            // save itinerary
+            if (cargoToSave.getItinerary() != null){
+                List<LegDbEntity> legDbEntities = dbMapper.convertItinerary(cargoToSave);
+
+            }
 
             // convert and load relations
             return obtainCargoByTrackingId(cargoToSave.getTrackingId());

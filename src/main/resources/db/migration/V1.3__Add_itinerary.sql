@@ -18,6 +18,6 @@ CREATE TABLE public.leg
     leg_index            int NULL,
     CONSTRAINT leg_pk PRIMARY KEY (id),
     CONSTRAINT leg_load_location_fk FOREIGN KEY (load_location_id) REFERENCES public."location" (id),
-    CONSTRAINT leg_itinerary_fk FOREIGN KEY (cargo_id) REFERENCES public.cargo (id),
+    CONSTRAINT leg_itinerary_fk FOREIGN KEY (cargo_id) REFERENCES public.cargo(id) ON DELETE CASCADE,
     CONSTRAINT leg_unload_location_fk FOREIGN KEY (unload_location_id) REFERENCES public."location" (id)
 );

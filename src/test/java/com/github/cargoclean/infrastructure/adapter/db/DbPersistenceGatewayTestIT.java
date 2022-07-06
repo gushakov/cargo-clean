@@ -1,9 +1,9 @@
 package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.CargoCleanApplication;
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.Itinerary;
+import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.Voyage;
@@ -70,6 +70,20 @@ public class DbPersistenceGatewayTestIT {
                 .extracting(Cargo::getTrackingId,
                         Cargo::getOrigin)
                 .containsExactly(cargoToSave.getTrackingId(), cargoToSave.getOrigin());
+    }
+
+    @Test
+    void should_save_cargo_with_itinerary() {
+        Cargo cargo = cargo("8E062F47");
+        Cargo cargoToSave = cargo.withNullId()
+                .withItinerary(Itinerary.builder()
+                                .legs(cargo.getItinerary().getLegs().stream()
+                                        .map(Leg::withNullId)
+                                        .toList())
+                                .build());
+        Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
+        assertThat(savedCargo.getId()).isGreaterThan(0);
+
     }
 
     @Test

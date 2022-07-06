@@ -69,4 +69,8 @@ public class Leg {
     public Leg withLoadTime(ZonedDateTime loadTime) {
         return newLeg().loadTime(loadTime).build();
     }
+
+    public Leg withNullId() {
+        return newLeg().id(null).build();
+    }
 }

@@ -74,7 +74,7 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     @Mapping(target = "unloadLocationId", source = "unloadLocation.id")
     @Mapping(target = "loadLocationId", source = "loadLocation.id")
-    @Mapping(target = "voyageId", source = "voyage.id")
+    @Mapping(target = "voyageId", ignore = true)
     @Mapping(target = "legIndex", ignore = true)
     @Mapping(target = "cargoId", ignore = true)
     abstract LegDbEntity map(Leg leg);
