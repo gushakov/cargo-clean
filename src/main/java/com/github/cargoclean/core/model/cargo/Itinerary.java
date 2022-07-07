@@ -34,6 +34,13 @@ public class Itinerary {
     @Builder
     public Itinerary(List<Leg> legs) {
         this.legs = List.copyOf(Optional.ofNullable(legs).orElse(List.of()));
+    }
 
+    public Leg first(){
+       return legs.stream().findFirst().orElse(null);
+    }
+
+    public Leg last(){
+        return legs.stream().skip(legs.size()-1).findFirst().orElse(null);
     }
 }

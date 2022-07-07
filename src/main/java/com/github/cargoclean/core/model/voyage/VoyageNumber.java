@@ -33,4 +33,8 @@ public class VoyageNumber {
                 .build();
     }
 
+    @Override
+    public String toString() {
+        return number;
+    }
 }

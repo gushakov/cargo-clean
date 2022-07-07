@@ -10,28 +10,38 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
  */
 
 
-import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Itinerary;
+import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.infrastructure.adapter.externalrouting.map.DefaultTransitPathMapperImpl;
+import com.github.cargoclean.infrastructure.adapter.externalrouting.map.TransitPathMapper;
+import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.internal.GraphDAOStub;
 import com.pathfinder.internal.GraphTraversalServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Code copied and modified from original "se.citerus.dddsample.infrastructure.routing.ExternalRoutingServiceTest".
  */
+@SpringJUnitConfig(classes = {DefaultTransitPathMapperImpl.class, CommonMapStructConverters.class})
 public class ExternalRoutingServiceTest {
 
+    @Autowired
+    private TransitPathMapper pathMapper;
+
     @Test
-    void should_find_shortest_path_using_external_graph_traversal_service() {
+    void should_find_itineries_using_external_graph_traversal_service() {
 
         GraphTraversalService graphTraversalService = new GraphTraversalServiceImpl(new GraphDAOStub() {
             @Override
@@ -46,7 +56,7 @@ public class ExternalRoutingServiceTest {
             }
         });
 
-        ExternalRoutingService externalRoutingService = new ExternalRoutingService(graphTraversalService);
+        ExternalRoutingService externalRoutingService = new ExternalRoutingService(graphTraversalService, pathMapper);
 
         List<Itinerary> itineraries = externalRoutingService.fetchRoutesForSpecification(RouteSpecification.builder()
                 .origin(UnLocode.of("JNTKO"))
@@ -54,6 +64,11 @@ public class ExternalRoutingServiceTest {
                 .arrivalDeadline(MockModels.now().plusDays(25))
                 .build());
 
-// TODO: continue
+        assertThat(itineraries)
+                .extracting(Itinerary::first)
+                .extracting(Leg::getLoadLocation)
+                .extracting(UnLocode::getCode)
+                .containsOnly("JNTKO");
+
     }
 }

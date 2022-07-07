@@ -3,6 +3,7 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting.map;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
+import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 import com.pathfinder.api.TransitEdge;
 import com.pathfinder.api.TransitPath;
 import org.mapstruct.Mapper;
@@ -26,4 +27,9 @@ public abstract class DefaultTransitPathMapper implements TransitPathMapper {
     @Mapping(target = "legs", source = "transitEdges")
     abstract Itinerary map(TransitPath transitPath);
 
+    @IgnoreForMapping
+    @Override
+    public Itinerary convert(TransitPath transitPath) {
+        return map(transitPath);
+    }
 }

@@ -13,6 +13,7 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
+import com.github.cargoclean.infrastructure.adapter.externalrouting.map.TransitPathMapper;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.api.TransitPath;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +29,18 @@ public class ExternalRoutingService implements RoutingServiceOutputPort {
 
     private final GraphTraversalService graphTraversalService;
 
+    private final TransitPathMapper pathMapper;
+
     @Override
     public List<Itinerary> fetchRoutesForSpecification(RouteSpecification routeSpecification) {
 
         // seems like the deadline in the specifications is not really used
-        // by the current implementation of GraphTraversalService
+        // by the original implementation of GraphTraversalService
 
         List<TransitPath> transitPaths = graphTraversalService.findShortestPath(routeSpecification.getOrigin().getCode(),
                 routeSpecification.getDestination().getCode(),
                 new Properties());
 
-// TODO: continue
-
-        return null;
+        return pathMapper.convert(transitPaths);
     }
 }
