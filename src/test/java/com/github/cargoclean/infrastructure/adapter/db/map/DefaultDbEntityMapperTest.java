@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
@@ -148,13 +149,14 @@ public class DefaultDbEntityMapperTest {
 
         assertThat(cargoDbEntity.getLegs())
                 .extracting(LegDbEntity::getCargoTrackingId,
+                        LegDbEntity::getVoyageNumber,
                         LegDbEntity::getLoadLocation,
                         LegDbEntity::getUnloadLocation,
                         LegDbEntity::getLoadTime,
                         LegDbEntity::getUnloadTime)
-                .containsExactly(tuple("8E062F47", "USDAL", "AUMEL",
+                .containsExactly(tuple("8E062F47", "100S", "USDAL", "AUMEL",
                                 localInstant("05-07-2022"), localInstant("23-07-2022")),
-                        tuple("8E062F47", "AUMEL", "JNTKO",
+                        tuple("8E062F47", "200S", "AUMEL", "JNTKO",
                                 localInstant("25-07-2022"), localInstant("05-08-2022")));
     }
 
@@ -173,6 +175,7 @@ public class DefaultDbEntityMapperTest {
                         .build())
                 .legs(List.of(LegDbEntity.builder()
                         .cargoTrackingId("8E062F47")
+                                .voyageNumber("100S")
                         .loadLocation("USDAL")
                         .unloadLocation("AUMEL")
                         .loadTime(localInstant("05-07-2022"))
@@ -185,11 +188,13 @@ public class DefaultDbEntityMapperTest {
         assertThat(partialCargo.getItinerary().getLegs()).isNotNull();
         assertThat(partialCargo.getItinerary().getLegs())
                 .extracting(Leg::getCargoTrackingId,
+                        Leg::getVoyageNumber,
                         Leg::getLoadLocation,
                         Leg::getUnloadLocation,
                         Leg::getLoadTime,
                         Leg::getUnloadTime)
                 .containsExactly(tuple(TrackingId.of("8E062F47"),
+                        VoyageNumber.of("100S"),
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
                         localDate("05-07-2022"), localDate("05-08-2022")));
     }

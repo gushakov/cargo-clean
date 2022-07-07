@@ -15,6 +15,9 @@ public class LegDbEntity {
     @Column("cargo_tracking_id")
     private String cargoTrackingId;
 
+    @Column("voyage_number")
+    private String voyageNumber;
+
     @Column("load_location")
     private String loadLocation;
 

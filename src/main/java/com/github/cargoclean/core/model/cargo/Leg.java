@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;
 import lombok.Value;
 
@@ -24,6 +25,8 @@ import java.time.ZonedDateTime;
 public class Leg {
 
     TrackingId cargoTrackingId;
+
+    VoyageNumber voyageNumber;
 
     UnLocode loadLocation;
     UnLocode unloadLocation;

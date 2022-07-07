@@ -3,6 +3,7 @@ package com.github.cargoclean.core.model;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -133,6 +134,7 @@ public class MockModels {
             1,
             Leg.builder()
                     .cargoTrackingId(TrackingId.of("8E062F47"))
+                    .voyageNumber(VoyageNumber.of("100S"))
                     .loadLocation(UnLocode.of("USDAL"))
                     .loadTime(localDate("05-07-2022"))
                     .unloadLocation(UnLocode.of("AUMEL"))
@@ -141,6 +143,7 @@ public class MockModels {
             2,
             Leg.builder()
                     .cargoTrackingId(TrackingId.of("8E062F47"))
+                    .voyageNumber(VoyageNumber.of("200S"))
                     .loadLocation(UnLocode.of("AUMEL"))
                     .loadTime(localDate("25-07-2022"))
                     .unloadLocation(UnLocode.of("JNTKO"))
