@@ -8,6 +8,7 @@ import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPre
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @see AbstractWebPresenter
  */
 @Component
-@Scope(scopeName = "request")
+@Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
 public class BookingPresenter extends AbstractWebPresenter implements BookingPresenterOutputPort {
     public BookingPresenter(LocalDispatcherServlet dispatcher, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         super(dispatcher, httpRequest, httpResponse);

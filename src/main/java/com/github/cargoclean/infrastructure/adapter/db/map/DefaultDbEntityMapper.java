@@ -46,6 +46,11 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
+    /*
+        Notice how just map the information from the query result DTO
+        to Location model object. That's way we avoid a lookup in the DB
+        for each "unlocode".
+     */
     @Mapping(target = "numberOfArrivals", source = "arrivals")
     @Mapping(target = "city.unlocode", source = "unlocode")
     @Mapping(target = "city.name", source = "city")
@@ -95,7 +100,7 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     @Override
     @IgnoreForMapping
-    public ExpectedArrivals convert(ExpectedArrivalsQueryRow arrivalsQueryRow){
+    public ExpectedArrivals convert(ExpectedArrivalsQueryRow arrivalsQueryRow) {
         return map(arrivalsQueryRow);
     }
 }
