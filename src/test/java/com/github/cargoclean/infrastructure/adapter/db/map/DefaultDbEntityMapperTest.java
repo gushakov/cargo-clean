@@ -1,14 +1,12 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
@@ -17,8 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.List;
+
 import static com.github.cargoclean.core.model.MockModels.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 /*
     References:
@@ -137,5 +138,59 @@ public class DefaultDbEntityMapperTest {
         assertThat(expectedArrivals)
                 .extracting(ExpectedArrivals::getCity, ExpectedArrivals::getNumberOfArrivals)
                 .containsExactly(location("AUMEL"), 2);
+    }
+
+    @Test
+    void should_map_itinerary_to_list_of_legs() {
+        Cargo cargo = cargo("8E062F47").withItinerary(itinerary(1, 2));
+
+        CargoDbEntity cargoDbEntity = mapper.convert(cargo);
+
+        assertThat(cargoDbEntity.getLegs())
+                .extracting(LegDbEntity::getCargoTrackingId,
+                        LegDbEntity::getLoadLocation,
+                        LegDbEntity::getUnloadLocation,
+                        LegDbEntity::getLoadTime,
+                        LegDbEntity::getUnloadTime)
+                .containsExactly(tuple("8E062F47", "USDAL", "AUMEL",
+                                localInstant("05-07-2022"), localInstant("23-07-2022")),
+                        tuple("8E062F47", "AUMEL", "JNTKO",
+                                localInstant("25-07-2022"), localInstant("05-08-2022")));
+    }
+
+    @Test
+    void should_map_list_of_legs_to_itinerary() {
+        CargoDbEntity partialCargoDbEntity = CargoDbEntity.builder()
+                .trackingId("8E062F47")
+                .origin("USDAL")
+                .delivery(DeliveryDbEntity.builder()
+                        .transportStatus(TransportStatus.ONBOARD_CARRIER.name())
+                        .build())
+                .routeSpecification(RouteSpecificationDbEntity.builder()
+                        .origin("USDAL")
+                        .destination("AUMEL")
+                        .arrivalDeadline(localInstant("10-08-2022"))
+                        .build())
+                .legs(List.of(LegDbEntity.builder()
+                        .cargoTrackingId("8E062F47")
+                        .loadLocation("USDAL")
+                        .unloadLocation("AUMEL")
+                        .loadTime(localInstant("05-07-2022"))
+                        .unloadTime(localInstant("05-08-2022"))
+                        .build()))
+                .build();
+
+        Cargo partialCargo = mapper.convert(partialCargoDbEntity);
+        assertThat(partialCargo.getItinerary()).isNotNull();
+        assertThat(partialCargo.getItinerary().getLegs()).isNotNull();
+        assertThat(partialCargo.getItinerary().getLegs())
+                .extracting(Leg::getCargoTrackingId,
+                        Leg::getLoadLocation,
+                        Leg::getUnloadLocation,
+                        Leg::getLoadTime,
+                        Leg::getUnloadTime)
+                .containsExactly(tuple(TrackingId.of("8E062F47"),
+                        UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
+                        localDate("05-07-2022"), localDate("05-08-2022")));
     }
 }

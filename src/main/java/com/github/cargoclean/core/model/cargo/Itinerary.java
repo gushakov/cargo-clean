@@ -25,6 +25,12 @@ public class Itinerary {
     @Builder.Default
     List<Leg> legs;
 
+    public static Itinerary of(List<Leg> legs){
+        return Itinerary.builder()
+                .legs(legs)
+                .build();
+    }
+
     @Builder
     public Itinerary(List<Leg> legs) {
         this.legs = List.copyOf(Optional.ofNullable(legs).orElse(List.of()));

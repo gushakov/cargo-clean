@@ -2,16 +2,19 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -42,8 +45,14 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract RouteSpecificationDbEntity map(RouteSpecification routeSpecification);
 
+    abstract Leg map(LegDbEntity legDbEntity);
+
+    abstract LegDbEntity map(Leg leg);
+
+    @Mapping(target = "legs", source = "itinerary.legs")
     abstract CargoDbEntity map(Cargo cargo);
 
+    @Mapping(target = "itinerary.legs", source = "legs")
     abstract Cargo map(CargoDbEntity cargoDbEntity);
 
     /*

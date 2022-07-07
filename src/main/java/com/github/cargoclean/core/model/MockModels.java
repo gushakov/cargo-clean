@@ -132,6 +132,7 @@ public class MockModels {
     private static final Map<Integer, Leg> allLegs = Map.of(
             1,
             Leg.builder()
+                    .cargoTrackingId(TrackingId.of("8E062F47"))
                     .loadLocation(UnLocode.of("USDAL"))
                     .loadTime(localDate("05-07-2022"))
                     .unloadLocation(UnLocode.of("AUMEL"))
@@ -139,6 +140,7 @@ public class MockModels {
                     .build(),
             2,
             Leg.builder()
+                    .cargoTrackingId(TrackingId.of("8E062F47"))
                     .loadLocation(UnLocode.of("AUMEL"))
                     .loadTime(localDate("25-07-2022"))
                     .unloadLocation(UnLocode.of("JNTKO"))

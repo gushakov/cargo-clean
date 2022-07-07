@@ -27,7 +27,4 @@ public class LegDbEntity {
     @Column("unload_time")
     private Instant unloadTime;
 
-    @Column("leg_index")
-    private Integer index;
-
 }
