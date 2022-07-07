@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.cargoclean.core.model.MockModels.cargo;
+import static com.github.cargoclean.core.model.MockModels.itinerary;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -106,5 +107,14 @@ public class DbPersistenceGatewayTestIT {
                 .map(ExpectedArrivals::getNumberOfArrivals)
                 .mapToInt(Integer::intValue)
                 .sum()).isGreaterThan(0);
+    }
+
+    @Test
+    void should_persist_cargo_with_itinerary() {
+        dbGateway.deleteCargo(TrackingId.of("8E062F47"));
+        Cargo cargo = cargo("8E062F47").withItinerary(itinerary(1, 2));
+        Cargo savedCargo = dbGateway.saveCargo(cargo);
+        assertThat(savedCargo.getItinerary().getLegs())
+                .hasSize(2);
     }
 }
