@@ -6,10 +6,12 @@ import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,5 +122,20 @@ public class DefaultDbEntityMapperTest {
         assertThat(cargo.getTrackingId()).isEqualTo(TrackingId.of("ABCDEF12"));
         assertThat(cargo.getOrigin()).isEqualTo(UnLocode.of("USDAL"));
 
+    }
+
+    @Test
+    void should_map_expected_arrivals_query_row_to_model() {
+        ExpectedArrivalsQueryRow queryRow = ExpectedArrivalsQueryRow.builder()
+                .unlocode("AUMEL")
+                .city("Melbourne")
+                .arrivals(2)
+                .build();
+
+        ExpectedArrivals expectedArrivals = mapper.convert(queryRow);
+
+        assertThat(expectedArrivals)
+                .extracting(ExpectedArrivals::getCity, ExpectedArrivals::getNumberOfArrivals)
+                .containsExactly(location("AUMEL"), 2);
     }
 }

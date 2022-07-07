@@ -7,6 +7,7 @@ import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -23,11 +24,20 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*
-    These are integrations tests intended to be run from the IDE to
-    verify the workings of the persistence gateway with the running
-    Postgres database (using local Docker instance).
+    References:
+    ----------
 
-    _IMPORTANT_: some of these tests will attempt to modify the database.
+    1.  Summing integers with streams: https://www.baeldung.com/java-stream-sum
+ */
+
+/*
+    Notes:
+    -----
+
+    1.  These are integrations tests intended to be run from the IDE to
+        verify the workings of the persistence gateway with the running
+        Postgres database (using local Docker instance).
+        IMPORTANT: some of these tests will attempt to modify the database.
  */
 
 @SpringBootTest(classes = {CargoCleanApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -82,10 +92,19 @@ public class DbPersistenceGatewayTestIT {
         final Cargo cargoToSave = cargo(trackingId.getId());
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
         final Cargo updatedCargo = savedCargo.withDelivery(Delivery.builder()
-                        .transportStatus(TransportStatus.CLAIMED)
+                .transportStatus(TransportStatus.CLAIMED)
                 .build());
         Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
         assertThat(savedAgainCargo.getDelivery().getTransportStatus())
                 .isEqualTo(TransportStatus.CLAIMED);
+    }
+
+    @Test
+    void should_query_for_number_of_arrivals_by_destination_city() {
+        List<ExpectedArrivals> expectedArrivals = dbGateway.queryForExpectedArrivals();
+        assertThat(expectedArrivals.stream()
+                .map(ExpectedArrivals::getNumberOfArrivals)
+                .mapToInt(Integer::intValue)
+                .sum()).isGreaterThan(0);
     }
 }

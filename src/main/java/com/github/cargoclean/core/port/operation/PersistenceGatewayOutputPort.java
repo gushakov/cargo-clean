@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.report.ExpectedArrivals;
 
 import java.util.List;
 
@@ -48,4 +49,6 @@ public interface PersistenceGatewayOutputPort {
      * @param trackingId tracking ID of the cargo
      */
     void deleteCargo(TrackingId trackingId);
+
+    List<ExpectedArrivals> queryForExpectedArrivals();
 }

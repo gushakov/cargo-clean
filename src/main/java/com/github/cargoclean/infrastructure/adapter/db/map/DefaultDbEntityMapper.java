@@ -4,10 +4,12 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 import org.mapstruct.Mapper;
@@ -43,6 +45,11 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     abstract CargoDbEntity map(Cargo cargo);
 
     abstract Cargo map(CargoDbEntity cargoDbEntity);
+
+    @Mapping(target = "numberOfArrivals", source = "arrivals")
+    @Mapping(target = "city.unlocode", source = "unlocode")
+    @Mapping(target = "city.name", source = "city")
+    abstract ExpectedArrivals map(ExpectedArrivalsQueryRow arrivalsQueryRow);
 
     @IgnoreForMapping
     @Override
@@ -86,4 +93,9 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
         return map(routeSpecification);
     }
 
+    @Override
+    @IgnoreForMapping
+    public ExpectedArrivals convert(ExpectedArrivalsQueryRow arrivalsQueryRow){
+        return map(arrivalsQueryRow);
+    }
 }

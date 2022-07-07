@@ -21,13 +21,17 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
+import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,6 +56,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
+
+    private final NamedParameterJdbcOperations queryTemplate;
 
     private final DbEntityMapper dbMapper;
 
@@ -113,6 +119,15 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     @Override
     public void deleteCargo(TrackingId trackingId) {
         cargoRepository.deleteById(trackingId.getId());
+    }
+
+    @Override
+    public List<ExpectedArrivals> queryForExpectedArrivals() {
+
+        List<ExpectedArrivalsQueryRow> rows = queryTemplate.query(ExpectedArrivalsQueryRow.SQL,
+                new BeanPropertyRowMapper<>(ExpectedArrivalsQueryRow.class));
+
+        return rows.stream().map(dbMapper::convert).toList();
     }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {
