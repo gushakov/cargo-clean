@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public class MockModels {
 
-    private static Map<String, Location> allLocations() {
+    public static Map<String, Location> allLocations() {
         return Map.of(
                 "JNTKO",
                 Location.builder()
@@ -76,7 +76,7 @@ public class MockModels {
                 .orElseThrow();
     }
 
-    private static Map<String, Cargo> allCargos() {
+    public static Map<String, Cargo> allCargos() {
         return Map.of(
 
                 "75FC0BD4",
@@ -129,7 +129,7 @@ public class MockModels {
         );
     }
 
-    private static final Map<Integer, Leg> allLegs = Map.of(
+    public static final Map<Integer, Leg> allLegs = Map.of(
             1,
             Leg.builder()
                     .cargoTrackingId(TrackingId.of("8E062F47"))
@@ -161,6 +161,10 @@ public class MockModels {
 
     public static Instant localInstant(String date) {
         return localDate(date).toInstant();
+    }
+
+    public static ZonedDateTime now(){
+        return ZonedDateTime.now(Constants.DEFAULT_ZONE_ID);
     }
 
     public static Cargo cargo(String trackingId) {
