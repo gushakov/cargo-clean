@@ -41,6 +41,11 @@ public class ExternalRoutingService implements RoutingServiceOutputPort {
                 routeSpecification.getDestination().getCode(),
                 new Properties());
 
-        return pathMapper.convert(transitPaths);
+        // fetch transit paths, convert them to itineraries and
+        // filter only the ones that satisfy route specification
+
+        return pathMapper.convert(transitPaths).stream()
+                .filter(routeSpecification::isSatisfiedBy)
+                .toList();
     }
 }

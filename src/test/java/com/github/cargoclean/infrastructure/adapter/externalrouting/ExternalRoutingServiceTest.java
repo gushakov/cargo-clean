@@ -12,7 +12,6 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Itinerary;
-import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -26,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,17 +58,15 @@ public class ExternalRoutingServiceTest {
 
         ExternalRoutingService externalRoutingService = new ExternalRoutingService(graphTraversalService, pathMapper);
 
-        List<Itinerary> itineraries = externalRoutingService.fetchRoutesForSpecification(RouteSpecification.builder()
+        ZonedDateTime arrivalDeadline = MockModels.now().plusDays(90);
+        RouteSpecification routeSpecification = RouteSpecification.builder()
                 .origin(UnLocode.of("JNTKO"))
                 .destination(UnLocode.of("USDAL"))
-                .arrivalDeadline(MockModels.now().plusDays(25))
-                .build());
+                .arrivalDeadline(arrivalDeadline)
+                .build();
+        List<Itinerary> itineraries = externalRoutingService.fetchRoutesForSpecification(routeSpecification);
 
-        assertThat(itineraries)
-                .extracting(Itinerary::first)
-                .extracting(Leg::getLoadLocation)
-                .extracting(UnLocode::getCode)
-                .containsOnly("JNTKO");
+        assertThat(itineraries.stream().allMatch(routeSpecification::isSatisfiedBy)).isTrue();
 
     }
 }
