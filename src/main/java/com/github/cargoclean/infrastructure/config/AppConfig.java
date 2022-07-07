@@ -2,14 +2,18 @@ package com.github.cargoclean.infrastructure.config;
 
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.report.ReportInputPort;
+import com.github.cargoclean.core.usecase.report.ReportUseCase;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
 import com.github.cargoclean.core.validator.BeanValidator;
 import com.github.cargoclean.core.validator.Validator;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +56,7 @@ public class AppConfig {
      */
 
     @Bean
-    @Scope("prototype")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
                                                    Validator validator,
                                                    PersistenceGatewayOutputPort gatewayOps) {
@@ -60,11 +64,17 @@ public class AppConfig {
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
                                            Validator validator,
                                            PersistenceGatewayOutputPort gatewayOps) {
         return new RoutingUseCase(presenter, validator, gatewayOps);
     }
 
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public ReportInputPort reportUseCase(ReportPresenterOutputPort presenter,
+                                         PersistenceGatewayOutputPort gatewayOps){
+        return new ReportUseCase(presenter, gatewayOps);
+    }
 }

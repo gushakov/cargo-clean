@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+
+<!--
+
+    References:
+    ==========
+
+    1.  For-each in Thymeleaf: https://www.baeldung.com/thymeleaf-iteration
+    2.  Mozilla Web reference, HTML: https://developer.mozilla.org/en-US/docs/Web/HTML
+
+-->
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+
+    <div th:replace="fragments :: header"></div>
+
+    <!--/*@thymesVar id="expectedArrivals" type="java.util.List<com.github.cargoclean.core.model.report.ExpectedArrivals>"*/-->
+
+    <div class="row-cols-2 mt-3">
+
+        <table>
+            <thead>
+            <tr>
+                <th>City</th>
+                <th>Expected arrivals</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="arrivals: ${expectedArrivals}">
+                <td th:text="${arrivals.city.name}"></td>
+                <td th:text="${arrivals.numberOfArrivals}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<th:block th:replace="fragments :: footer"></th:block>
+
+</body>
+</html>
