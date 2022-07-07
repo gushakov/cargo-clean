@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -128,6 +129,23 @@ public class MockModels {
         );
     }
 
+    private static final Map<Integer, Leg> allLegs = Map.of(
+            1,
+            Leg.builder()
+                    .loadLocation(UnLocode.of("USDAL"))
+                    .loadTime(localDate("05-07-2022"))
+                    .unloadLocation(UnLocode.of("AUMEL"))
+                    .unloadTime(localDate("23-07-2022"))
+                    .build(),
+            2,
+            Leg.builder()
+                    .loadLocation(UnLocode.of("AUMEL"))
+                    .loadTime(localDate("25-07-2022"))
+                    .unloadLocation(UnLocode.of("JNTKO"))
+                    .unloadTime(localDate("05-08-2022"))
+                    .build()
+    );
+
     /**
      * Converts string in format "dd-MM-yyyy" to an instance of {@link ZonedDateTime}
      *
@@ -146,6 +164,16 @@ public class MockModels {
     public static Cargo cargo(String trackingId) {
         return Optional.ofNullable(allCargos().get(trackingId))
                 .orElseThrow();
+    }
+
+    public static Leg leg(Integer id) {
+        return Optional.ofNullable(allLegs.get(id)).orElseThrow();
+    }
+
+    public static Itinerary itinerary(Integer... legs) {
+        return Itinerary.builder()
+                .legs(Arrays.stream(legs).map(MockModels::leg).toList())
+                .build();
     }
 
 

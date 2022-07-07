@@ -48,6 +48,9 @@ public class Cargo {
     @NotNull
     RouteSpecification routeSpecification;
 
+    // itinerary is null before cargo is routed
+    Itinerary itinerary;
+
     /**
      * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
      * which will be used by Spring Data JDBC to determine the state (new, existing) of
@@ -71,6 +74,10 @@ public class Cargo {
         return newCargo().delivery(delivery).build();
     }
 
+    public Cargo withItinerary(Itinerary itinerary) {
+        return newCargo().itinerary(itinerary).build();
+    }
+
     private CargoBuilder newCargo() {
 
         return Cargo.builder()
@@ -78,6 +85,7 @@ public class Cargo {
                 .origin(origin)
                 .delivery(delivery)
                 .routeSpecification(routeSpecification)
+                .itinerary(itinerary)
                 .version(version);
     }
 

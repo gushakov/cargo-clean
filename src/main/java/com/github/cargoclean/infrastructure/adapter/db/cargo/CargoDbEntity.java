@@ -6,7 +6,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.List;
 
 /*
     References:
@@ -32,6 +35,14 @@ public class CargoDbEntity {
 
     @Embedded.Nullable
     private RouteSpecificationDbEntity routeSpecification;
+
+    /**
+     * One-to-many mapping to a list of {@code LegDbEntity} which will be
+     * used to persist cargo's itinerary. We are setting custom column names
+     * for the foreign key and item indexes.
+     */
+    @MappedCollection(idColumn = "cargo_tracking_id", keyColumn = "leg_index")
+    private List<LegDbEntity> legs;
 
     /**
      * Needed by Spring Data JDBC, see {@code Cargo}.
