@@ -17,6 +17,7 @@ import com.github.cargoclean.infrastructure.adapter.externalrouting.map.TransitP
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.api.TransitPath;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Properties;
@@ -25,6 +26,7 @@ import java.util.Properties;
  * Code were copied and modified from original "se.citerus.dddsample.infrastructure.routing.ExternalRoutingService".
  */
 @RequiredArgsConstructor
+@Service
 public class ExternalRoutingService implements RoutingServiceOutputPort {
 
     private final GraphTraversalService graphTraversalService;
