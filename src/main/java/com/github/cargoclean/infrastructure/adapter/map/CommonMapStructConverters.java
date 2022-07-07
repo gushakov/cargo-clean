@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * Common MapStruct converters for model entities, value objects, standard types and primitives.
@@ -51,6 +52,10 @@ public class CommonMapStructConverters {
 
     public ZonedDateTime convertInstantToZonedDateTime(Instant instant) {
         return ZonedDateTime.ofInstant(instant, Constants.DEFAULT_ZONE_ID);
+    }
+
+    public ZonedDateTime convertDateToZonedDateTime(Date date){
+        return convertInstantToZonedDateTime(date.toInstant());
     }
 
 }

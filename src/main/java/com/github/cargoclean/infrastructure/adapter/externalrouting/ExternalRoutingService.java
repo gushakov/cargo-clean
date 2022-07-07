@@ -38,8 +38,7 @@ public class ExternalRoutingService implements RoutingServiceOutputPort {
                 routeSpecification.getDestination().getCode(),
                 new Properties());
 
-        transitPaths.forEach(System.out::println);
-
+// TODO: continue
 
         return null;
     }

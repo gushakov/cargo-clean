@@ -54,7 +54,6 @@ public class ExternalRoutingServiceTest {
                 .arrivalDeadline(MockModels.now().plusDays(25))
                 .build());
 
-        itineraries.forEach(System.out::println);
-
+// TODO: continue
     }
 }
