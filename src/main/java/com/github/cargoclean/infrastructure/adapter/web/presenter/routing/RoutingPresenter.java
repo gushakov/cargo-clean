@@ -48,5 +48,20 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
     @Override
     public void presentCandidateItinerariesForSelection(Cargo cargo, List<Itinerary> itineraries) {
 
+        /*
+            Note: since our domain object ("Itinerary") is immutable, we can
+            reuse them in our Response Model object. Normally, we would create
+            a flat POJO here to pass to the view.
+         */
+
+        ItineraryAssigmentForm itineraryAssigmentForm = ItineraryAssigmentForm.builder()
+                .trackingId(cargo.getTrackingId())
+                .cargoOrigin(cargo.getOrigin())
+                .cargoDestination(cargo.getRouteSpecification().getDestination())
+                .candidateItineraries(List.copyOf(itineraries))
+                .selectedItinerary(null)
+                .build();
+
+        presentModelAndView(Map.of("itineraryAssigmentForm", itineraryAssigmentForm), "select-itinerary");
     }
 }
