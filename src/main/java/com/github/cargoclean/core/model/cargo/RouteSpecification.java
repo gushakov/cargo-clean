@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
+import com.github.cargoclean.core.Specification;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
 import lombok.Value;
@@ -19,11 +20,11 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 /**
- * Modeled after original "se.citerus.dddsample.domain.model.cargo.RouteSpecification".
+ * Code copied and modified from original "se.citerus.dddsample.domain.model.cargo.RouteSpecification".
  */
 @Value
 @Builder
-public class RouteSpecification {
+public class RouteSpecification implements Specification<Itinerary> {
 
     @NotNull
     UnLocode origin;
@@ -49,4 +50,10 @@ public class RouteSpecification {
                 .arrivalDeadline(arrivalDeadline);
     }
 
+    @Override
+    public boolean isSatisfiedBy(Itinerary itinerary) {
+        return origin.equals(itinerary.first().getLoadLocation())
+                && destination.equals(itinerary.last().getUnloadLocation())
+                && arrivalDeadline.isAfter(itinerary.last().getUnloadTime());
+    }
 }

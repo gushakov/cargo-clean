@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+
+<!--
+
+    Notice on COPYRIGHT:
+    ===================
+
+    Some code in this file is based on, copied from, and or modified from
+    the code in the original DDDSample application. Please, see the copyright
+    notice in "README.md" and the copy of the original licence in
+    "original-license.txt", as well.
+-->
+
+<!--
+
+    References:
+    ==========
+
+    1.  Based on the similar Thymeleaf view: "admin/selectItinerary" in the original DDDSample.
+    2.  Thymeleaf, input box binding: https://www.thymeleaf.org/doc/tutorials/2.1/thymeleafspring.html#inputs
+-->
+
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+
+    <div th:replace="fragments :: header"></div>
+
+    <div class="row-cols-1 mt-3">
+
+        <!--/*@thymesVar id="itineraryAssigmentForm" type="com.github.cargoclean.infrastructure.adapter.web.presenter.routing.ItineraryAssigmentForm"*/-->
+
+        <th:block th:object="${itineraryAssigmentForm}">
+
+            <div class="row-cols-1" th:unless="*{candidateRoutes.isEmpty()}">
+                Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
+                <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
+            </div>
+
+            <div class="row-cols-1" th:if="*{candidateRoutes.isEmpty()}">
+                No suitable routes found. Please, specify different arrival deadline.
+            </div>
+
+            <div class="row-cols-2 mt-3" th:each="route : *{candidateRoutes}">
+
+                <table style="border: lightgray 1px solid;">
+                    <thead>
+                    <tr>
+                        <th>Voyage</th>
+                        <th>From</th>
+                        <th>Load on</th>
+                        <th>To</th>
+                        <th>Unload on</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="leg : ${route.legs}">
+                        <td>
+                            <span th:text="${leg.voyageNumber}"/>
+                        </td>
+                        <td>
+                            <span th:text="${leg.from}"/>
+                        </td>
+                        <td>
+                            <span th:text="${#dates.format(leg.loadTime, 'dd-MM-yyyy HH:mm')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${leg.to}"/>
+                        </td>
+                        <td>
+                            <span th:text="${#dates.format(leg.unloadTime, 'dd-MM-yyyy HH:mm')}"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row mt-1">
+                    <div class="col-3">
+                        <form method="post" action="#"
+                              th:action="@{/assignRoute(selectedRouteIndex=${routeStat.index},trackingId=*{trackingId})}">
+                            <button type="submit" class="btn btn-success">Assign this route</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </th:block>
+
+    </div>
+
+</div>
+
+<th:block th:replace="fragments :: footer"></th:block>
+
+</body>
+</html>

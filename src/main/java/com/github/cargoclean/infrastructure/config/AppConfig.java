@@ -1,6 +1,18 @@
 package com.github.cargoclean.infrastructure.config;
 
+/*
+    Notice on COPYRIGHT:
+    -------------------
+
+    Some code in this file is based on, copied from, and or modified from
+    the code in the original DDDSample application. Please, see the copyright
+    notice in "README.md" and the copy of the original licence in
+    "original-license.txt", as well.
+ */
+
+
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
@@ -13,6 +25,9 @@ import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
 import com.github.cargoclean.core.validator.BeanValidator;
 import com.github.cargoclean.core.validator.Validator;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.pathfinder.api.GraphTraversalService;
+import com.pathfinder.internal.GraphDAOStub;
+import com.pathfinder.internal.GraphTraversalServiceImpl;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -21,6 +36,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.DispatcherServlet;
 
+/*
+    Some configuration code copied from original "com.pathfinder.config.PathfinderApplicationContext".
+ */
 @Configuration
 public class AppConfig {
 
@@ -50,6 +68,15 @@ public class AppConfig {
     }
 
     /*
+        Pathfinder service configuration.
+     */
+
+    @Bean
+    public GraphTraversalService graphTraversalService(){
+        return new GraphTraversalServiceImpl(new GraphDAOStub());
+    }
+
+    /*
         Here we specify all the use cases for our application. Notice the prototype scope.
         This way each request processing thread will get its own instance of each use case
         when it is looked up from the application context (in the controller).
@@ -67,8 +94,9 @@ public class AppConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
                                            Validator validator,
-                                           PersistenceGatewayOutputPort gatewayOps) {
-        return new RoutingUseCase(presenter, validator, gatewayOps);
+                                           PersistenceGatewayOutputPort gatewayOps,
+                                           RoutingServiceOutputPort routingServiceOps) {
+        return new RoutingUseCase(presenter, validator, gatewayOps, routingServiceOps);
     }
 
     @Bean
