@@ -2,8 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.controller.routing;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.CandidateRouteDto;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.ItineraryAssigmentForm;
+import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.RouteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -12,9 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 /*
     References:
@@ -65,11 +62,11 @@ public class RoutingController {
 
         // get the selected route by accessing the saved list of candidate routes
         String sessionAttrName = "cargo.%s.candidate.routes".formatted(trackingId.toLowerCase());
-        List<CandidateRouteDto> candidateRoutes = (List<CandidateRouteDto>) session
+        List<RouteDto> candidateRoutes = (List<RouteDto>) session
                 .getAttribute(sessionAttrName);
         session.removeAttribute(sessionAttrName);
 
-        CandidateRouteDto candidateRouteDto = candidateRoutes.get(selectedRouteIndex);
+        RouteDto candidateRouteDto = candidateRoutes.get(selectedRouteIndex);
         useCase.assignRoute(trackingId, candidateRouteDto);
 
     }

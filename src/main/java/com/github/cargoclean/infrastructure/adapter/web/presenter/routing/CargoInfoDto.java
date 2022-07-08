@@ -1,7 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 @Value
@@ -13,4 +12,5 @@ public class CargoInfoDto {
     String destination;
     String arrivalDeadline;
     boolean routed;
+    RouteDto routeDto;
 }

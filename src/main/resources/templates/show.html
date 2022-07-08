@@ -59,7 +59,54 @@
         </div>
 
         <th:block th:if="*{isRouted()}">
-            Cargo routed already
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            This cargo is currently routed.
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table style="border: lightgray 1px solid;">
+                                <thead>
+                                <tr>
+                                    <th>Voyage</th>
+                                    <th>From</th>
+                                    <th>Load on</th>
+                                    <th>To</th>
+                                    <th>Unload on</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="leg : ${cargo.routeDto.legs}">
+                                    <td>
+                                        <span th:text="${leg.voyageNumber}"/>
+                                    </td>
+                                    <td>
+                                        <span th:text="${leg.from}"/>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#dates.format(leg.loadTime, 'dd-MM-yyyy HH:mm')}"/>
+                                    </td>
+                                    <td>
+                                        <span th:text="${leg.to}"/>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#dates.format(leg.unloadTime, 'dd-MM-yyyy HH:mm')}"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
         </th:block>
 
         <th:block th:unless="*{isRouted()}">

@@ -34,9 +34,14 @@
 
         <th:block th:object="${itineraryAssigmentForm}">
 
+            <div class="row-cols-1" th:unless="*{candidateRoutes.isEmpty()}">
+                Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
+                <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
+            </div>
 
-            Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
-            <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
+            <div class="row-cols-1" th:if="*{candidateRoutes.isEmpty()}">
+                No suitable routes found. Please, specify different arrival deadline.
+            </div>
 
             <div class="row-cols-2 mt-3" th:each="route : *{candidateRoutes}">
 
@@ -80,11 +85,7 @@
                 </div>
             </div>
 
-
         </th:block>
-
-
-
 
     </div>
 

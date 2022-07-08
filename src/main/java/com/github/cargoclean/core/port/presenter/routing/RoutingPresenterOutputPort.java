@@ -7,7 +7,7 @@ import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 import java.util.List;
 
 public interface RoutingPresenterOutputPort extends ErrorHandlingPresenterOutputPort {
-    void presentCargoForRouting(Cargo cargo);
+    void presentCargoDetails(Cargo cargo);
 
     void presentCandidateRoutes(Cargo cargo, List<Itinerary> itineraries);
 

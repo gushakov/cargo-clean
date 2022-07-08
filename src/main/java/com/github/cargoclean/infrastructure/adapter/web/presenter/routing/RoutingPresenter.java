@@ -22,7 +22,7 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
     }
 
     @Override
-    public void presentCargoForRouting(Cargo cargo) {
+    public void presentCargoDetails(Cargo cargo) {
 
         /*
             We are creating a "Response Model" (flat POJO) object
@@ -40,6 +40,7 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
                 .arrivalDeadline(cargo.getRouteSpecification().getArrivalDeadline()
                         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .routed(cargo.isRouted())
+                .routeDto(mapItineraryToRouteDto(cargo.getItinerary()))
                 .build();
 
         presentModelAndView(Map.of("cargo", dto), "show");
@@ -49,14 +50,8 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
     @Override
     public void presentCandidateRoutes(Cargo cargo, List<Itinerary> itineraries) {
 
-
-        // construct the Response Model with candidate routes, convert all domain models
-        // to DTOs
-
-        List<CandidateRouteDto> candidateRoutes = itineraries.stream()
-                .map(itinerary -> CandidateRouteDto.builder()
-                        .legs(itinerary.getLegs().stream().map(LegDto::of).toList())
-                        .build()).toList();
+        // construct a Response Model by converting itineraries to RouteDto DTOs
+        List<RouteDto> candidateRoutes = itineraries.stream().map(this::mapItineraryToRouteDto).toList();
 
         // store candidate routes in session so that we can access them later
         storeInSession("cargo.%s.candidate.routes".formatted(cargo.getTrackingId().getId().toLowerCase()), candidateRoutes);
@@ -69,6 +64,17 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
                 .build();
 
         presentModelAndView(Map.of("itineraryAssigmentForm", itineraryAssigmentForm), "select-itinerary");
+    }
+
+    private RouteDto mapItineraryToRouteDto(Itinerary itinerary) {
+
+        if (itinerary == null) {
+            return null;
+        }
+
+        return RouteDto.builder()
+                .legs(itinerary.getLegs().stream().map(LegDto::of).toList())
+                .build();
     }
 
     @Override

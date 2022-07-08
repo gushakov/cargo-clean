@@ -8,7 +8,7 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.validator.Validator;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.CandidateRouteDto;
+import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.RouteDto;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.LegDto;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.RoutingError;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class RoutingUseCase implements RoutingInputPort {
             return;
         }
 
-        presenter.presentCargoForRouting(cargo);
+        presenter.presentCargoDetails(cargo);
 
     }
 
@@ -73,7 +73,7 @@ public class RoutingUseCase implements RoutingInputPort {
     }
 
     @Override
-    public void assignRoute(String trackingId, CandidateRouteDto selectedRoute) {
+    public void assignRoute(String trackingId, RouteDto selectedRoute) {
 
         try {
 

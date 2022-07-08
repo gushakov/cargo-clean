@@ -7,7 +7,7 @@ import java.util.List;
 
 @Value
 @Builder
-public class CandidateRouteDto {
+public class RouteDto {
 
     List<LegDto> legs;
 
