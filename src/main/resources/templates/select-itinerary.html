@@ -33,12 +33,51 @@
 
         <form method="post" action="#" th:action="@{/assignRoute}" th:object="${itineraryAssigmentForm}">
 
-           Cargo <th:block th:text="*{trackingId}"/>
+            Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
+            <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
+
+            <div class="row-cols-2 mt-3" th:each="route : *{candidateRoutes}">
+
+                <table style="border: lightgray 1px solid;">
+                    <thead>
+                    <tr>
+                        <th>Voyage</th>
+                        <th>From</th>
+                        <th>Load on</th>
+                        <th>To</th>
+                        <th>Unload on</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="leg : ${route.legs}">
+                        <td>
+                            <span th:text="${leg.voyageNumber}"/>
+                        </td>
+                        <td>
+                            <span th:text="${leg.from}"/>
+                        </td>
+                        <td>
+                            <span th:text="${#dates.format(leg.loadTime, 'dd-MM-yyyy HH:mm')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${leg.to}"/>
+                        </td>
+                        <td>
+                            <span th:text="${#dates.format(leg.unloadTime, 'dd-MM-yyyy HH:mm')}"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row mt-1">
+                    <div class="col-3">
+                        <button class="btn btn-success">Assign this route</button>
+                    </div>
+                </div>
+            </div>
 
         </form>
 
     </div>
-
 
 </div>
 

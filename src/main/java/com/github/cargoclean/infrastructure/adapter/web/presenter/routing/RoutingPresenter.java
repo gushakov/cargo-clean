@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = "request")
@@ -49,18 +50,17 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
     @Override
     public void presentCandidateItinerariesForSelection(Cargo cargo, List<Itinerary> itineraries) {
 
-        /*
-            Note: since our domain object ("Itinerary") is immutable, we can
-            reuse them in our Response Model object. Normally, we would create
-            a flat POJO here to pass to the view.
-         */
+        // construct the Response Model with candidate routes, convert all domain models
+        // to DTOs
 
         ItineraryAssigmentForm itineraryAssigmentForm = ItineraryAssigmentForm.builder()
                 .trackingId(cargo.getTrackingId())
                 .cargoOrigin(cargo.getOrigin())
                 .cargoDestination(cargo.getRouteSpecification().getDestination())
-                .candidateItineraries(List.copyOf(itineraries))
-                .selectedItinerary(null)
+                .candidateRoutes(itineraries.stream().map(itinerary -> CandidateRouteDto.builder()
+                        .legs(itinerary.getLegs().stream().map(LegDto::of).toList())
+                        .build()).toList())
+                .selectedRoute(null)
                 .build();
 
         presentModelAndView(Map.of("itineraryAssigmentForm", itineraryAssigmentForm), "select-itinerary");

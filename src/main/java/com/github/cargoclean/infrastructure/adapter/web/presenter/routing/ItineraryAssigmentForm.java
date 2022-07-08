@@ -1,24 +1,29 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
 
-import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
 @Builder
 public class ItineraryAssigmentForm {
 
+    @Getter
     private TrackingId trackingId;
 
+    @Getter
     private UnLocode cargoOrigin;
 
+    @Getter
     private UnLocode cargoDestination;
 
-    private List<Itinerary> candidateItineraries;
+    @Getter
+    private List<CandidateRouteDto> candidateRoutes;
 
-    private Itinerary selectedItinerary;
+    @Getter
+    @Setter
+    private CandidateRouteDto selectedRoute;
 }

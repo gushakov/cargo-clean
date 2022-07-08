@@ -1,16 +1,16 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
 
+import com.github.cargoclean.core.model.cargo.Leg;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 
+import java.util.List;
+
 @Value
 @Builder
-public class CargoInfoDto {
+public class CandidateRouteDto {
 
-    String trackingId;
-    String origin;
-    String destination;
-    String arrivalDeadline;
-    boolean routed;
+    List<LegDto> legs;
+
 }
