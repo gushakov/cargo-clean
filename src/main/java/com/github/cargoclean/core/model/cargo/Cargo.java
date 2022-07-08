@@ -95,4 +95,8 @@ public class Cargo {
                 "trackingId=" + trackingId +
                 '}';
     }
+
+    public boolean isRouted() {
+        return itinerary != null && !itinerary.getLegs().isEmpty();
+    }
 }

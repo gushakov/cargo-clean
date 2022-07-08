@@ -28,4 +28,15 @@ public class RoutingController {
 
     }
 
+    @RequestMapping("/selectItinerary")
+    @ResponseBody
+    public void routeCargo(@RequestParam String trackingId) {
+        log.debug("[Routing] Showing cargo details of tracking ID: {}", trackingId);
+
+        RoutingInputPort useCase = appContext.getBean(RoutingInputPort.class);
+
+        useCase.selectItinerary(TrackingId.of(trackingId));
+
+    }
+
 }

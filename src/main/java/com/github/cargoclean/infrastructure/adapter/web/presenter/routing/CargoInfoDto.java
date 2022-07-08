@@ -11,4 +11,5 @@ public class CargoInfoDto {
     private String origin;
     private String destination;
     private String arrivalDeadline;
+    private boolean routed;
 }

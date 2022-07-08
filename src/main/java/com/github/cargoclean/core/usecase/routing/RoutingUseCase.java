@@ -50,6 +50,9 @@ public class RoutingUseCase implements RoutingInputPort {
             // load cargo
             cargo = validator.validate(gatewayOps.obtainCargoByTrackingId(trackingId));
 
+            // FIXME: show error is cargo is already routed
+
+
             // get route specification for cargo
             RouteSpecification routeSpecification = cargo.getRouteSpecification();
 

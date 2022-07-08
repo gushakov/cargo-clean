@@ -39,6 +39,7 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
                 .destination(cargo.getRouteSpecification().getDestination().getCode())
                 .arrivalDeadline(cargo.getRouteSpecification().getArrivalDeadline()
                         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                .routed(cargo.isRouted())
                 .build();
 
         presentModelAndView(Map.of("cargo", dto), "show");

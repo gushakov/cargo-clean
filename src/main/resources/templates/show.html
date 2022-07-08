@@ -15,6 +15,8 @@
 
     1.  Based on the similar Thymeleaf view: "admin/show.html" in the original DDDSample.
     2.  Bootstrap form layout: https://getbootstrap.com/docs/5.2/forms/layout/
+    3.  Thymeleaf, URL parameters: https://www.thymeleaf.org/doc/articles/standardurlsyntax.html#adding-parameters
+    4.  Thymeleaf, construct URL with variables: https://stackoverflow.com/questions/14938344/thymeleaf-construct-url-with-variable
 -->
 
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
@@ -55,6 +57,10 @@
                 <input id="arrivalDeadline" class="form-control" th:value="*{arrivalDeadline}" readonly="readonly">
             </div>
         </div>
+
+        <th:block th:unless="*{isRouted()}">
+            <a href="#" th:href="@{/selectItinerary(trackingId=*{trackingId})}">Route this cargo</a>
+        </th:block>
 
     </div>
 
