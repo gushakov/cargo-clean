@@ -11,6 +11,7 @@ package com.github.cargoclean.core.port.operation;
 
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 
 import java.util.List;
 
@@ -19,6 +20,13 @@ import java.util.List;
  */
 public interface RoutingServiceOutputPort {
 
-    List<Itinerary> fetchRoutesForSpecification(RouteSpecification routeSpecification);
+    /*
+        This is slightly different from the original. We are passing tracking ID
+        for the cargo. This will allow us to set this tracking ID to each leg
+        of the (candidate) itinerary when converting the transit edges to Legs
+        instances.
+     */
+
+    List<Itinerary> fetchRoutesForSpecification(TrackingId trackingId, RouteSpecification routeSpecification);
 
 }

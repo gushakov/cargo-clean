@@ -12,6 +12,7 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.map.TransitPathMapper;
 import com.pathfinder.api.GraphTraversalService;
@@ -34,7 +35,7 @@ public class ExternalRoutingService implements RoutingServiceOutputPort {
     private final TransitPathMapper pathMapper;
 
     @Override
-    public List<Itinerary> fetchRoutesForSpecification(RouteSpecification routeSpecification) {
+    public List<Itinerary> fetchRoutesForSpecification(TrackingId trackingId, RouteSpecification routeSpecification) {
 
         // seems like the deadline in the specifications is not really used
         // by the original implementation of GraphTraversalService
@@ -46,7 +47,7 @@ public class ExternalRoutingService implements RoutingServiceOutputPort {
         // fetch transit paths, convert them to itineraries and
         // filter only the ones that satisfy route specification
 
-        return pathMapper.convert(transitPaths).stream()
+        return pathMapper.convert(transitPaths, trackingId).stream()
                 .filter(routeSpecification::isSatisfiedBy)
                 .toList();
     }

@@ -12,6 +12,7 @@ package com.github.cargoclean.infrastructure.config;
 
 
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
@@ -93,8 +94,9 @@ public class AppConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
                                            Validator validator,
-                                           PersistenceGatewayOutputPort gatewayOps) {
-        return new RoutingUseCase(presenter, validator, gatewayOps);
+                                           PersistenceGatewayOutputPort gatewayOps,
+                                           RoutingServiceOutputPort routingServiceOps) {
+        return new RoutingUseCase(presenter, validator, gatewayOps, routingServiceOps);
     }
 
     @Bean

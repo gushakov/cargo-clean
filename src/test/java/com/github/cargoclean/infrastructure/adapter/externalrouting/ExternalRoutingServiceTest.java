@@ -12,7 +12,9 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.Itinerary;
+import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.map.DefaultTransitPathMapperImpl;
@@ -28,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,9 +67,17 @@ public class ExternalRoutingServiceTest {
                 .destination(UnLocode.of("USDAL"))
                 .arrivalDeadline(arrivalDeadline)
                 .build();
-        List<Itinerary> itineraries = externalRoutingService.fetchRoutesForSpecification(routeSpecification);
+        List<Itinerary> itineraries = externalRoutingService.fetchRoutesForSpecification(TrackingId.of("ABCDEF12"), routeSpecification);
 
         assertThat(itineraries.stream().allMatch(routeSpecification::isSatisfiedBy)).isTrue();
+
+        // verify that the right tracking ID was assigned to each leg of each itinerary
+        assertThat(itineraries.stream()
+                .flatMap(itinerary -> itinerary.getLegs().stream())
+                .map(Leg::getCargoTrackingId)
+                .map(TrackingId::getId)
+                .collect(Collectors.toSet()))
+                .containsExactly("ABCDEF12");
 
     }
 }

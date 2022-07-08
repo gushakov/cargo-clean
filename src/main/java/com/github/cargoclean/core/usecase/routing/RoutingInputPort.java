@@ -6,4 +6,6 @@ public interface RoutingInputPort {
 
     void showCargo(TrackingId trackingId);
 
+    void selectItinerary(TrackingId trackingId);
+
 }

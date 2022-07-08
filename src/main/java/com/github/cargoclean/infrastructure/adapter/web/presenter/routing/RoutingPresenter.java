@@ -1,6 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -40,6 +42,11 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
                 .build();
 
         presentModelAndView(Map.of("cargo", dto), "show");
+
+    }
+
+    @Override
+    public void presentCandidateItinerariesForSelection(Cargo cargo, List<Itinerary> itineraries) {
 
     }
 }
