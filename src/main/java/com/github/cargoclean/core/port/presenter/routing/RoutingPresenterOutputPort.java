@@ -9,5 +9,7 @@ import java.util.List;
 public interface RoutingPresenterOutputPort extends ErrorHandlingPresenterOutputPort {
     void presentCargoForRouting(Cargo cargo);
 
-    void presentCandidateItinerariesForSelection(Cargo cargo, List<Itinerary> itineraries);
+    void presentCandidateRoutes(Cargo cargo, List<Itinerary> itineraries);
+
+    void presentResultOfAssigningRouteToCargo(String trackingId);
 }

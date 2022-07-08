@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = "request")
@@ -48,21 +47,32 @@ public class RoutingPresenter extends AbstractWebPresenter implements RoutingPre
     }
 
     @Override
-    public void presentCandidateItinerariesForSelection(Cargo cargo, List<Itinerary> itineraries) {
+    public void presentCandidateRoutes(Cargo cargo, List<Itinerary> itineraries) {
+
 
         // construct the Response Model with candidate routes, convert all domain models
         // to DTOs
+
+        List<CandidateRouteDto> candidateRoutes = itineraries.stream()
+                .map(itinerary -> CandidateRouteDto.builder()
+                        .legs(itinerary.getLegs().stream().map(LegDto::of).toList())
+                        .build()).toList();
+
+        // store candidate routes in session so that we can access them later
+        storeInSession("cargo.%s.candidate.routes".formatted(cargo.getTrackingId().getId().toLowerCase()), candidateRoutes);
 
         ItineraryAssigmentForm itineraryAssigmentForm = ItineraryAssigmentForm.builder()
                 .trackingId(cargo.getTrackingId())
                 .cargoOrigin(cargo.getOrigin())
                 .cargoDestination(cargo.getRouteSpecification().getDestination())
-                .candidateRoutes(itineraries.stream().map(itinerary -> CandidateRouteDto.builder()
-                        .legs(itinerary.getLegs().stream().map(LegDto::of).toList())
-                        .build()).toList())
-                .selectedRoute(null)
+                .candidateRoutes(candidateRoutes)
                 .build();
 
         presentModelAndView(Map.of("itineraryAssigmentForm", itineraryAssigmentForm), "select-itinerary");
+    }
+
+    @Override
+    public void presentResultOfAssigningRouteToCargo(String trackingId) {
+        redirect("/showCargoDetails", Map.of("trackingId", trackingId));
     }
 }

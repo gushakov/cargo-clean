@@ -143,7 +143,7 @@ public class DefaultDbEntityMapperTest {
 
     @Test
     void should_map_itinerary_to_list_of_legs() {
-        Cargo cargo = cargo("8E062F47").withItinerary(itinerary(1, 2));
+        Cargo cargo = cargo("8E062F47").assignItinerary(itinerary(1, 2));
 
         CargoDbEntity cargoDbEntity = mapper.convert(cargo);
 

@@ -58,6 +58,10 @@
             </div>
         </div>
 
+        <th:block th:if="*{isRouted()}">
+            Cargo routed already
+        </th:block>
+
         <th:block th:unless="*{isRouted()}">
             <a href="#" th:href="@{/selectItinerary(trackingId=*{trackingId})}">Route this cargo</a>
         </th:block>

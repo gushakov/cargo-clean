@@ -17,6 +17,7 @@
     ==========
 
     1.  Based on the similar Thymeleaf view: "admin/selectItinerary" in the original DDDSample.
+    2.  Thymeleaf, input box binding: https://www.thymeleaf.org/doc/tutorials/2.1/thymeleafspring.html#inputs
 -->
 
 
@@ -31,7 +32,8 @@
 
         <!--/*@thymesVar id="itineraryAssigmentForm" type="com.github.cargoclean.infrastructure.adapter.web.presenter.routing.ItineraryAssigmentForm"*/-->
 
-        <form method="post" action="#" th:action="@{/assignRoute}" th:object="${itineraryAssigmentForm}">
+        <th:block th:object="${itineraryAssigmentForm}">
+
 
             Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
             <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
@@ -70,12 +72,19 @@
                 </table>
                 <div class="row mt-1">
                     <div class="col-3">
-                        <button class="btn btn-success">Assign this route</button>
+                        <form method="post" action="#"
+                              th:action="@{/assignRoute(selectedRouteIndex=${routeStat.index},trackingId=*{trackingId})}">
+                            <button type="submit" class="btn btn-success">Assign this route</button>
+                        </form>
                     </div>
                 </div>
             </div>
 
-        </form>
+
+        </th:block>
+
+
+
 
     </div>
 

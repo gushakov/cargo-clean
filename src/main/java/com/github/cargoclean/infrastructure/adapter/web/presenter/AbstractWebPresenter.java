@@ -34,6 +34,10 @@ public abstract class AbstractWebPresenter {
     private final HttpServletRequest httpRequest;
     private final HttpServletResponse httpResponse;
 
+    protected void storeInSession(String attributeName, Object attributeValue){
+        httpRequest.getSession().setAttribute(attributeName, attributeValue);
+    }
+
     public void presentError(Exception e) {
 
         // we need to roll back any active transaction

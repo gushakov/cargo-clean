@@ -112,7 +112,7 @@ public class DbPersistenceGatewayTestIT {
     @Test
     void should_persist_cargo_with_itinerary() {
         dbGateway.deleteCargo(TrackingId.of("8E062F47"));
-        Cargo cargo = cargo("8E062F47").withItinerary(itinerary(1, 2));
+        Cargo cargo = cargo("8E062F47").assignItinerary(itinerary(1, 2));
         Cargo savedCargo = dbGateway.saveCargo(cargo);
         assertThat(savedCargo.getItinerary().getLegs())
                 .hasSize(2);

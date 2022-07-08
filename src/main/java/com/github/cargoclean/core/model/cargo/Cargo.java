@@ -74,7 +74,13 @@ public class Cargo {
         return newCargo().delivery(delivery).build();
     }
 
-    public Cargo withItinerary(Itinerary itinerary) {
+    /**
+     * Routes this cargo by assigning new {@code itinerary} to it.
+     *
+     * @param itinerary itinerary for this cargo
+     * @return new {@code Cargo} instance with new itinerary
+     */
+    public Cargo assignItinerary(Itinerary itinerary) {
         return newCargo().itinerary(itinerary).build();
     }
 
