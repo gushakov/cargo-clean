@@ -8,12 +8,10 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.validator.Validator;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.RouteDto;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.LegDto;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.routing.RoutingError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -71,7 +69,7 @@ public class RoutingUseCase implements RoutingInputPort {
 
         presenter.presentCandidateRoutes(cargo, itineraries);
     }
-
+    @Transactional
     @Override
     public void assignRoute(String trackingId, RouteDto selectedRoute) {
 
@@ -92,12 +90,12 @@ public class RoutingUseCase implements RoutingInputPort {
             Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
             // make sure the cargo needs routing
-            if (cargo.isRouted()){
+            if (cargo.isRouted()) {
                 throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId));
             }
 
             // make sure selected itinerary satisfies the route specification for the cargo
-            if (!cargo.getRouteSpecification().isSatisfiedBy(itinerary)){
+            if (!cargo.getRouteSpecification().isSatisfiedBy(itinerary)) {
                 throw new RoutingError("Provided itinerary does not satisfy route specification for cargo <%s>."
                         .formatted(trackingId));
             }

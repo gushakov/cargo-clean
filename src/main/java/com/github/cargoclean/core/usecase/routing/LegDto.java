@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
+package com.github.cargoclean.core.usecase.routing;
 
 import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.cargo.Leg;

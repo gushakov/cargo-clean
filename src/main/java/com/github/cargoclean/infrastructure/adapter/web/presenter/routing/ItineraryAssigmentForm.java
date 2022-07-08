@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.usecase.routing.RouteDto;
 import lombok.Builder;
 import lombok.Value;
 

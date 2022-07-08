@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
+package com.github.cargoclean.core.usecase.routing;
 
 import lombok.Builder;
 import lombok.Value;
