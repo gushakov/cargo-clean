@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.usecase.routing;
+package com.github.cargoclean.core.model.cargo;
 
 import com.github.cargoclean.core.GenericCargoError;
 

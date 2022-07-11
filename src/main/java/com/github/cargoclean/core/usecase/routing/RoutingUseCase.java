@@ -1,9 +1,6 @@
 package com.github.cargoclean.core.usecase.routing;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Itinerary;
-import com.github.cargoclean.core.model.cargo.RouteSpecification;
-import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;

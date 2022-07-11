@@ -1,8 +1,6 @@
-package com.github.cargoclean.core.usecase.routing;
+package com.github.cargoclean.core.model.cargo;
 
 import com.github.cargoclean.core.model.Constants;
-import com.github.cargoclean.core.model.cargo.Leg;
-import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;

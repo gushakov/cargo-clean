@@ -2,7 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.controller.routing;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
-import com.github.cargoclean.core.usecase.routing.RouteDto;
+import com.github.cargoclean.core.model.cargo.RouteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;

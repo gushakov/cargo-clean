@@ -166,7 +166,7 @@ public class MockModels {
         return localDate(date).toInstant();
     }
 
-    public static ZonedDateTime now(){
+    public static ZonedDateTime now() {
         return ZonedDateTime.now(Constants.DEFAULT_ZONE_ID);
     }
 

@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.usecase.routing;
+package com.github.cargoclean.core.model.cargo;
 
 import lombok.Builder;
 import lombok.Value;
