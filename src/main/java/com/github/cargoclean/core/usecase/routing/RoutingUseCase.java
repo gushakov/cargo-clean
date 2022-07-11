@@ -86,17 +86,6 @@ public class RoutingUseCase implements RoutingInputPort {
             // load cargo
             Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
-            // make sure the cargo needs routing
-            if (cargo.isRouted()) {
-                throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId));
-            }
-
-            // make sure selected itinerary satisfies the route specification for the cargo
-            if (!cargo.getRouteSpecification().isSatisfiedBy(itinerary)) {
-                throw new RoutingError("Provided itinerary does not satisfy route specification for cargo <%s>."
-                        .formatted(trackingId));
-            }
-
             // actually route this cargo and validate
             Cargo routedCargo = validator.validate(cargo.assignItinerary(itinerary));
 

@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.routing;
 
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
@@ -48,15 +48,7 @@ public class RoutingUseCaseTest {
                 .thenReturn(cargo(trackingId));
 
         // set up a direct route for the test, scheduled to arrive on time
-        RouteDto routeDto = RouteDto.builder()
-                .legs(List.of(LegDto.builder()
-                        .cargoTrackingId(trackingId)
-                        .from("USDAL")
-                        .to("JNTKO")
-                        .loadTime(Date.from(localInstant("15-07-2022")))
-                        .unloadTime(Date.from(localInstant("09-08-2022")))
-                        .build()))
-                .build();
+        RouteDto routeDto = getValidRoute(trackingId);
 
         // try to assign the route
         useCase.assignRoute(trackingId, routeDto);
@@ -98,15 +90,7 @@ public class RoutingUseCaseTest {
                 .thenReturn(cargo(trackingId));
 
         // route which does not satisfy the route specification for the test cargo
-        RouteDto routeDto = RouteDto.builder()
-                .legs(List.of(LegDto.builder()
-                        .cargoTrackingId(trackingId)
-                        .from("USDAL")
-                        .to("AUMEL")
-                        .loadTime(Date.from(localInstant("15-07-2022")))
-                        .unloadTime(Date.from(localInstant("09-08-2022")))
-                        .build()))
-                .build();
+        RouteDto routeDto = getInvalidRoute(trackingId);
 
         // try to assign the route
         useCase.assignRoute(trackingId, routeDto);
@@ -122,14 +106,39 @@ public class RoutingUseCaseTest {
 
         RoutingInputPort useCase = new RoutingUseCase(presenter, validator, gatewayOps, externalRoutingService);
 
-        // get an example cargo
+        // create a spy of an existing cargo to simulate a cargo which has already been
+        // routed
         String trackingId = "8E062F47";
-        Cargo alreadyRoutedCargo = cargo(trackingId).assignItinerary(itinerary(1));
+        Cargo alreadyRoutedCargo = Mockito.spy(cargo(trackingId));
+        lenient().when(alreadyRoutedCargo.isRouted()).thenReturn(true);
+
         lenient().when(gatewayOps.obtainCargoByTrackingId(any(TrackingId.class)))
                 .thenReturn(alreadyRoutedCargo);
 
-        // route which does not satisfy the route specification for the test cargo
-        RouteDto routeDto = RouteDto.builder()
+        RouteDto routeDto = getValidRoute(trackingId);
+
+        // try to assign a new route
+        useCase.assignRoute(trackingId, routeDto);
+
+        // should result in a routing error
+        verify(presenter, times(1))
+                .presentError(any(RoutingError.class));
+    }
+
+    private RouteDto getValidRoute(String trackingId) {
+        return RouteDto.builder()
+                .legs(List.of(LegDto.builder()
+                        .cargoTrackingId(trackingId)
+                        .from("USDAL")
+                        .to("JNTKO")
+                        .loadTime(Date.from(localInstant("15-07-2022")))
+                        .unloadTime(Date.from(localInstant("09-08-2022")))
+                        .build()))
+                .build();
+    }
+
+    private RouteDto getInvalidRoute(String trackingId) {
+        return RouteDto.builder()
                 .legs(List.of(LegDto.builder()
                         .cargoTrackingId(trackingId)
                         .from("USDAL")
@@ -138,12 +147,5 @@ public class RoutingUseCaseTest {
                         .unloadTime(Date.from(localInstant("09-08-2022")))
                         .build()))
                 .build();
-
-        // try to assign the route
-        useCase.assignRoute(trackingId, routeDto);
-
-        // should result in a routing error
-        verify(presenter, times(1))
-                .presentError(any(RoutingError.class));
     }
 }

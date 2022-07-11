@@ -62,14 +62,9 @@ public class Cargo {
         return version != null;
     }
 
-    public Cargo withOrigin(UnLocode origin) {
-        return newCargo().origin(origin).build();
-    }
-
-    public Cargo withRouteSpecification(RouteSpecification routeSpec) {
-        return newCargo().routeSpecification(routeSpec).build();
-    }
-
+    /**
+     * Used for tests only.
+     */
     public Cargo withDelivery(Delivery delivery) {
         return newCargo().delivery(delivery).build();
     }
@@ -79,8 +74,22 @@ public class Cargo {
      *
      * @param itinerary itinerary for this cargo
      * @return new {@code Cargo} instance with new itinerary
+     * @throws RoutingError if this cargo is already routed or if {@code itinerary} does not satisfy
+     *                      {@code routeSpecification} for this cargo
      */
     public Cargo assignItinerary(Itinerary itinerary) {
+
+        // make sure the cargo needs routing
+        if (isRouted()) {
+            throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId));
+        }
+
+        // make sure selected itinerary satisfies the route specification for the cargo
+        if (!routeSpecification.isSatisfiedBy(itinerary)) {
+            throw new RoutingError("Provided itinerary does not satisfy route specification for cargo <%s>."
+                    .formatted(trackingId));
+        }
+
         return newCargo().itinerary(itinerary).build();
     }
 
