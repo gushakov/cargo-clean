@@ -8,4 +8,8 @@ public class TrackingUseCase implements TrackingInputPort {
 
     private final TrackingPresenterOutputPort presenter;
 
+    @Override
+    public void trackCargo() {
+        presenter.presentInitialViewForCargoTracking();
+    }
 }
