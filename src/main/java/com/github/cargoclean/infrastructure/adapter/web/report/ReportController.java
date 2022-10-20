@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.controller.report;
+package com.github.cargoclean.infrastructure.adapter.web.report;
 
 import com.github.cargoclean.core.usecase.report.ReportInputPort;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.controller;
+package com.github.cargoclean.infrastructure.adapter.web;
 
 /*
     References:

@@ -1,7 +1,6 @@
-package com.github.cargoclean.infrastructure.adapter.web.controller.booking;
+package com.github.cargoclean.infrastructure.adapter.web.booking;
 
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.booking.BookingForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;

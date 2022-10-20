@@ -1,11 +1,11 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
+package com.github.cargoclean.infrastructure.adapter.web.booking;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
+import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;

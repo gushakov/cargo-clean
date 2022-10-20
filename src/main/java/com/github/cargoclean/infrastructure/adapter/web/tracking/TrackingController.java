@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.controller.tracking;
+package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

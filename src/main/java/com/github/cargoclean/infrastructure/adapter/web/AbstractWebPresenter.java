@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter;
+package com.github.cargoclean.infrastructure.adapter.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.NoTransactionException;

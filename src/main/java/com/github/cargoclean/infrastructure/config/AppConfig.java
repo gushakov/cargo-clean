@@ -27,7 +27,7 @@ import com.github.cargoclean.core.usecase.tracking.TrackingInputPort;
 import com.github.cargoclean.core.usecase.tracking.TrackingUseCase;
 import com.github.cargoclean.core.validator.BeanValidator;
 import com.github.cargoclean.core.validator.Validator;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.internal.GraphDAOStub;
 import com.pathfinder.internal.GraphTraversalServiceImpl;

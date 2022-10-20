@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.booking;
+package com.github.cargoclean.infrastructure.adapter.web.booking;
 
 import lombok.Builder;
 import lombok.Data;

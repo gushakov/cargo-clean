@@ -1,8 +1,8 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.tracking;
+package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
+import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

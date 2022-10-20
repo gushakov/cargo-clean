@@ -1,12 +1,12 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
+package com.github.cargoclean.infrastructure.adapter.web.routing;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.model.cargo.LegDto;
 import com.github.cargoclean.core.model.cargo.RouteDto;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.AbstractWebPresenter;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
+import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter.web.presenter.routing;
+package com.github.cargoclean.infrastructure.adapter.web.routing;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
