@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
+import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -19,6 +20,14 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
 
     @Override
     public void presentInitialViewForCargoTracking() {
-        presentModelAndView(Map.of(), "track-cargo");
+        presentModelAndView(Map.of("trackingForm", TrackingForm.builder().build()), "track-cargo");
+    }
+
+    @Override
+    public void presentCargoTrackingInformation(Cargo cargo) {
+        presentModelAndView(Map.of("trackingForm", TrackingForm.builder().build(),
+                "trackingInfo", TrackingInfo.builder()
+                                .trackingId(cargo.getTrackingId().toString())
+                        .build()), "track-cargo");
     }
 }

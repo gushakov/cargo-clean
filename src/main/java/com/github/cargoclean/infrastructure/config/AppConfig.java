@@ -111,7 +111,8 @@ public class AppConfig {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter){
-        return new TrackingUseCase(presenter);
+    public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
+                                             PersistenceGatewayOutputPort gatewayOps){
+        return new TrackingUseCase(presenter, gatewayOps);
     }
 }

@@ -1,6 +1,7 @@
 package com.github.cargoclean.core.usecase.tracking;
 
 public interface TrackingInputPort {
-    void trackCargo();
+    void initializeCargoTrackingView();
 
+    void trackCargo(String trackingIdText);
 }
