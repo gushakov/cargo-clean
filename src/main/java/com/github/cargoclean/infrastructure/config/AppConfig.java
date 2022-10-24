@@ -14,11 +14,14 @@ package com.github.cargoclean.infrastructure.config;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
+import com.github.cargoclean.core.usecase.handling.HandlingUseCase;
 import com.github.cargoclean.core.usecase.report.ReportInputPort;
 import com.github.cargoclean.core.usecase.report.ReportUseCase;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
@@ -114,5 +117,12 @@ public class AppConfig {
     public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
                                              PersistenceGatewayOutputPort gatewayOps){
         return new TrackingUseCase(presenter, gatewayOps);
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
+                                             PersistenceGatewayOutputPort gatewayOps){
+        return new HandlingUseCase(presenter, gatewayOps);
     }
 }
