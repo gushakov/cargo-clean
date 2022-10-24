@@ -11,6 +11,9 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 
+springdoc:
+  paths-to-match: /**
+  packages-to-scan: com.github.cargoclean.infrastructure.adapter.web.handling
 
 logging:
   level:
