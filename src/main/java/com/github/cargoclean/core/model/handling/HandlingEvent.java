@@ -25,10 +25,12 @@ public class HandlingEvent {
     TrackingId cargoId;
 
     ZonedDateTime completionTime;
+
     ZonedDateTime registrationTime;
 
     @EqualsAndHashCode.Include
     HandlingEventType type;
 
+    Integer version;
 
 }

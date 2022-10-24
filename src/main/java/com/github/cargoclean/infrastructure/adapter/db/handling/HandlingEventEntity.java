@@ -23,10 +23,13 @@ public class HandlingEventEntity {
     private String cargoId;
 
     @Column("completion_time")
-    Instant completionTime;
+    private Instant completionTime;
 
     @Column("registration_time")
-    Instant registrationTime;
+    private Instant registrationTime;
+
+    @Column("type")
+    private String type;
 
     @Version
     private Integer version;
