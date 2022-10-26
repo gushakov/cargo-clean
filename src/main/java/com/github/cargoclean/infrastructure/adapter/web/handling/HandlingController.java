@@ -36,8 +36,9 @@ public class HandlingController {
     @PostMapping("/recordEvent")
     public void recordEvent(
 
+            // voyage number is not required
             @Parameter(name = "voyageNumber", description = "Voyage number")
-            @RequestParam String voyageNumber,
+            @RequestParam(required = false) String voyageNumber,
 
             @Parameter(name = "location", description = "Location: UnLocode")
             @RequestParam String location,

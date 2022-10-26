@@ -19,6 +19,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -75,6 +76,14 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
          */
         final String uuid = UUID.randomUUID().toString();
         return TrackingId.of(uuid.substring(0, uuid.indexOf("-")).toUpperCase());
+    }
+
+    @Override
+    public EventId nextEventId() {
+
+        // Just for demo, should probably be based on a UUID instead.
+
+        return EventId.of(System.currentTimeMillis());
     }
 
     @Override

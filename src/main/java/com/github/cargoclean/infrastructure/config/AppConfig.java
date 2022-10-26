@@ -122,7 +122,8 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
+                                             Validator validator,
                                              PersistenceGatewayOutputPort gatewayOps){
-        return new HandlingUseCase(presenter, gatewayOps);
+        return new HandlingUseCase(presenter, validator, gatewayOps);
     }
 }

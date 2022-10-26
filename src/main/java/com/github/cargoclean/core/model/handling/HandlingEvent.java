@@ -6,6 +6,8 @@ import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -16,18 +18,26 @@ import java.time.ZonedDateTime;
 public class HandlingEvent {
 
     @EqualsAndHashCode.Include
+    @NotNull
     EventId eventId;
 
     VoyageNumber voyageNumber;
 
+    @NotNull
     UnLocode location;
 
+    @NonNull
     TrackingId cargoId;
 
+    @NotNull
+    @Past
     ZonedDateTime completionTime;
 
+    @NotNull
+    @Past
     ZonedDateTime registrationTime;
 
+    @NotNull
     HandlingEventType type;
 
     Integer version;
