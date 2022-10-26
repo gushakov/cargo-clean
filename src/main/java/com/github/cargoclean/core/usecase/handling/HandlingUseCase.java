@@ -26,8 +26,8 @@ public class HandlingUseCase implements HandlingInputPort {
     private final PersistenceGatewayOutputPort gatewayOps;
 
     @Override
-    public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr, Instant completionTime,
-                                    Instant registrationTime, HandlingEventType type) {
+    public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr,
+                                    Instant completionTime, HandlingEventType type) {
 
         TrackingId cargoId;
         HandlingEvent handlingEvent;
@@ -47,7 +47,7 @@ public class HandlingUseCase implements HandlingInputPort {
                         .location(location)
                         .cargoId(cargoId)
                         .completionTime(completionTime.atZone(Constants.DEFAULT_ZONE_ID))
-                        .registrationTime(registrationTime.atZone(Constants.DEFAULT_ZONE_ID))
+                        .registrationTime(Instant.now().atZone(Constants.DEFAULT_ZONE_ID))
                         .type(type)
                         .build());
             } catch (InvalidDomainObjectError e) {

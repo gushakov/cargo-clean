@@ -52,18 +52,12 @@ public class HandlingController {
                     schema = @Schema(type = "string", format = "date-time"))
             @RequestParam Instant completionTime,
 
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @Parameter(name = "registrationTime",
-                    description = "Event registration date and time (ISO format)",
-                    schema = @Schema(type = "string", format = "date-time"))
-            @RequestParam Instant registrationTime,
-
             @Parameter(name = "type", description = "Event type: loading, unloading, etc.")
             @RequestParam HandlingEventType type
 
     ) {
 
-        useCase().recordHandlingEvent(voyageNumber, location, cargoId, completionTime, registrationTime, type);
+        useCase().recordHandlingEvent(voyageNumber, location, cargoId, completionTime, type);
 
     }
 
