@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -30,11 +29,9 @@ public class HandlingEvent {
     TrackingId cargoId;
 
     @NotNull
-    @Past
     ZonedDateTime completionTime;
 
     @NotNull
-    @Past
     ZonedDateTime registrationTime;
 
     @NotNull

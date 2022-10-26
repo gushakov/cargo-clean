@@ -1,8 +1,8 @@
 package com.github.cargoclean.infrastructure.adapter.web;
 
+import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -28,24 +28,20 @@ import java.util.Map;
  * @see #redirect(String, Map)
  */
 @RequiredArgsConstructor
-public abstract class AbstractWebPresenter {
+@Slf4j
+public abstract class AbstractWebPresenter extends AbstractErrorHandler {
 
     private final LocalDispatcherServlet dispatcher;
     private final HttpServletRequest httpRequest;
     private final HttpServletResponse httpResponse;
 
-    protected void storeInSession(String attributeName, Object attributeValue){
+    protected void storeInSession(String attributeName, Object attributeValue) {
         httpRequest.getSession().setAttribute(attributeName, attributeValue);
     }
 
     public void presentError(Exception e) {
 
-        // we need to roll back any active transaction
-        try {
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-        } catch (NoTransactionException nte) {
-            // do nothing if not running in a transactional context
-        }
+        logErrorAndRollBack(e);
 
         // redirect to special error handling controller
         redirectError(e.getMessage());

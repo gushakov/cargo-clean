@@ -9,6 +9,7 @@ import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
+import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +29,7 @@ public class HandlingUseCase implements HandlingInputPort {
     public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr, Instant completionTime,
                                     Instant registrationTime, HandlingEventType type) {
 
+        TrackingId cargoId;
         HandlingEvent handlingEvent;
         try {
 
@@ -35,27 +37,32 @@ public class HandlingUseCase implements HandlingInputPort {
             VoyageNumber voyageNumber = Optional.ofNullable(voyageNumberStr)
                     .map(VoyageNumber::of).orElse(null);
             UnLocode location = UnLocode.of(locationStr);
-            TrackingId cargoId = TrackingId.of(cargoIdStr);
+            cargoId = TrackingId.of(cargoIdStr);
 
             // construct and validate new handling event
-            handlingEvent = validator.validate(HandlingEvent.builder()
-                    .eventId(gatewayOps.nextEventId())
-                    .voyageNumber(voyageNumber)
-                    .cargoId(cargoId)
-                    .completionTime(completionTime.atZone(Constants.DEFAULT_ZONE_ID))
-                    .registrationTime(registrationTime.atZone(Constants.DEFAULT_ZONE_ID))
-                    .type(type)
-                    .build());
+            try {
+                handlingEvent = validator.validate(HandlingEvent.builder()
+                        .eventId(gatewayOps.nextEventId())
+                        .voyageNumber(voyageNumber)
+                        .location(location)
+                        .cargoId(cargoId)
+                        .completionTime(completionTime.atZone(Constants.DEFAULT_ZONE_ID))
+                        .registrationTime(registrationTime.atZone(Constants.DEFAULT_ZONE_ID))
+                        .type(type)
+                        .build());
+            } catch (InvalidDomainObjectError e) {
+                presenter.presentInvalidParametersError(e);
+                return;
+            }
 
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
-        }
-        catch (GenericCargoError e){
+        } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;
         }
 
-        presenter.presentResultOfRegisteringHandlingEvent(handlingEvent);
+        presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
     }
 }

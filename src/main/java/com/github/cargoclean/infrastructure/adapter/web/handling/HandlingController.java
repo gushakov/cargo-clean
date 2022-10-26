@@ -58,7 +58,6 @@ public class HandlingController {
                     schema = @Schema(type = "string", format = "date-time"))
             @RequestParam Instant registrationTime,
 
-
             @Parameter(name = "type", description = "Event type: loading, unloading, etc.")
             @RequestParam HandlingEventType type
 

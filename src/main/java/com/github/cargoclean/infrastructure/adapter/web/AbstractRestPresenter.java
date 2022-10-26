@@ -10,20 +10,21 @@ package com.github.cargoclean.infrastructure.adapter.web;
  */
 
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class AbstractRestPresenter implements ErrorHandlingPresenterOutputPort {
+@Slf4j
+public abstract class AbstractRestPresenter extends AbstractErrorHandler implements ErrorHandlingPresenterOutputPort {
 
     private final HttpServletResponse httpServletResponse;
     private final MappingJackson2HttpMessageConverter jacksonConverter;
@@ -53,18 +54,22 @@ public abstract class AbstractRestPresenter implements ErrorHandlingPresenterOut
     @Override
     public void presentError(Exception t) {
 
-        // roll back any transaction, if needed
-        // code from: https://stackoverflow.com/a/23502214
-        try {
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-        } catch (NoTransactionException e) {
-            // do nothing if not running in a transactional context
-        }
+        doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    public void presentClientError(Exception t) {
+        doPresentError(t, HttpStatus.BAD_REQUEST);
+    }
+
+    protected void doPresentError(Exception t, HttpStatus status) {
+
+        logErrorAndRollBack(t);
 
         final DelegatingServerHttpResponse httpOutputMessage =
                 new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse));
 
-        httpOutputMessage.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
+        httpOutputMessage.setStatusCode(status);
 
         try {
             jacksonConverter.write(Map.of("error", Optional.ofNullable(t.getMessage()).orElse("null")),
@@ -72,7 +77,6 @@ public abstract class AbstractRestPresenter implements ErrorHandlingPresenterOut
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

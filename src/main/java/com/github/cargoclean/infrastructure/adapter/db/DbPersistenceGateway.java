@@ -29,6 +29,7 @@ import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
+import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
@@ -61,11 +62,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private final LocationDbEntityRepository locationRepository;
     private final CargoDbEntityRepository cargoRepository;
 
+    private final HandlingEventEntityRepository handlingEventRepository;
+
     private final NamedParameterJdbcOperations queryTemplate;
 
     private final DbEntityMapper dbMapper;
-
-    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -146,12 +147,12 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public void recordHandlingEvent(HandlingEvent event) {
-        HandlingEventEntity eventEntity = dbMapper.convert(event);
-
-        // we are saving new handling event entity each time
-
-        jdbcAggregateTemplate.save(eventEntity);
-
+        try {
+            HandlingEventEntity eventEntity = dbMapper.convert(event);
+            handlingEventRepository.save(eventEntity);
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
+        }
     }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {
