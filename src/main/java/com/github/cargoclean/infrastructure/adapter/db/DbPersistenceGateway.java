@@ -19,6 +19,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -26,10 +27,12 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
+import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
@@ -60,6 +63,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private final NamedParameterJdbcOperations queryTemplate;
 
     private final DbEntityMapper dbMapper;
+
+    private final JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -128,6 +133,16 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
                 new BeanPropertyRowMapper<>(ExpectedArrivalsQueryRow.class));
 
         return rows.stream().map(dbMapper::convert).toList();
+    }
+
+    @Override
+    public void recordHandlingEvent(HandlingEvent event) {
+        HandlingEventEntity eventEntity = dbMapper.convert(event);
+
+        // we are saving new handling event entity each time
+
+        jdbcAggregateTemplate.save(eventEntity);
+
     }
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {

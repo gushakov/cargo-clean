@@ -2,6 +2,7 @@ package com.github.cargoclean.core.port.operation;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -51,4 +52,6 @@ public interface PersistenceGatewayOutputPort {
     void deleteCargo(TrackingId trackingId);
 
     List<ExpectedArrivals> queryForExpectedArrivals();
+
+    void recordHandlingEvent(HandlingEvent event);
 }

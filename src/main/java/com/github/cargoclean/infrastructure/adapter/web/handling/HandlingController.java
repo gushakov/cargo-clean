@@ -1,10 +1,14 @@
 package com.github.cargoclean.infrastructure.adapter.web.handling;
 
+import com.github.cargoclean.core.model.handling.HandlingEventType;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
+import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,18 +30,45 @@ import java.time.Instant;
 @RestController
 public class HandlingController {
 
+    private final ApplicationContext applicationContext;
+
     @Operation(summary = "Record event", description = "Record handling event")
     @PostMapping("/recordEvent")
     public void recordEvent(
 
+            @Parameter(name = "voyageNumber", description = "Voyage number")
+            @RequestParam String voyageNumber,
+
+            @Parameter(name = "location", description = "Location: UnLocode")
+            @RequestParam String location,
+
+            @Parameter(name = "cargoId", description = "Cargo tracking ID")
+            @RequestParam String cargoId,
+
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @Parameter(name = "completion time",
+            @Parameter(name = "completionTime",
                     description = "Event completion date and time (ISO format)",
                     schema = @Schema(type = "string", format = "date-time"))
-            @RequestParam Instant completionTime) {
+            @RequestParam Instant completionTime,
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>" + completionTime);
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @Parameter(name = "registrationTime",
+                    description = "Event registration date and time (ISO format)",
+                    schema = @Schema(type = "string", format = "date-time"))
+            @RequestParam Instant registrationTime,
 
+
+            @Parameter(name = "type", description = "Event type: loading, unloading, etc.")
+            @RequestParam HandlingEventType type
+
+    ) {
+
+        useCase().recordHandlingEvent(voyageNumber, location, cargoId, completionTime, registrationTime, type);
+
+    }
+
+    private HandlingInputPort useCase(){
+        return applicationContext.getBean(HandlingInputPort.class);
     }
 
 }
