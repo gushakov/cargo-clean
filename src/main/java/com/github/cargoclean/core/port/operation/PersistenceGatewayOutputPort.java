@@ -13,6 +13,8 @@ public interface PersistenceGatewayOutputPort {
 
     TrackingId nextTrackingId();
 
+
+
     /**
      * Load all {@code Locations} from the database.
      *

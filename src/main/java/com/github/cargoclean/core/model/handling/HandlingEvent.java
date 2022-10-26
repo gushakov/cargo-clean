@@ -16,19 +16,18 @@ import java.time.ZonedDateTime;
 public class HandlingEvent {
 
     @EqualsAndHashCode.Include
+    EventId eventId;
+
     VoyageNumber voyageNumber;
 
-    @EqualsAndHashCode.Include
     UnLocode location;
 
-    @EqualsAndHashCode.Include
     TrackingId cargoId;
 
     ZonedDateTime completionTime;
 
     ZonedDateTime registrationTime;
 
-    @EqualsAndHashCode.Include
     HandlingEventType type;
 
     Integer version;

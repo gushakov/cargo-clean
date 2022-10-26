@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.map;
 
 import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.mapstruct.Mapper;
@@ -58,4 +59,11 @@ public class CommonMapStructConverters {
         return convertInstantToZonedDateTime(date.toInstant());
     }
 
+    public EventId convertLongToEventId(Long id){
+        return EventId.of(id);
+    }
+
+    public Long convertEventIdToLong(EventId eventId){
+        return eventId.getId();
+    }
 }

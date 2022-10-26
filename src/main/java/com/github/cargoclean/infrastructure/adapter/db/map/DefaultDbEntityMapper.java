@@ -122,12 +122,12 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @IgnoreForMapping
     @Override
     public HandlingEvent convert(HandlingEventEntity handlingEventEntity) {
-        return null;
+        return map(handlingEventEntity);
     }
 
     @IgnoreForMapping
     @Override
     public HandlingEventEntity convert(HandlingEvent handlingEvent) {
-        return null;
+        return map(handlingEvent);
     }
 }

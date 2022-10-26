@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
     References:
     ----------
 
-    1.  Default constructor with MapStruct: https://bit.ly/38TxAVY
+    1.  Default constructor with MapStruct: https://mapstruct.org/documentation/stable/reference/html/#non-shipped-annotations
  */
 
 @Target(ElementType.CONSTRUCTOR)
