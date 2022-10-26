@@ -22,8 +22,8 @@ public class HandlingPresenter extends AbstractRestPresenter implements Handling
 
     @Override
     public void presentResultOfRegisteringHandlingEvent(TrackingId cargoId, HandlingEvent handlingEvent) {
-        presentOk(Map.of("message", "Event %s was registered, cargo ID: %s"
-                .formatted(handlingEvent, cargoId)));
+        presentOk(Map.of("message", "Event %s was registered, cargo ID: %s, location: %s"
+                .formatted(handlingEvent.getType(), cargoId, handlingEvent.getLocation())));
     }
 
     @Override
