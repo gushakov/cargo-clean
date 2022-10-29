@@ -7,4 +7,6 @@ import java.time.Instant;
 public interface HandlingInputPort {
     void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr,
                              Instant completionTime, HandlingEventType type);
+
+    void updateDeliveryAfterHandlingActivity(String cargoIdStr);
 }

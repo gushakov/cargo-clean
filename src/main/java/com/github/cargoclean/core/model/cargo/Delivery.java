@@ -13,12 +13,14 @@ package com.github.cargoclean.core.model.cargo;
 
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
+import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 import static com.github.cargoclean.core.model.cargo.TransportStatus.*;
 
@@ -36,6 +38,9 @@ public class Delivery {
     @Getter
     TransportStatus transportStatus;
 
+    @Getter
+    UnLocode lastKnownLocation;
+
     /**
      * This constructor is needed for MapStruct mapper to work. We need to be
      * able to map a database entity to "Cargo".
@@ -46,6 +51,7 @@ public class Delivery {
     public Delivery(TransportStatus transportStatus) {
         this.lastEvent = null;
         this.transportStatus = transportStatus;
+        this.lastKnownLocation = null;
 
     }
 
@@ -56,7 +62,8 @@ public class Delivery {
 
     private Delivery(HandlingEvent lastEvent, Itinerary itinerary, RouteSpecification routeSpecification) {
         this.lastEvent = lastEvent;
-        transportStatus = calculateTransportStatus();
+        this.transportStatus = calculateTransportStatus();
+        this.lastKnownLocation = calculateLastKnownLocation().orElse(null);
     }
 
 
@@ -73,5 +80,16 @@ public class Delivery {
             case UNLOAD, RECEIVE, CUSTOMS -> IN_PORT;
             case CLAIM -> CLAIMED;
         };
+    }
+
+    /*
+        Copied and modified from "se.citerus.dddsample.domain.model.cargo.Delivery#calculateLastKnownLocation".
+     */
+    private Optional<UnLocode> calculateLastKnownLocation() {
+        if (lastEvent != null) {
+            return Optional.of(lastEvent.getLocation());
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -21,6 +21,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -150,6 +151,18 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         try {
             HandlingEventEntity eventEntity = dbMapper.convert(event);
             handlingEventRepository.save(eventEntity);
+        } catch (Exception e) {
+            throw new PersistenceOperationError(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public HandlingHistory handlingHistory(TrackingId cargoId) {
+        try {
+            return HandlingHistory.builder()
+                    .handlingEvents(handlingEventRepository.findAllByCargoId(cargoId.getId())
+                            .stream().map(dbMapper::convert).toList())
+                    .build();
         } catch (Exception e) {
             throw new PersistenceOperationError(e.getMessage(), e);
         }

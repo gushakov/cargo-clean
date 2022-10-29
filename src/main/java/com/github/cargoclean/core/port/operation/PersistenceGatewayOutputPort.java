@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -57,4 +58,6 @@ public interface PersistenceGatewayOutputPort {
     List<ExpectedArrivals> queryForExpectedArrivals();
 
     void recordHandlingEvent(HandlingEvent event);
+
+    HandlingHistory handlingHistory(TrackingId cargoId);
 }

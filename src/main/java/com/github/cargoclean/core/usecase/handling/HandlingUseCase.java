@@ -2,9 +2,11 @@ package com.github.cargoclean.core.usecase.handling;
 
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.Constants;
+import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
@@ -64,5 +66,30 @@ public class HandlingUseCase implements HandlingInputPort {
         }
 
         presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
+    }
+
+    @Override
+    public void updateDeliveryAfterHandlingActivity(String cargoIdStr) {
+
+        try {
+
+            TrackingId trackingId = TrackingId.of(cargoIdStr);
+
+            // retrieve cargo
+            Cargo cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
+
+            // retrieve handling history of cargo
+            HandlingHistory handlingHistory = gatewayOps.handlingHistory(trackingId);
+
+            // update cargo to reflect handling history
+            Cargo updatedCargo = cargo.updateDeliveryProgress(handlingHistory);
+
+            // save cargo aggregate
+            gatewayOps.saveCargo(updatedCargo);
+        }
+        catch (GenericCargoError e){
+            presenter.presentError(e);
+        }
+
     }
 }

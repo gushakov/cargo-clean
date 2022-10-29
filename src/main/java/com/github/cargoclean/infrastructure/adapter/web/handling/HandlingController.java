@@ -1,7 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.handling;
 
 import com.github.cargoclean.core.model.handling.HandlingEventType;
-import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,11 +56,15 @@ public class HandlingController {
 
     ) {
 
+        // register new handling event
         useCase().recordHandlingEvent(voyageNumber, location, cargoId, completionTime, type);
+
+        // we are updating cargo's delivery synchronously
+        useCase().updateDeliveryAfterHandlingActivity(cargoId);
 
     }
 
-    private HandlingInputPort useCase(){
+    private HandlingInputPort useCase() {
         return applicationContext.getBean(HandlingInputPort.class);
     }
 

@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -113,5 +114,21 @@ public class Cargo {
 
     public boolean isRouted() {
         return itinerary != null && !itinerary.getLegs().isEmpty();
+    }
+
+    /*
+        Modeled after "se.citerus.dddsample.domain.model.cargo.Cargo#deriveDeliveryProgress".
+     */
+
+    /**
+     * Returns a new instance of the cargo with delivery updated to reflect given {@code handlingHistory}.
+     *
+     * @param handlingHistory handling history (list of handling events) of the cargo
+     * @return new {@code Cargo} with updated delivery
+     */
+    public Cargo updateDeliveryProgress(HandlingHistory handlingHistory) {
+        return newCargo()
+                .delivery(Delivery.derivedFrom(routeSpecification, itinerary, handlingHistory))
+                .build();
     }
 }
