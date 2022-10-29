@@ -18,6 +18,7 @@ public enum HandlingEventType {
     LOAD(true),
     UNLOAD(true),
     RECEIVE(false),
+    CLAIM(false),
     CUSTOMS(false);
 
     private final boolean voyageRequired;

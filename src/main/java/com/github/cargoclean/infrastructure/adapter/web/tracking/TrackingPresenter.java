@@ -28,6 +28,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
         presentModelAndView(Map.of("trackingForm", TrackingForm.builder().build(),
                 "trackingInfo", TrackingInfo.builder()
                                 .trackingId(cargo.getTrackingId().toString())
+                                .delivery(cargo.getDelivery())
                         .build()), "track-cargo");
     }
 }
