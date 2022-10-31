@@ -2,6 +2,9 @@ package com.github.cargoclean.core.port.operation;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.EventId;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -11,6 +14,8 @@ import java.util.List;
 public interface PersistenceGatewayOutputPort {
 
     TrackingId nextTrackingId();
+
+    EventId nextEventId();
 
     /**
      * Load all {@code Locations} from the database.
@@ -51,4 +56,8 @@ public interface PersistenceGatewayOutputPort {
     void deleteCargo(TrackingId trackingId);
 
     List<ExpectedArrivals> queryForExpectedArrivals();
+
+    void recordHandlingEvent(HandlingEvent event);
+
+    HandlingHistory handlingHistory(TrackingId cargoId);
 }

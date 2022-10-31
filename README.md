@@ -23,8 +23,8 @@ Wherever possible, I'll try to mention the original code which was consulted for
 ### How to run
 
 This application is a standard Spring Boot application. There is also a Docker compose file with a Postgres database,
-which should be started prior to the execution of the application. You may need to start the database for some of
-the integration tests as well.
+which should be started prior to the execution of the application. You may need to start the database for some 
+integration tests as well.
 
 ### Exploring DDDSample DB
 
@@ -33,7 +33,13 @@ There is an example configuration available here: [HsqlDbServerConfig.java](./et
 
 To launch the server, you need `hsqldb-2.4.0.jar` (available from Maven central):
 
+on Unix
+
 > java -cp ~/.m2/repository/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar org.hsqldb.util.DatabaseManagerSwing
+
+or on Windows
+
+> java -cp %HOME%/.m2/repository/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar org.hsqldb.util.DatabaseManagerSwing
 
 This should start the UI of the DB viewer. The type of connection to use is "HSQL Database Engine WebServer" and JDBC 
 URL to use is `jdbc:hsqldb:hsql://localhost/dddsample`.

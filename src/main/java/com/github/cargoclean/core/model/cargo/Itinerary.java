@@ -22,10 +22,14 @@ import java.util.Optional;
 @Value
 public class Itinerary {
 
-    @Builder.Default
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#EMPTY_ITINERARY".
+     */
+    public static final Itinerary EMPTY_ITINERARY = Itinerary.builder().build();
+
     List<Leg> legs;
 
-    public static Itinerary of(List<Leg> legs){
+    public static Itinerary of(List<Leg> legs) {
         return Itinerary.builder()
                 .legs(legs)
                 .build();
@@ -36,11 +40,11 @@ public class Itinerary {
         this.legs = List.copyOf(Optional.ofNullable(legs).orElse(List.of()));
     }
 
-    public Leg first(){
-       return legs.stream().findFirst().orElse(null);
+    public Leg first() {
+        return legs.stream().findFirst().orElse(null);
     }
 
-    public Leg last(){
-        return legs.stream().skip(legs.size()-1).findFirst().orElse(null);
+    public Leg last() {
+        return legs.stream().skip(legs.size() - 1).findFirst().orElse(null);
     }
 }

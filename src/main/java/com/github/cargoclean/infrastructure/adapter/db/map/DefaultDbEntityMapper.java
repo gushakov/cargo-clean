@@ -4,17 +4,18 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -65,6 +66,10 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Mapping(target = "city.name", source = "city")
     abstract ExpectedArrivals map(ExpectedArrivalsQueryRow arrivalsQueryRow);
 
+    abstract HandlingEvent map(HandlingEventEntity handlingEventEntity);
+
+    abstract HandlingEventEntity map(HandlingEvent handlingEvent);
+
     @IgnoreForMapping
     @Override
     public Location convert(LocationDbEntity locationDbEntity) {
@@ -111,5 +116,17 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @IgnoreForMapping
     public ExpectedArrivals convert(ExpectedArrivalsQueryRow arrivalsQueryRow) {
         return map(arrivalsQueryRow);
+    }
+
+    @IgnoreForMapping
+    @Override
+    public HandlingEvent convert(HandlingEventEntity handlingEventEntity) {
+        return map(handlingEventEntity);
+    }
+
+    @IgnoreForMapping
+    @Override
+    public HandlingEventEntity convert(HandlingEvent handlingEvent) {
+        return map(handlingEvent);
     }
 }

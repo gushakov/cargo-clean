@@ -30,7 +30,7 @@
 
     <div class="row-cols-1 mt-3">
 
-        <!--/*@thymesVar id="bookingForm" type="com.github.cargoclean.infrastructure.adapter.web.presenter.booking.BookingForm"*/-->
+        <!--/*@thymesVar id="bookingForm" type="com.github.cargoclean.infrastructure.adapter.web.booking.BookingForm"*/-->
 
         <form method="post" action="#" th:action="@{/book}" th:object="${bookingForm}">
             <div class="row mb-3">
@@ -65,7 +65,7 @@
 
             <div class="row mb-3">
                 <div class="col-1">
-                    <button class="btn btn-success" type="submit">Book</button>
+                    <button type="submit" class="btn btn-success">Book</button>
                 </div>
             </div>
 

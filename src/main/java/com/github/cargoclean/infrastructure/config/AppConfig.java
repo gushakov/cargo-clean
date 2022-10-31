@@ -14,17 +14,23 @@ package com.github.cargoclean.infrastructure.config;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
+import com.github.cargoclean.core.usecase.handling.HandlingUseCase;
 import com.github.cargoclean.core.usecase.report.ReportInputPort;
 import com.github.cargoclean.core.usecase.report.ReportUseCase;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
+import com.github.cargoclean.core.usecase.tracking.TrackingInputPort;
+import com.github.cargoclean.core.usecase.tracking.TrackingUseCase;
 import com.github.cargoclean.core.validator.BeanValidator;
 import com.github.cargoclean.core.validator.Validator;
-import com.github.cargoclean.infrastructure.adapter.web.presenter.LocalDispatcherServlet;
+import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.internal.GraphDAOStub;
 import com.pathfinder.internal.GraphTraversalServiceImpl;
@@ -72,7 +78,7 @@ public class AppConfig {
      */
 
     @Bean
-    public GraphTraversalService graphTraversalService(){
+    public GraphTraversalService graphTraversalService() {
         return new GraphTraversalServiceImpl(new GraphDAOStub());
     }
 
@@ -102,7 +108,22 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ReportInputPort reportUseCase(ReportPresenterOutputPort presenter,
-                                         PersistenceGatewayOutputPort gatewayOps){
+                                         PersistenceGatewayOutputPort gatewayOps) {
         return new ReportUseCase(presenter, gatewayOps);
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
+                                             PersistenceGatewayOutputPort gatewayOps) {
+        return new TrackingUseCase(presenter, gatewayOps);
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
+                                             Validator validator,
+                                             PersistenceGatewayOutputPort gatewayOps) {
+        return new HandlingUseCase(presenter, validator, gatewayOps);
     }
 }

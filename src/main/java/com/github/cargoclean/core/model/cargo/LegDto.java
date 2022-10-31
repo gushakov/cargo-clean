@@ -20,7 +20,7 @@ public class LegDto {
     String to;
     Date unloadTime;
 
-    public static LegDto of(Leg leg){
+    public static LegDto of(Leg leg) {
         return LegDto.builder()
                 .cargoTrackingId(leg.getCargoTrackingId().getId())
                 .voyageNumber(leg.getVoyageNumber().getNumber())
@@ -31,7 +31,7 @@ public class LegDto {
                 .build();
     }
 
-    public Leg toLeg(){
+    public Leg toLeg() {
         return Leg.builder()
                 .cargoTrackingId(TrackingId.of(cargoTrackingId))
                 .voyageNumber(VoyageNumber.of(voyageNumber))

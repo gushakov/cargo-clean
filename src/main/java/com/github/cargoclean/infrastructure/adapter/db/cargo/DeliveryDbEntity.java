@@ -11,4 +11,10 @@ public class DeliveryDbEntity {
     @Column("transport_status")
     String transportStatus;
 
+    @Column("last_known_location")
+    String lastKnownLocation;
+
+    @Column("current_voyage")
+    String currentVoyage;
+
 }

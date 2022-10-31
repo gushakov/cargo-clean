@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="fragments :: head"></head>
 <body>
-    <div class="container-fluid">
-        <div th:replace="fragments :: header"></div>
-        <div class="row m-3" th:text="${errorMessage}" style="color: orangered">
-        </div>
+<div class="container-fluid">
+    <div th:replace="fragments :: header"></div>
+    <div class="row m-3" th:text="${errorMessage}" style="color: orangered">
     </div>
-    <th:block th:replace="fragments :: footer"></th:block>
+</div>
+<th:block th:replace="fragments :: footer"></th:block>
 </body>
 </html>

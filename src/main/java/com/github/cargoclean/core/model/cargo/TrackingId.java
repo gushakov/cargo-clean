@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 import com.github.cargoclean.core.annotation.Default;
+import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import lombok.Builder;
 import lombok.Value;
 
@@ -31,7 +32,7 @@ public class TrackingId {
     @Default
     public TrackingId(String id) {
         if (id == null || id.isEmpty() || id.isBlank()) {
-            throw new IllegalArgumentException("Invalid tracking ID: <%s>".formatted(id));
+            throw new InvalidDomainObjectError("Invalid tracking ID: <%s>".formatted(id));
         }
         this.id = id;
     }

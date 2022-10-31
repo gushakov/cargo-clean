@@ -25,6 +25,14 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class Location {
 
+    /*
+        Copied from "se.citerus.dddsample.domain.model.location.Location#UNKNOWN".
+     */
+    public static final Location UNKNOWN = Location.builder()
+            .name("UNKNOWN")
+            .unlocode(UnLocode.of("XXXXX"))
+            .build();
+
     @EqualsAndHashCode.Include
     @NotNull
     UnLocode unlocode;
@@ -34,8 +42,6 @@ public class Location {
 
     @Override
     public String toString() {
-        return "Location{" +
-                "unlocode=" + unlocode +
-                '}';
+        return "%s, %s".formatted(name, unlocode);
     }
 }

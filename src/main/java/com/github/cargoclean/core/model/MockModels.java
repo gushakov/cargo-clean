@@ -19,6 +19,18 @@ import java.util.Optional;
  */
 public class MockModels {
 
+    public static RouteSpecification routeSpecification() {
+        return RouteSpecification.builder()
+                .origin(UnLocode.of("USDAL"))
+                .destination(UnLocode.of("AUMEL"))
+                .arrivalDeadline(localDate("24-08-2022"))
+                .build();
+    }
+
+    public static Itinerary itinerary() {
+        return itinerary(1, 2);
+    }
+
     public static Map<String, Location> allLocations() {
         return Map.of(
                 "JNTKO",
@@ -89,11 +101,7 @@ public class MockModels {
                         .delivery(Delivery.builder()
                                 .transportStatus(TransportStatus.IN_PORT)
                                 .build())
-                        .routeSpecification(RouteSpecification.builder()
-                                .origin(UnLocode.of("USDAL"))
-                                .destination(UnLocode.of("AUMEL"))
-                                .arrivalDeadline(localDate("24-08-2022"))
-                                .build())
+                        .routeSpecification(routeSpecification())
                         .build(),
 
                 "695CF30D",
@@ -184,6 +192,5 @@ public class MockModels {
                 .legs(Arrays.stream(legs).map(MockModels::leg).toList())
                 .build();
     }
-
 
 }

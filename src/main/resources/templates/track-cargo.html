@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+
+<!--
+
+    Notice on COPYRIGHT:
+    ===================
+
+    Some code in this file is based on, copied from, and or modified from
+    the code in the original DDDSample application. Please, see the copyright
+    notice in "README.md" and the copy of the original licence in
+    "original-license.txt", as well.
+-->
+
+<!--
+
+    References:
+    ==========
+
+    1.  Based on the similar Thymeleaf view: "track" ("track.html") in the original DDDSample.
+    2.  Bootstrap 5 Forms: https://getbootstrap.com/docs/5.0/forms/form-control/
+    3.  Thymeleaf, Spring MVC, form submission: https://spring.io/guides/gs/handling-form-submission/
+-->
+
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+
+    <div th:replace="fragments :: header"></div>
+
+    <div class="row-cols-1 mt-3">
+
+        <!--/*@thymesVar id="trackingForm" type="com.github.cargoclean.infrastructure.adapter.web.tracking.TrackingForm"*/-->
+        <form class="mb-3" method="post" action="#" th:action="@{/trackCargo}" th:object="${trackingForm}">
+            <label for="trackingId" class="form-label">Tracking ID</label>
+            <input id="trackingId" type="text" th:field="*{trackingId}" class="form-label" placeholder="3AA85BC7">
+            <div class="row mt-3">
+                <div class="col-1">
+                    <button type="submit" class="btn btn-success">Track</button>
+                </div>
+            </div>
+        </form>
+
+        <!--/*@thymesVar id="trackingInfo" type="com.github.cargoclean.infrastructure.adapter.web.tracking.TrackingInfo"*/-->
+        <th:block th:if="${trackingInfo != null}" th:object="${trackingInfo}">
+
+            <div class="border-top mt-3">
+                Current status for cargo <span th:text="${trackingInfo.trackingId}"></span>:
+                <span th:text="${trackingInfo.statusText}"></span>
+            </div>
+
+        </th:block>
+
+    </div>
+
+</div>
+
+<th:block th:replace="fragments :: footer"></th:block>
+
+</body>
+</html>
