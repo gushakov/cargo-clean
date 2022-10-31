@@ -13,7 +13,6 @@ package com.github.cargoclean.core.model.handling;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
-import org.springframework.util.comparator.Comparators;
 
 import java.util.*;
 
@@ -32,15 +31,14 @@ import java.util.*;
 public class HandlingHistory {
 
     private static final Comparator<HandlingEvent> BY_COMPLETION_LATEST_FIRST_COMPARATOR =
-            (event1, event2) -> (-1) * Comparators.comparable().compare(event1.getCompletionTime(),
-                    event2.getCompletionTime());
+            Comparator.comparing(HandlingEvent::getCompletionTime).reversed();
 
     List<HandlingEvent> handlingEvents;
 
     @Builder
     public HandlingHistory(List<HandlingEvent> handlingEvents) {
 
-        if (handlingEvents == null || handlingEvents.isEmpty()){
+        if (handlingEvents == null || handlingEvents.isEmpty()) {
             this.handlingEvents = List.of();
             return;
         }
@@ -67,7 +65,7 @@ public class HandlingHistory {
         }
     }
 
-    int numberOfEvents(){
+    int numberOfEvents() {
         return handlingEvents.size();
     }
 

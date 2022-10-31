@@ -26,7 +26,8 @@ public class HexagonalArchitectureTest {
             "",
             "java..",
             "javax..",
-            "org.slf4j..");
+            "org.slf4j..",
+            "lombok..");
 
     private final DescribedPredicate<JavaClass> areCore = resideInAnyPackage("com.github.cargoclean.core..");
 
