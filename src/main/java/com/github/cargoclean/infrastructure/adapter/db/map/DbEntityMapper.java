@@ -12,7 +12,6 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationD
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
-import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 
 public interface DbEntityMapper {
 

@@ -1,15 +1,18 @@
 package com.github.cargoclean.infrastructure.adapter.web.routing;
 
+import com.github.cargoclean.core.model.cargo.RouteDto;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
-import com.github.cargoclean.core.model.cargo.RouteDto;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;

@@ -18,32 +18,57 @@ import org.springframework.util.comparator.Comparators;
 import java.util.*;
 
 /*
+    References:
+    ----------
+
+    1. JavaDoc for "java.util.LinkedHashSet".
+ */
+
+/*
     Modeled after "se.citerus.dddsample.domain.model.handling.HandlingHistory".
  */
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HandlingHistory {
 
-    private static final Comparator<HandlingEvent> BY_COMPLETION_TIME_NATURAL_COMPARATOR =
-            (event1, event2) -> Comparators.comparable().compare(event1.getCompletionTime(),
+    private static final Comparator<HandlingEvent> BY_COMPLETION_LATEST_FIRST_COMPARATOR =
+            (event1, event2) -> (-1) * Comparators.comparable().compare(event1.getCompletionTime(),
                     event2.getCompletionTime());
-
 
     List<HandlingEvent> handlingEvents;
 
     @Builder
     public HandlingHistory(List<HandlingEvent> handlingEvents) {
-        // Discard any duplicates, see "HandlingEvent" equals method for more details.
-        this.handlingEvents = new ArrayList<>(Set.copyOf(handlingEvents));
-        this.handlingEvents.sort(BY_COMPLETION_TIME_NATURAL_COMPARATOR);
+
+        if (handlingEvents == null || handlingEvents.isEmpty()){
+            this.handlingEvents = List.of();
+            return;
+        }
+
+        // Sort the events by completion time, the latest event first
+        List<HandlingEvent> sortedEvents = new ArrayList<>(List.copyOf(handlingEvents));
+        sortedEvents.sort(BY_COMPLETION_LATEST_FIRST_COMPARATOR);
+
+        // Create a set, effectively eliminating the duplicate events, "LinkedHashSet"
+        // guarantees the order of traversal.
+        LinkedHashSet<HandlingEvent> set = new LinkedHashSet<>(sortedEvents);
+
+        this.handlingEvents = new ArrayList<>(set.stream().toList());
     }
 
     public Optional<HandlingEvent> mostRecentlyCompletedEvent() {
         if (handlingEvents.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.ofNullable(handlingEvents.get(handlingEvents.size() - 1));
+            // Note, this is different from the original "DDDSample":
+            // our events are sorted with by the latest completion time
+            // first.
+            return Optional.ofNullable(handlingEvents.get(0));
         }
+    }
+
+    int numberOfEvents(){
+        return handlingEvents.size();
     }
 
 }

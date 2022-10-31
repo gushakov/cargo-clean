@@ -17,6 +17,7 @@ import java.io.IOException;
 /**
  * Common parent for web controllers: declares default error handling for web interface (redirect to an
  * error view).
+ *
  * @see AbstractRestController
  */
 @Slf4j

@@ -7,7 +7,7 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 @Slf4j
 public abstract class AbstractErrorHandler {
 
-    protected void logErrorAndRollBack(Exception t){
+    protected void logErrorAndRollBack(Exception t) {
         log.error(t.getMessage(), t);
 
         // roll back any transaction, if needed

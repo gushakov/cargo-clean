@@ -78,7 +78,7 @@ public class AppConfig {
      */
 
     @Bean
-    public GraphTraversalService graphTraversalService(){
+    public GraphTraversalService graphTraversalService() {
         return new GraphTraversalServiceImpl(new GraphDAOStub());
     }
 
@@ -108,14 +108,14 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ReportInputPort reportUseCase(ReportPresenterOutputPort presenter,
-                                         PersistenceGatewayOutputPort gatewayOps){
+                                         PersistenceGatewayOutputPort gatewayOps) {
         return new ReportUseCase(presenter, gatewayOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
-                                             PersistenceGatewayOutputPort gatewayOps){
+                                             PersistenceGatewayOutputPort gatewayOps) {
         return new TrackingUseCase(presenter, gatewayOps);
     }
 
@@ -123,7 +123,7 @@ public class AppConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
                                              Validator validator,
-                                             PersistenceGatewayOutputPort gatewayOps){
+                                             PersistenceGatewayOutputPort gatewayOps) {
         return new HandlingUseCase(presenter, validator, gatewayOps);
     }
 }

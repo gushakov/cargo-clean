@@ -16,7 +16,6 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

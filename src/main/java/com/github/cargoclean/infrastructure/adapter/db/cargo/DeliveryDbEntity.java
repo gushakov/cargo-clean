@@ -14,4 +14,7 @@ public class DeliveryDbEntity {
     @Column("last_known_location")
     String lastKnownLocation;
 
+    @Column("current_voyage")
+    String currentVoyage;
+
 }

@@ -3,6 +3,7 @@ package com.github.cargoclean.infrastructure.adapter.web.tracking;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -33,10 +34,13 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
             In original application this done in "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter".
          */
 
-        presentModelAndView(Map.of("trackingForm", TrackingForm.builder().build(),
+        presentModelAndView(Map.of("trackingForm", TrackingForm.builder()
+                        .trackingId(cargo.getTrackingId().getId())
+                        .build(),
                 "trackingInfo", TrackingInfo.builder()
                         .trackingId(cargo.getTrackingId().toString())
-                        .statusText(makeCargoStatusText(cargo.getDelivery().getTransportStatus(), lastKnownLocation))
+                        .statusText(makeCargoStatusText(cargo.getDelivery().getTransportStatus(), lastKnownLocation,
+                                cargo.getDelivery().getCurrentVoyage()))
                         .build()), "track-cargo");
     }
 
@@ -44,11 +48,11 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
         Method copied and modified from
         "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getStatusText".
      */
-    private String makeCargoStatusText(TransportStatus transportStatus, Location lastKnownLocation) {
+    private String makeCargoStatusText(TransportStatus transportStatus, Location lastKnownLocation, VoyageNumber currentVoyage) {
 
         return switch (transportStatus) {
-            case IN_PORT -> "In port %s".formatted(lastKnownLocation);
-            case ONBOARD_CARRIER -> "On board carrier";
+            case IN_PORT -> "In port: %s".formatted(lastKnownLocation);
+            case ONBOARD_CARRIER -> "On board carrier, voyage: %s".formatted(currentVoyage);
             case CLAIMED, NOT_RECEIVED, UNKNOWN -> "Unknown";
         };
 

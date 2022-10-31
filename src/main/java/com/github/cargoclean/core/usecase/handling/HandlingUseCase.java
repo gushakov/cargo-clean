@@ -89,8 +89,7 @@ public class HandlingUseCase implements HandlingInputPort {
 
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
-        }
-        catch (GenericCargoError e){
+        } catch (GenericCargoError e) {
             presenter.presentError(e);
         }
 

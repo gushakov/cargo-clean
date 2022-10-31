@@ -36,7 +36,8 @@
 
             <div class="row-cols-1" th:unless="*{candidateRoutes.isEmpty()}">
                 Select route for cargo <span th:text="*{trackingId}" class="fw-bold"/> traveling from
-                <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}" class="fw-bold"/>
+                <span th:text="*{cargoOrigin}" class="fw-bold"/> to <span th:text="*{cargoDestination}"
+                                                                          class="fw-bold"/>
             </div>
 
             <div class="row-cols-1" th:if="*{candidateRoutes.isEmpty()}">

@@ -66,6 +66,7 @@ public class RoutingUseCase implements RoutingInputPort {
 
         presenter.presentCandidateRoutes(cargo, itineraries);
     }
+
     @Transactional
     @Override
     public void assignRoute(String trackingId, RouteDto selectedRoute) {

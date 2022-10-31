@@ -27,7 +27,7 @@ public class MockModels {
                 .build();
     }
 
-    public static Itinerary itinerary(){
+    public static Itinerary itinerary() {
         return itinerary(1, 2);
     }
 
