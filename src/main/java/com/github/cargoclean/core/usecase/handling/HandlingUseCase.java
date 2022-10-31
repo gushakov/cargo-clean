@@ -15,6 +15,7 @@ import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class HandlingUseCase implements HandlingInputPort {
 
     private final PersistenceGatewayOutputPort gatewayOps;
 
+    @Transactional
     @Override
     public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr,
                                     Instant completionTime, HandlingEventType type) {
@@ -68,6 +70,7 @@ public class HandlingUseCase implements HandlingInputPort {
         presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
     }
 
+    @Transactional
     @Override
     public void updateDeliveryAfterHandlingActivity(String cargoIdStr) {
 
