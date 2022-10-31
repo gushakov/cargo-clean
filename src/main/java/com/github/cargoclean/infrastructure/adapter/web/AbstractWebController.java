@@ -8,21 +8,22 @@ package com.github.cargoclean.infrastructure.adapter.web;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@ControllerAdvice
+/**
+ * Common parent for web controllers: declares default error handling for web interface (redirect to an
+ * error view).
+ * @see AbstractRestController
+ */
 @Slf4j
-public class MvcErrorHandler {
+public abstract class AbstractWebController {
 
-    /*
-        Handle any errors which manage to bubble up all the way to the web interface
-        layer (Spring MVC) by redirecting to the error handling endpoint.
-     */
+    // This will be called for any error which was not handled through
+    // presenters.
 
     @ExceptionHandler
     public void redirectOnError(HttpServletRequest request, HttpServletResponse response, Exception exception) {

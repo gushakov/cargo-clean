@@ -1,6 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.booking;
 
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
+import com.github.cargoclean.infrastructure.adapter.web.AbstractWebController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
-public class BookingController {
+public class BookingController extends AbstractWebController {
 
     private final ApplicationContext appContext;
 

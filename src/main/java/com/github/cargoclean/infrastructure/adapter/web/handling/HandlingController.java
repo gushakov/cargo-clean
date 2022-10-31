@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.handling;
 
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
+import com.github.cargoclean.infrastructure.adapter.web.AbstractRestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,7 +28,7 @@ import java.time.Instant;
 @Tag(name = "Cargo handling")
 @RequiredArgsConstructor
 @RestController
-public class HandlingController {
+public class HandlingController extends AbstractRestController {
 
     private final ApplicationContext applicationContext;
 
