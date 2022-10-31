@@ -35,7 +35,7 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
@@ -100,9 +100,16 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
-        return dbMapper.convert(locationRepository.findById(unLocode.getCode())
-                .orElseThrow(() -> new PersistenceOperationError("Cannot load location with UnLocode: <%s>"
-                        .formatted(unLocode))));
+        try {
+            return dbMapper.convert(locationRepository.findById(unLocode.getCode())
+                    .orElseThrow(() -> new IllegalStateException("Cannot load location with UnLocode: <%s>"
+                            .formatted(unLocode))));
+        } catch (IllegalStateException e) {
+            throw new PersistenceOperationError(e.getMessage());
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot obtain location with unLocode: <%s>"
+                    .formatted(unLocode), e);
+        }
     }
 
     @Override
@@ -125,25 +132,41 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
-        CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId())
-                .orElseThrow(() -> new PersistenceOperationError("Cannot find Cargo with tracking ID: <%s>"
-                        .formatted(trackingId)));
-        return dbMapper.convert(cargoDbEntity);
+        try {
+            CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId())
+                    .orElseThrow(() -> new IllegalStateException("Cannot find Cargo with tracking ID: <%s>"
+                            .formatted(trackingId)));
+            return dbMapper.convert(cargoDbEntity);
+        } catch (IllegalStateException e) {
+            throw new PersistenceOperationError(e.getMessage());
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot obtain cargo with tracking ID: <%s>"
+                    .formatted(trackingId), e);
+        }
 
     }
 
     @Override
     public void deleteCargo(TrackingId trackingId) {
-        cargoRepository.deleteById(trackingId.getId());
+        try {
+            cargoRepository.deleteById(trackingId.getId());
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot delete cargo with tracking ID: <%s>"
+                    .formatted(trackingId), e);
+        }
     }
 
     @Override
     public List<ExpectedArrivals> queryForExpectedArrivals() {
 
-        List<ExpectedArrivalsQueryRow> rows = queryTemplate.query(ExpectedArrivalsQueryRow.SQL,
-                new BeanPropertyRowMapper<>(ExpectedArrivalsQueryRow.class));
+        try {
+            List<ExpectedArrivalsQueryRow> rows = queryTemplate.query(ExpectedArrivalsQueryRow.SQL,
+                    new BeanPropertyRowMapper<>(ExpectedArrivalsQueryRow.class));
 
-        return rows.stream().map(dbMapper::convert).toList();
+            return rows.stream().map(dbMapper::convert).toList();
+        } catch (DataAccessException e) {
+            throw new PersistenceOperationError("Cannot execute a query for expected arrivals", e);
+        }
     }
 
     @Override
@@ -152,7 +175,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             HandlingEventEntity eventEntity = dbMapper.convert(event);
             handlingEventRepository.save(eventEntity);
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot record handling event %s".formatted(event), e);
         }
     }
 
@@ -164,7 +187,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
                             .stream().map(dbMapper::convert).toList())
                     .build();
         } catch (Exception e) {
-            throw new PersistenceOperationError(e.getMessage(), e);
+            throw new PersistenceOperationError("Cannot obtain handling history for cargo with tracking ID: %s"
+                    .formatted(cargoId), e);
         }
     }
 

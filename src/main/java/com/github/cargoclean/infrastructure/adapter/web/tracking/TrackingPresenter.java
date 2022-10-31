@@ -1,6 +1,8 @@
 package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -24,11 +26,31 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     }
 
     @Override
-    public void presentCargoTrackingInformation(Cargo cargo) {
+    public void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation) {
+
+        /*
+            We are preparing all the information to be displayed by the "track cargo" view.
+            In original application this done in "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter".
+         */
+
         presentModelAndView(Map.of("trackingForm", TrackingForm.builder().build(),
                 "trackingInfo", TrackingInfo.builder()
-                                .trackingId(cargo.getTrackingId().toString())
-                                .delivery(cargo.getDelivery())
+                        .trackingId(cargo.getTrackingId().toString())
+                        .statusText(makeCargoStatusText(cargo.getDelivery().getTransportStatus(), lastKnownLocation))
                         .build()), "track-cargo");
+    }
+
+    /*
+        Method copied and modified from
+        "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getStatusText".
+     */
+    private String makeCargoStatusText(TransportStatus transportStatus, Location lastKnownLocation) {
+
+        return switch (transportStatus) {
+            case IN_PORT -> "In port %s".formatted(lastKnownLocation);
+            case ONBOARD_CARRIER -> "On board carrier";
+            case CLAIMED, NOT_RECEIVED, UNKNOWN -> "Unknown";
+        };
+
     }
 }

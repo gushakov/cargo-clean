@@ -42,16 +42,19 @@ public class Delivery {
     UnLocode lastKnownLocation;
 
     /**
-     * This constructor is needed for MapStruct mapper to work. We need to be
-     * able to map a database entity to "Cargo".
+     * This constructor is needed for MapStruct mapper to map a database entity
+     * {@code DeliveryDbEntity} to corresponding {@code Delivery} value object
+     * associated with each cargo. All the fields for "Delivery" which are persisted
+     * in the database need to be initialized here.
      *
      * @param transportStatus current transport status for the cargo
+     * @param lastKnownLocation UnLocode for last known location of the cargo
      */
     @Builder
-    public Delivery(TransportStatus transportStatus) {
+    public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation) {
         this.lastEvent = null;
         this.transportStatus = transportStatus;
-        this.lastKnownLocation = null;
+        this.lastKnownLocation = lastKnownLocation;
 
     }
 

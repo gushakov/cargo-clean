@@ -10,7 +10,6 @@ package com.github.cargoclean.infrastructure.adapter.web.tracking;
     "original-license.txt", as well.
  */
 
-import com.github.cargoclean.core.model.cargo.Delivery;
 import lombok.Builder;
 import lombok.Value;
 
@@ -28,6 +27,6 @@ public class TrackingInfo {
 
     String trackingId;
 
-    Delivery delivery;
+    String statusText;
 
 }

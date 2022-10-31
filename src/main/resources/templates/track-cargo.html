@@ -46,7 +46,8 @@
         <th:block th:if="${trackingInfo != null}" th:object="${trackingInfo}">
 
             <div class="border-top mt-3">
-                cargo tracking here
+                Current status for cargo <span th:text="${trackingInfo.trackingId}"></span>:
+                <span th:text="${trackingInfo.statusText}"></span>
             </div>
 
         </th:block>

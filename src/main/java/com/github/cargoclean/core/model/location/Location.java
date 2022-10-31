@@ -42,8 +42,6 @@ public class Location {
 
     @Override
     public String toString() {
-        return "Location{" +
-                "unlocode=" + unlocode +
-                '}';
+        return "%s, %s".formatted(name, unlocode);
     }
 }
