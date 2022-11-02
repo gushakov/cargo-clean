@@ -6,6 +6,7 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class BookingUseCase implements BookingInputPort {
 
             // we validate the inputs to the use case
             if (deliveryDeadline == null) {
-                throw new InvalidDestinationSpecificationError("arrival deadline must not be null");
+                throw new InvalidDomainObjectError("arrival deadline must not be null");
             }
 
             UnLocode origin = UnLocode.of(originUnLocode);
