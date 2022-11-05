@@ -10,7 +10,7 @@ import java.util.Optional;
 
 /**
  * Wrapper around {@link ZonedDateTime} fixed to the {@code UTC} timezone.
- * This is a real immutable value-object encapsulating all date-time related
+ * This is a an immutable value-object encapsulating all date-time related
  * operations.
  */
 public class UtcDateTime implements Comparable<UtcDateTime> {
