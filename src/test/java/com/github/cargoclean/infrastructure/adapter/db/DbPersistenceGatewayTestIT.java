@@ -1,10 +1,8 @@
 package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.CargoCleanApplication;
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.UtcDateTime;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -94,6 +92,9 @@ public class DbPersistenceGatewayTestIT {
         final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
         final Cargo updatedCargo = savedCargo.withDelivery(Delivery.builder()
                 .transportStatus(TransportStatus.CLAIMED)
+                .routingStatus(RoutingStatus.ROUTED)
+                .eta(UtcDateTime.of("24-08-2022"))
+                .misdirected(false)
                 .build());
         Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
         assertThat(savedAgainCargo.getDelivery().getTransportStatus())

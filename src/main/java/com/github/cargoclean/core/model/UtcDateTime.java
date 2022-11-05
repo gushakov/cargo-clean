@@ -73,7 +73,7 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
         }
     }
 
-    public ZonedDateTime toDateTimeAtUtc(){
+    public ZonedDateTime toDateTimeAtUtc() {
         return dateTimeAtUtc;
     }
 
