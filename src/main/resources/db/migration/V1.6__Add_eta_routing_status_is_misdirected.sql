@@ -1,5 +1,5 @@
 ALTER TABLE public.cargo
-    ADD eta timestamp NOT NULL;
+    ADD eta timestamp NULL;
 ALTER TABLE public.cargo
     ADD routing_status varchar NOT NULL;
 ALTER TABLE public.cargo

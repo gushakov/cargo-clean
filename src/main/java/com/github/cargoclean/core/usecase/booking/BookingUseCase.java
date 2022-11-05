@@ -77,6 +77,8 @@ public class BookingUseCase implements BookingInputPort {
                     .trackingId(trackingId)
                     .delivery(Delivery.builder()
                             .transportStatus(TransportStatus.NOT_RECEIVED)
+                            .routingStatus(RoutingStatus.NOT_ROUTED)
+                            .misdirected(false)
                             .build())
                     .routeSpecification(RouteSpecification.builder()
                             .origin(origin)

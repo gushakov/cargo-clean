@@ -68,7 +68,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     public String getEta(Cargo cargo) {
         UtcDateTime eta = cargo.getDelivery().estimatedTimeOfArrival();
 
-        if (eta.isUnknown()) return "?";
+        if (eta == null || eta.isUnknown()) return "?";
         else return eta.toString();
     }
 

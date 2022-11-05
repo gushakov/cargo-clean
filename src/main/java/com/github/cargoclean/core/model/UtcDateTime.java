@@ -83,7 +83,7 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
 
     @Override
     public String toString() {
-        return dateTimeAtUtc.format(DateTimeFormatter.BASIC_ISO_DATE);
+        return dateTimeAtUtc.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
     }
 
     public Instant toInstant() {
@@ -117,6 +117,10 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
 
     public UtcDateTime plusDays(long days) {
         return new UtcDateTime(dateTimeAtUtc.plusDays(days));
+    }
+
+    public Date getDate(){
+        return new Date(dateTimeAtUtc.toInstant().toEpochMilli());
     }
 
     @Override

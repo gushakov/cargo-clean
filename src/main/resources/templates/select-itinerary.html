@@ -65,13 +65,13 @@
                             <span th:text="${leg.from}"/>
                         </td>
                         <td>
-                            <span th:text="${#dates.format(leg.loadTime, 'dd-MM-yyyy HH:mm')}"/>
+                            <span th:text="${#dates.format(leg.loadTime.date, 'dd-MM-yyyy HH:mm')}"/>
                         </td>
                         <td>
                             <span th:text="${leg.to}"/>
                         </td>
                         <td>
-                            <span th:text="${#dates.format(leg.unloadTime, 'dd-MM-yyyy HH:mm')}"/>
+                            <span th:text="${#dates.format(leg.unloadTime.date, 'dd-MM-yyyy HH:mm')}"/>
                         </td>
                     </tr>
                     </tbody>
