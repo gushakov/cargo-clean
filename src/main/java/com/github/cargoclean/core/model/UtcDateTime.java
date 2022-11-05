@@ -13,7 +13,7 @@ import java.util.Optional;
  * This is a real immutable value-object encapsulating all date-time related
  * operations.
  */
-public class UtcDateTime {
+public class UtcDateTime implements Comparable<UtcDateTime> {
     private static final ZoneId UTC = ZoneId.from(ZoneOffset.UTC);
 
     /*
@@ -30,6 +30,18 @@ public class UtcDateTime {
      */
     public static UtcDateTime of(String date) {
         return new UtcDateTime(date);
+    }
+
+    public static UtcDateTime of(Date fromDate) {
+        return new UtcDateTime(fromDate);
+    }
+
+    public static UtcDateTime of(Instant fromInstant) {
+        return new UtcDateTime(fromInstant);
+    }
+
+    public static UtcDateTime now() {
+        return new UtcDateTime(Instant.now());
     }
 
     private final ZonedDateTime dateTimeAtUtc;
@@ -52,13 +64,17 @@ public class UtcDateTime {
                 .getTime()).atZone(UTC);
     }
 
-    private UtcDateTime(String fromString) {
+    public UtcDateTime(String fromString) {
         try {
             this.dateTimeAtUtc = ZonedDateTime.of(LocalDate.parse(fromString, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
-                    Constants.DEFAULT_ZONE_ID);
+                    UTC);
         } catch (NullPointerException | DateTimeParseException e) {
             throw new InvalidDomainObjectError("String must not be null and must be in the format: \"dd-MM-yyyy\"");
         }
+    }
+
+    public ZonedDateTime toDateTimeAtUtc(){
+        return dateTimeAtUtc;
     }
 
     public boolean isUnknown() {
@@ -72,5 +88,34 @@ public class UtcDateTime {
 
     public Instant toInstant() {
         return dateTimeAtUtc.toInstant();
+    }
+
+    public boolean isAfter(UtcDateTime anotherUtcDateTime) {
+        return dateTimeAtUtc.isAfter(anotherUtcDateTime.toDateTimeAtUtc());
+    }
+
+    @Override
+    public int compareTo(UtcDateTime anotherUtcDateTime) {
+        return dateTimeAtUtc.compareTo(anotherUtcDateTime.toDateTimeAtUtc());
+    }
+
+    public String format(DateTimeFormatter pattern) {
+        return dateTimeAtUtc.format(pattern);
+    }
+
+    public UtcDateTime plusSeconds(long seconds) {
+        return new UtcDateTime(dateTimeAtUtc.plusSeconds(seconds));
+    }
+
+    public UtcDateTime plusMonths(long months) {
+        return new UtcDateTime(dateTimeAtUtc.plusMonths(months));
+    }
+
+    public UtcDateTime atStartOfDay() {
+        return new UtcDateTime(dateTimeAtUtc.withHour(0).withMinute(0).withSecond(0).withNano(0));
+    }
+
+    public UtcDateTime plusDays(long days) {
+        return new UtcDateTime(dateTimeAtUtc.plusDays(days));
     }
 }

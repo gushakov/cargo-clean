@@ -1,6 +1,5 @@
 package com.github.cargoclean.infrastructure.adapter.map;
 
-import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
@@ -10,7 +9,6 @@ import org.mapstruct.Mapper;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 /**
  * Common MapStruct converters for model entities, value objects, standard types and primitives.
@@ -73,20 +71,6 @@ public class CommonMapStructConverters {
         return dateTime.toInstant();
     }
 
-    public ZonedDateTime convertInstantToZonedDateTime(Instant instant) {
-        if (instant == null) {
-            return null;
-        }
-        return ZonedDateTime.ofInstant(instant, Constants.DEFAULT_ZONE_ID);
-    }
-
-    public ZonedDateTime convertDateToZonedDateTime(Date date) {
-        if (date == null) {
-            return null;
-        }
-        return convertInstantToZonedDateTime(date.toInstant());
-    }
-
     public EventId convertLongToEventId(Long id) {
         if (id == null) {
             return null;
@@ -101,15 +85,15 @@ public class CommonMapStructConverters {
         return eventId.getId();
     }
 
-    public Instant convertUtcDateTimeToInstant(UtcDateTime utcDateTime){
-        if (utcDateTime == null){
+    public Instant convertUtcDateTimeToInstant(UtcDateTime utcDateTime) {
+        if (utcDateTime == null) {
             return null;
         }
-       return utcDateTime.toInstant();
+        return utcDateTime.toInstant();
     }
 
-    public UtcDateTime convertInstantToUtcDateTime(Instant instant){
-        if (instant == null){
+    public UtcDateTime convertInstantToUtcDateTime(Instant instant) {
+        if (instant == null) {
             return null;
         }
         return new UtcDateTime(instant);

@@ -12,12 +12,12 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.Specification;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
 import lombok.Value;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
 
 /**
  * Code copied and modified from original "se.citerus.dddsample.domain.model.cargo.RouteSpecification".
@@ -33,7 +33,7 @@ public class RouteSpecification implements Specification<Itinerary> {
     UnLocode destination;
 
     @NotNull
-    ZonedDateTime arrivalDeadline;
+    UtcDateTime arrivalDeadline;
 
     public RouteSpecification withOrigin(UnLocode origin) {
         return newRouteSpecification().origin(origin).build();

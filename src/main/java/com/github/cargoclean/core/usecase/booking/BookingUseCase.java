@@ -1,6 +1,6 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.model.Constants;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 /*
@@ -58,7 +56,7 @@ public class BookingUseCase implements BookingInputPort {
 
     @Transactional
     @Override
-    public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
+    public void bookCargo(String originUnLocode, String destinationUnLocode, UtcDateTime deliveryDeadline) {
 
         final TrackingId trackingId;
         try {
@@ -83,8 +81,7 @@ public class BookingUseCase implements BookingInputPort {
                     .routeSpecification(RouteSpecification.builder()
                             .origin(origin)
                             .destination(destination)
-                            .arrivalDeadline(ZonedDateTime.ofInstant(deliveryDeadline.toInstant(),
-                                    Constants.DEFAULT_ZONE_ID))
+                            .arrivalDeadline(deliveryDeadline)
                             .build())
                     .build();
 

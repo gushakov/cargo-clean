@@ -11,6 +11,7 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 
 
 import com.github.cargoclean.core.model.MockModels;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.Leg;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
@@ -61,7 +62,7 @@ public class ExternalRoutingServiceTest {
 
         ExternalRoutingService externalRoutingService = new ExternalRoutingService(graphTraversalService, pathMapper);
 
-        ZonedDateTime arrivalDeadline = MockModels.now().plusDays(90);
+        UtcDateTime arrivalDeadline = UtcDateTime.now().plusDays(90);
         RouteSpecification routeSpecification = RouteSpecification.builder()
                 .origin(UnLocode.of("JNTKO"))
                 .destination(UnLocode.of("USDAL"))

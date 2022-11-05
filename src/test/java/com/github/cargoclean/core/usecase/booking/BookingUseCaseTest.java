@@ -1,7 +1,7 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.model.Constants;
 import com.github.cargoclean.core.model.MockModels;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.InvalidDestinationSpecificationError;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -16,10 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,8 +54,7 @@ public class BookingUseCaseTest {
     @Test
     void should_create_and_save_new_cargo() {
 
-        Date monthFromNow = Date.from(LocalDate.now(Constants.DEFAULT_ZONE_ID).plusMonths(1)
-                .atStartOfDay(Constants.DEFAULT_ZONE_ID).toInstant());
+        UtcDateTime monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay();
 
         // booking a new cargo from Dallas to Melbourne, to arrive no later then a month from now
         useCase.bookCargo("USDAL", "AUMEL",
@@ -81,9 +76,8 @@ public class BookingUseCaseTest {
         assertThat(cargo.getOrigin()).isEqualTo(UnLocode.of("USDAL"));
         assertThat(cargo.getRouteSpecification().getDestination())
                 .isEqualTo(UnLocode.of("AUMEL"));
-        assertThat(cargo.getRouteSpecification().getArrivalDeadline())
-                .isEqualToIgnoringSeconds(ZonedDateTime.ofInstant(monthFromNow.toInstant(),
-                        Constants.DEFAULT_ZONE_ID));
+        assertThat(cargo.getRouteSpecification().getArrivalDeadline().toDateTimeAtUtc())
+                .isEqualToIgnoringSeconds(monthFromNow.toDateTimeAtUtc());
 
         // verify presenter was called to present the tracking ID of the new cargo
 
@@ -96,10 +90,9 @@ public class BookingUseCaseTest {
     @Test
     void should_not_book_cargo_with_invalid_route_specification_same_origin_destination() {
 
-        Date monthFromNow = Date.from(LocalDate.now(Constants.DEFAULT_ZONE_ID).plusMonths(1)
-                .atStartOfDay(Constants.DEFAULT_ZONE_ID).toInstant());
+        UtcDateTime monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay();
 
-        // booking a new cargo from Dallas to Melbourne, to arrive no later then a month from now
+        // booking a new cargo from Dallas to Melbourne, to arrive no later than a month from now
         useCase.bookCargo("USDAL", "USDAL",
                 monthFromNow);
 

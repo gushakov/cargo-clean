@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.usecase.routing;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
@@ -14,10 +15,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Date;
 import java.util.List;
 
-import static com.github.cargoclean.core.model.MockModels.*;
+import static com.github.cargoclean.core.model.MockModels.cargo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,8 +75,8 @@ public class RoutingUseCaseTest {
                 .containsExactly(tuple(TrackingId.of(trackingId),
                         UnLocode.of("USDAL"),
                         UnLocode.of("JNTKO"),
-                        fromLocalDate("15-07-2022"),
-                        fromLocalDate("09-08-2022")));
+                        UtcDateTime.of("15-07-2022"),
+                        UtcDateTime.of("09-08-2022")));
 
     }
 
@@ -131,8 +131,8 @@ public class RoutingUseCaseTest {
                         .cargoTrackingId(trackingId)
                         .from("USDAL")
                         .to("JNTKO")
-                        .loadTime(Date.from(localInstant("15-07-2022")))
-                        .unloadTime(Date.from(localInstant("09-08-2022")))
+                        .loadTime(UtcDateTime.of("15-07-2022"))
+                        .unloadTime(UtcDateTime.of("09-08-2022"))
                         .build()))
                 .build();
     }
@@ -143,8 +143,8 @@ public class RoutingUseCaseTest {
                         .cargoTrackingId(trackingId)
                         .from("USDAL")
                         .to("AUMEL")
-                        .loadTime(Date.from(localInstant("15-07-2022")))
-                        .unloadTime(Date.from(localInstant("09-08-2022")))
+                        .loadTime(UtcDateTime.of("15-07-2022"))
+                        .unloadTime(UtcDateTime.of("09-08-2022"))
                         .build()))
                 .build();
     }

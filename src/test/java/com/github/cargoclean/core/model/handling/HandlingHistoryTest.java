@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.model.handling;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -14,8 +15,8 @@ public class HandlingHistoryTest {
 
     @Test
     void must_correctly_disambiguate_similar_events_keeping_one_with_latest_completion_time() {
-        ZonedDateTime time = ZonedDateTime.now();
-        ZonedDateTime timeLater = time.plusSeconds(1L);
+        UtcDateTime time = UtcDateTime.now();
+        UtcDateTime timeLater = time.plusSeconds(1L);
         HandlingEvent event1 = HandlingEvent.builder()
                 .eventId(EventId.of(1L))
                 .voyageNumber(VoyageNumber.of("100S"))

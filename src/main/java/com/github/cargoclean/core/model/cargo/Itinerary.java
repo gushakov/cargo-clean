@@ -60,7 +60,7 @@ public class Itinerary {
         if (lastLeg == null) {
             return UtcDateTime.END_OF_DAYS;
         } else {
-            return new UtcDateTime(lastLeg.getUnloadTime());
+            return lastLeg.getUnloadTime();
         }
     }
 

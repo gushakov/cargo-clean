@@ -10,12 +10,11 @@ package com.github.cargoclean.core.model.cargo;
     "original-license.txt", as well.
  */
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;
 import lombok.Value;
-
-import java.time.ZonedDateTime;
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Leg".
@@ -31,7 +30,7 @@ public class Leg {
     UnLocode loadLocation;
     UnLocode unloadLocation;
 
-    ZonedDateTime loadTime;
-    ZonedDateTime unloadTime;
+    UtcDateTime loadTime;
+    UtcDateTime unloadTime;
 
 }

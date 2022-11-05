@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.model.cargo;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -10,7 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.github.cargoclean.core.model.MockModels.*;
+import static com.github.cargoclean.core.model.MockModels.itinerary;
+import static com.github.cargoclean.core.model.MockModels.routeSpecification;
 import static com.github.cargoclean.core.model.handling.HandlingEventType.LOAD;
 
 public class DeliveryTest {
@@ -25,8 +27,8 @@ public class DeliveryTest {
                                 .eventId(EventId.of(1L))
                                 .location(UnLocode.of("USDAL"))
                                 .cargoId(TrackingId.of("8E062F47"))
-                                .registrationTime(fromLocalDate("05-07-2022"))
-                                .completionTime(fromLocalDate("05-07-2022"))
+                                .registrationTime(UtcDateTime.of("05-07-2022"))
+                                .completionTime(UtcDateTime.of("05-07-2022"))
                                 .voyageNumber(VoyageNumber.of("100S"))
                                 .build()))
                         .build());

@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -100,12 +101,12 @@ public class DefaultDbEntityMapperTest {
                 .extracting(RouteSpecificationDbEntity::getOrigin,
                         RouteSpecificationDbEntity::getDestination,
                         RouteSpecificationDbEntity::getArrivalDeadline)
-                .containsExactly("USDAL", "AUMEL", localInstant("24-08-2022"));
+                .containsExactly("USDAL", "AUMEL", UtcDateTime.of("24-08-2022").toInstant());
 
     }
 
     @Test
-    void should_map_cargo_model_to_db_entity_with_delivery(){
+    void should_map_cargo_model_to_db_entity_with_delivery() {
         final Cargo cargo = cargo("CC3A58FB");
     }
 
@@ -120,7 +121,7 @@ public class DefaultDbEntityMapperTest {
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
                         .destination("AUMEL")
-                        .arrivalDeadline(localInstant("10-10-2022"))
+                        .arrivalDeadline(UtcDateTime.of("10-10-2022").toInstant())
                         .build())
                 .build();
 
@@ -160,9 +161,11 @@ public class DefaultDbEntityMapperTest {
                         LegDbEntity::getLoadTime,
                         LegDbEntity::getUnloadTime)
                 .containsExactly(tuple("8E062F47", "100S", "USDAL", "AUMEL",
-                                localInstant("05-07-2022"), localInstant("23-07-2022")),
+                                UtcDateTime.of("05-07-2022").toInstant(),
+                                UtcDateTime.of("23-07-2022").toInstant()),
                         tuple("8E062F47", "200S", "AUMEL", "JNTKO",
-                                localInstant("25-07-2022"), localInstant("05-08-2022")));
+                                UtcDateTime.of("25-07-2022").toInstant(),
+                                UtcDateTime.of("05-08-2022").toInstant()));
     }
 
     @Test
@@ -176,15 +179,15 @@ public class DefaultDbEntityMapperTest {
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
                         .destination("AUMEL")
-                        .arrivalDeadline(localInstant("10-08-2022"))
+                        .arrivalDeadline(UtcDateTime.of("10-08-2022").toInstant())
                         .build())
                 .legs(List.of(LegDbEntity.builder()
                         .cargoTrackingId("8E062F47")
-                                .voyageNumber("100S")
+                        .voyageNumber("100S")
                         .loadLocation("USDAL")
                         .unloadLocation("AUMEL")
-                        .loadTime(localInstant("05-07-2022"))
-                        .unloadTime(localInstant("05-08-2022"))
+                        .loadTime(UtcDateTime.of("05-07-2022").toInstant())
+                        .unloadTime(UtcDateTime.of("05-08-2022").toInstant())
                         .build()))
                 .build();
 
@@ -201,6 +204,6 @@ public class DefaultDbEntityMapperTest {
                 .containsExactly(tuple(TrackingId.of("8E062F47"),
                         VoyageNumber.of("100S"),
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
-                        fromLocalDate("05-07-2022"), fromLocalDate("05-08-2022")));
+                        UtcDateTime.of("05-07-2022"), UtcDateTime.of("05-08-2022")));
     }
 }

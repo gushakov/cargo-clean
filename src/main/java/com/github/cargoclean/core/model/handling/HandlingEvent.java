@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.handling;
  */
 
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -18,7 +19,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
 
 /*
     Modeled after "se.citerus.dddsample.domain.model.handling.HandlingEvent".
@@ -50,10 +50,10 @@ public class HandlingEvent {
     TrackingId cargoId;
 
     @NotNull
-    ZonedDateTime completionTime;
+    UtcDateTime completionTime;
 
     @NotNull
-    ZonedDateTime registrationTime;
+    UtcDateTime registrationTime;
 
     @NotNull
     @EqualsAndHashCode.Include

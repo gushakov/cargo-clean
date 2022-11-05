@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.booking;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebController;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,8 @@ public class BookingController extends AbstractWebController {
     public void book(@ModelAttribute BookingForm bookingForm) {
 
         BookingInputPort useCase = appContext.getBean(BookingInputPort.class);
-        useCase.bookCargo(bookingForm.getOrigin(), bookingForm.getDestination(), bookingForm.getDeliveryDeadline());
+        useCase.bookCargo(bookingForm.getOrigin(), bookingForm.getDestination(),
+                UtcDateTime.of(bookingForm.getDeliveryDeadline()));
 
     }
 }

@@ -1,7 +1,7 @@
 package com.github.cargoclean.core.usecase.handling;
 
 import com.github.cargoclean.core.GenericCargoError;
-import com.github.cargoclean.core.model.Constants;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
@@ -50,8 +50,8 @@ public class HandlingUseCase implements HandlingInputPort {
                         .voyageNumber(voyageNumber)
                         .location(location)
                         .cargoId(cargoId)
-                        .completionTime(completionTime.atZone(Constants.DEFAULT_ZONE_ID))
-                        .registrationTime(Instant.now().atZone(Constants.DEFAULT_ZONE_ID))
+                        .completionTime(UtcDateTime.of(completionTime))
+                        .registrationTime(UtcDateTime.now())
                         .type(type)
                         .build());
             } catch (InvalidDomainObjectError e) {
