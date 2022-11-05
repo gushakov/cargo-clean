@@ -10,6 +10,8 @@ import java.util.Optional;
 
 /**
  * Wrapper around {@link ZonedDateTime} fixed to the {@code UTC} timezone.
+ * This is a real immutable value-object encapsulating all date-time related
+ * operations.
  */
 public class UtcDateTime {
     private static final ZoneId UTC = ZoneId.from(ZoneOffset.UTC);
@@ -19,14 +21,21 @@ public class UtcDateTime {
      */
     public static UtcDateTime END_OF_DAYS = new UtcDateTime(Instant.ofEpochMilli(Long.MAX_VALUE).atZone(UTC));
 
-    public static UtcDateTime of(String date){
+    /**
+     * Creates an instance of {@link UtcDateTime} from the short date string. The start
+     * of the day will be used for the time.
+     *
+     * @param date string in the form "dd-MM-yyyy"
+     * @return new instance of {@code UtcDateTime}
+     */
+    public static UtcDateTime of(String date) {
         return new UtcDateTime(date);
     }
 
     private final ZonedDateTime dateTimeAtUtc;
 
     public UtcDateTime(Instant instant) {
-        this.dateTimeAtUtc  = Optional.ofNullable(instant)
+        this.dateTimeAtUtc = Optional.ofNullable(instant)
                 .orElseThrow(() -> new InvalidDomainObjectError("Source instant cannot be null"))
                 .atZone(UTC);
     }
