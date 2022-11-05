@@ -50,6 +50,9 @@ public class RouteSpecification implements Specification<Itinerary> {
                 .arrivalDeadline(arrivalDeadline);
     }
 
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.RouteSpecification#isSatisfiedBy".
+     */
     @Override
     public boolean isSatisfiedBy(Itinerary itinerary) {
         return origin.equals(itinerary.first().getLoadLocation())
