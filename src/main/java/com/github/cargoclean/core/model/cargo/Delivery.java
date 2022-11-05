@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -21,7 +22,6 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.Optional;
 
 import static com.github.cargoclean.core.model.cargo.RoutingStatus.*;
@@ -37,7 +37,7 @@ public class Delivery {
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#ETA_UNKOWN".
      */
-    private static final Date ETA_UNKOWN = null;
+    private static final UtcDateTime ETA_UNKOWN = null;
 
     HandlingEvent lastEvent;
 
@@ -53,7 +53,7 @@ public class Delivery {
 
     @NotNull
     @Getter
-    Date eta;
+    UtcDateTime eta;
 
     @NotNull
     @Getter
@@ -77,7 +77,7 @@ public class Delivery {
      */
     @Builder
     public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage,
-                    Date eta, RoutingStatus routingStatus, boolean misdirected) {
+                    UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected) {
         this.transportStatus = transportStatus;
         this.lastKnownLocation = lastKnownLocation;
         this.currentVoyage = currentVoyage;
@@ -130,7 +130,7 @@ public class Delivery {
     }
 
     // Copied froim "se.citerus.dddsample.domain.model.cargo.Delivery#calculateEta".
-    private Date calculateEta(Itinerary itinerary) {
+    private UtcDateTime calculateEta(Itinerary itinerary) {
         if (onTrack()) {
             return itinerary.finalArrivalDate();
         } else {
@@ -150,14 +150,10 @@ public class Delivery {
     }
 
     /*
-        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#estimatedTimeOfArrival".
+        Modified from "se.citerus.dddsample.domain.model.cargo.Delivery#estimatedTimeOfArrival".
      */
-    public Date estimatedTimeOfArrival() {
-        if (eta != ETA_UNKOWN) {
-            return new Date(eta.getTime());
-        } else {
-            return ETA_UNKOWN;
-        }
+    public UtcDateTime estimatedTimeOfArrival() {
+        return eta;
     }
 
     /*

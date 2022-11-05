@@ -144,7 +144,7 @@ public class MockModels {
                         .delivery(Delivery.builder()
                                 .transportStatus(TransportStatus.IN_PORT)
                                 .routingStatus(RoutingStatus.ROUTED)
-                                .eta(localDate("16-12-2022"))
+                                .eta(UtcDateTime.of("16-12-2022"))
                                 .misdirected(false)
                                 .build())
                         .routeSpecification(RouteSpecification.builder()

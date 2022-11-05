@@ -10,12 +10,12 @@ package com.github.cargoclean.core.model.cargo;
     "original-license.txt", as well.
  */
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +24,6 @@ import java.util.Optional;
  */
 @Value
 public class Itinerary {
-
-    /*
-        Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#END_OF_DAYS".
-     */
-    private static final Date END_OF_DAYS = new Date(Long.MAX_VALUE);
 
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#EMPTY_ITINERARY".
@@ -59,13 +54,13 @@ public class Itinerary {
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#finalArrivalDate".
      */
-    Date finalArrivalDate() {
+    UtcDateTime finalArrivalDate() {
         final Leg lastLeg = lastLeg();
 
         if (lastLeg == null) {
-            return new Date(END_OF_DAYS.getTime());
+            return UtcDateTime.END_OF_DAYS;
         } else {
-            return new Date(lastLeg.getUnloadTime().toInstant().toEpochMilli());
+            return new UtcDateTime(lastLeg.getUnloadTime());
         }
     }
 

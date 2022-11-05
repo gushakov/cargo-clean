@@ -1,5 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
@@ -12,19 +13,11 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 @Component
 @Scope(scopeName = "request")
 public class TrackingPresenter extends AbstractWebPresenter implements TrackingPresenterOutputPort {
-
-    /*
-        Copied from "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#FORMAT".
-     */
-    private final String FORMAT = "yyyy-MM-dd hh:mm";
-
 
     public TrackingPresenter(LocalDispatcherServlet dispatcher, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         super(dispatcher, httpRequest, httpResponse);
@@ -73,10 +66,10 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
         Copied from original "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getEta".
      */
     public String getEta(Cargo cargo) {
-        Date eta = cargo.getDelivery().estimatedTimeOfArrival();
+        UtcDateTime eta = cargo.getDelivery().estimatedTimeOfArrival();
 
-        if (eta == null) return "?";
-        else return new SimpleDateFormat(FORMAT).format(eta);
+        if (eta.isUnknown()) return "?";
+        else return eta.toString();
     }
 
 }

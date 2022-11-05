@@ -1,6 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.map;
 
 import com.github.cargoclean.core.model.Constants;
+import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -98,5 +99,19 @@ public class CommonMapStructConverters {
             return null;
         }
         return eventId.getId();
+    }
+
+    public Instant convertUtcDateTimeToInstant(UtcDateTime utcDateTime){
+        if (utcDateTime == null){
+            return null;
+        }
+       return utcDateTime.toInstant();
+    }
+
+    public UtcDateTime convertInstantToUtcDateTime(Instant instant){
+        if (instant == null){
+            return null;
+        }
+        return new UtcDateTime(instant);
     }
 }
