@@ -94,14 +94,13 @@ public class Delivery {
 
     private Delivery(HandlingEvent lastEvent, Itinerary itinerary, RouteSpecification routeSpecification) {
         this.lastEvent = lastEvent;
+        this.misdirected = calculateMisdirectionStatus(itinerary);
+        this.routingStatus = calculateRoutingStatus(itinerary, routeSpecification);
         this.transportStatus = calculateTransportStatus();
         this.lastKnownLocation = calculateLastKnownLocation().orElse(null);
         this.currentVoyage = calculateCurrentVoyage().orElse(null);
         this.eta = calculateEta(itinerary);
-        this.routingStatus = calculateRoutingStatus(itinerary, routeSpecification);
-        this.misdirected = calculateMisdirectionStatus(itinerary);
     }
-
 
     /*
         Copied and modified from original: "se.citerus.dddsample.domain.model.cargo.Delivery#calculateTransportStatus".

@@ -107,7 +107,33 @@ public class DefaultDbEntityMapperTest {
 
     @Test
     void should_map_cargo_model_to_db_entity_with_delivery() {
+
         final Cargo cargo = cargo("CC3A58FB");
+
+        final CargoDbEntity cargoDbEntity = mapper.convert(cargo);
+
+        assertThat(cargoDbEntity.getTrackingId())
+                .as("Cargo tracking ID")
+                .isEqualTo("CC3A58FB");
+
+        assertThat(cargoDbEntity.getDelivery())
+                .as("Delivery with transport status, routing status, ETA, misdirected set")
+                .extracting(DeliveryDbEntity::getTransportStatus,
+                        DeliveryDbEntity::getRoutingStatus,
+                        DeliveryDbEntity::getEta,
+                        DeliveryDbEntity::isMisdirected)
+                .containsExactly(TransportStatus.IN_PORT.name(),
+                        RoutingStatus.ROUTED.name(),
+                        UtcDateTime.of("16-12-2022").toInstant(),
+                        false);
+
+        assertThat(cargoDbEntity.getRouteSpecification())
+                .as("Routing specification")
+                .extracting(RouteSpecificationDbEntity::getOrigin,
+                        RouteSpecificationDbEntity::getDestination,
+                        RouteSpecificationDbEntity::getArrivalDeadline)
+                .containsExactly("JNTKO", "USNYC", UtcDateTime.of("16-12-2022").toInstant());
+
     }
 
     @Test
@@ -204,6 +230,7 @@ public class DefaultDbEntityMapperTest {
                 .containsExactly(tuple(TrackingId.of("8E062F47"),
                         VoyageNumber.of("100S"),
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
-                        UtcDateTime.of("05-07-2022"), UtcDateTime.of("05-08-2022")));
+                        UtcDateTime.of("05-07-2022"),
+                        UtcDateTime.of("05-08-2022")));
     }
 }

@@ -8,7 +8,6 @@ import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.mapstruct.Mapper;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 /**
  * Common MapStruct converters for model entities, value objects, standard types and primitives.
@@ -62,13 +61,6 @@ public class CommonMapStructConverters {
             return null;
         }
         return VoyageNumber.of(number);
-    }
-
-    public Instant convertZonedDateTimeToInstant(ZonedDateTime dateTime) {
-        if (dateTime == null) {
-            return null;
-        }
-        return dateTime.toInstant();
     }
 
     public EventId convertLongToEventId(Long id) {

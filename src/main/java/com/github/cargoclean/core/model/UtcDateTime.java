@@ -6,12 +6,12 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Wrapper around {@link ZonedDateTime} fixed to the {@code UTC} timezone.
- * This is a an immutable value-object encapsulating all date-time related
- * operations.
+ * This is a value object encapsulating all date-time related operations.
  */
 public class UtcDateTime implements Comparable<UtcDateTime> {
     private static final ZoneId UTC = ZoneId.from(ZoneOffset.UTC);
@@ -117,5 +117,18 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
 
     public UtcDateTime plusDays(long days) {
         return new UtcDateTime(dateTimeAtUtc.plusDays(days));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UtcDateTime that = (UtcDateTime) o;
+        return dateTimeAtUtc.equals(that.dateTimeAtUtc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateTimeAtUtc);
     }
 }
