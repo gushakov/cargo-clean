@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class MockModels {
         return RouteSpecification.builder()
                 .origin(UnLocode.of("USDAL"))
                 .destination(UnLocode.of("AUMEL"))
-                .arrivalDeadline(localDate("24-08-2022"))
+                .arrivalDeadline(fromLocalDate("24-08-2022"))
                 .build();
     }
 
@@ -116,7 +117,7 @@ public class MockModels {
                         .routeSpecification(RouteSpecification.builder()
                                 .origin(UnLocode.of("FIHEL"))
                                 .destination(UnLocode.of("NLRTM"))
-                                .arrivalDeadline(localDate("16-08-2022"))
+                                .arrivalDeadline(fromLocalDate("16-08-2022"))
                                 .build())
                         .build(),
 
@@ -132,9 +133,27 @@ public class MockModels {
                         .routeSpecification(RouteSpecification.builder()
                                 .origin(UnLocode.of("USDAL"))
                                 .destination(UnLocode.of("JNTKO"))
-                                .arrivalDeadline(localDate("10-08-2022"))
+                                .arrivalDeadline(fromLocalDate("10-08-2022"))
+                                .build())
+                        .build(),
+
+                "CC3A58FB",
+                Cargo.builder()
+                        .trackingId(TrackingId.of("CC3A58FB"))
+                        .origin(UnLocode.of("JNTKO"))
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.IN_PORT)
+                                .routingStatus(RoutingStatus.ROUTED)
+                                .eta(localDate("16-12-2022"))
+                                .misdirected(false)
+                                .build())
+                        .routeSpecification(RouteSpecification.builder()
+                                .origin(UnLocode.of("JNTKO"))
+                                .destination(UnLocode.of("USNYC"))
+                                .arrivalDeadline(fromLocalDate("16-12-2022"))
                                 .build())
                         .build()
+
         );
     }
 
@@ -144,18 +163,18 @@ public class MockModels {
                     .cargoTrackingId(TrackingId.of("8E062F47"))
                     .voyageNumber(VoyageNumber.of("100S"))
                     .loadLocation(UnLocode.of("USDAL"))
-                    .loadTime(localDate("05-07-2022"))
+                    .loadTime(fromLocalDate("05-07-2022"))
                     .unloadLocation(UnLocode.of("AUMEL"))
-                    .unloadTime(localDate("23-07-2022"))
+                    .unloadTime(fromLocalDate("23-07-2022"))
                     .build(),
             2,
             Leg.builder()
                     .cargoTrackingId(TrackingId.of("8E062F47"))
                     .voyageNumber(VoyageNumber.of("200S"))
                     .loadLocation(UnLocode.of("AUMEL"))
-                    .loadTime(localDate("25-07-2022"))
+                    .loadTime(fromLocalDate("25-07-2022"))
                     .unloadLocation(UnLocode.of("JNTKO"))
-                    .unloadTime(localDate("05-08-2022"))
+                    .unloadTime(fromLocalDate("05-08-2022"))
                     .build()
     );
 
@@ -165,13 +184,24 @@ public class MockModels {
      * @param date local date as sting
      * @return date and time at the start of the day with the default timezone
      */
-    public static ZonedDateTime localDate(String date) {
+    public static ZonedDateTime fromLocalDate(String date) {
         return ZonedDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
                 Constants.DEFAULT_ZONE_ID);
     }
 
+    /**
+     * Converts string in format "dd-MM-yyyy" to an instance of {@link Date} using default timezone.
+     *
+     * @param date local date as sting
+     * @see Constants#DEFAULT_ZONE_ID
+     */
+    public static Date localDate(String date) {
+        return new Date(ZonedDateTime.of(LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay(),
+                Constants.DEFAULT_ZONE_ID).toInstant().toEpochMilli());
+    }
+
     public static Instant localInstant(String date) {
-        return localDate(date).toInstant();
+        return fromLocalDate(date).toInstant();
     }
 
     public static ZonedDateTime now() {

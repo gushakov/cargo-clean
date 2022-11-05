@@ -50,6 +50,12 @@
                 <span th:text="${trackingInfo.statusText}"></span>
             </div>
 
+            <div class="border-top mt-3">
+                Estimated time of arrival in
+                <span th:text="${trackingInfo.destination}"></span> :
+                <span th:text="${trackingInfo.eta}"></span>
+            </div>
+
         </th:block>
 
     </div>

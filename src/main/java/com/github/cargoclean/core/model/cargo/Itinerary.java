@@ -10,9 +10,12 @@ package com.github.cargoclean.core.model.cargo;
     "original-license.txt", as well.
  */
 
+import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingEventType;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,11 @@ import java.util.Optional;
  */
 @Value
 public class Itinerary {
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#END_OF_DAYS".
+     */
+    private static final Date END_OF_DAYS = new Date(Long.MAX_VALUE);
 
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#EMPTY_ITINERARY".
@@ -47,4 +55,73 @@ public class Itinerary {
     public Leg last() {
         return legs.stream().skip(legs.size() - 1).findFirst().orElse(null);
     }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#finalArrivalDate".
+     */
+    Date finalArrivalDate() {
+        final Leg lastLeg = lastLeg();
+
+        if (lastLeg == null) {
+            return new Date(END_OF_DAYS.getTime());
+        } else {
+            return new Date(lastLeg.getUnloadTime().toInstant().toEpochMilli());
+        }
+    }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Itinerary#lastLeg".
+     */
+    Leg lastLeg() {
+        if (legs.isEmpty()) {
+            return null;
+        } else {
+            return legs.get(legs.size() - 1);
+        }
+    }
+
+    /*
+        Copied and modified from "se.citerus.dddsample.domain.model.cargo.Itinerary#isExpected".
+     */
+    public boolean isExpected(final HandlingEvent event) {
+        if (legs.isEmpty()) {
+            return true;
+        }
+
+        if (event.getType() == HandlingEventType.RECEIVE) {
+            //Check that the first leg's origin is the event's location
+            final Leg leg = legs.get(0);
+            return (leg.getLoadLocation().equals(event.getLocation()));
+        }
+
+        if (event.getType() == HandlingEventType.LOAD) {
+            //Check that the there is one leg with same load location and voyage
+            for (Leg leg : legs) {
+                if (leg.getLoadLocation().equals(event.getLocation()) &&
+                        leg.getVoyageNumber().equals(event.getVoyageNumber()))
+                    return true;
+            }
+            return false;
+        }
+
+        if (event.getType() == HandlingEventType.UNLOAD) {
+            //Check that the there is one leg with same unload location and voyage
+            for (Leg leg : legs) {
+                if (leg.getUnloadLocation().equals(event.getLocation()) &&
+                        leg.getVoyageNumber().equals(event.getVoyageNumber()))
+                    return true;
+            }
+            return false;
+        }
+
+        if (event.getType() == HandlingEventType.CLAIM) {
+            //Check that the last leg's destination is from the event's location
+            final Leg leg = lastLeg();
+            return (leg.getUnloadLocation().equals(event.getLocation()));
+        }
+
+        //HandlingEventType.CUSTOMS;
+        return true;
+    }
+
 }

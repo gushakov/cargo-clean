@@ -75,8 +75,8 @@ public class RoutingUseCaseTest {
                 .containsExactly(tuple(TrackingId.of(trackingId),
                         UnLocode.of("USDAL"),
                         UnLocode.of("JNTKO"),
-                        localDate("15-07-2022"),
-                        localDate("09-08-2022")));
+                        fromLocalDate("15-07-2022"),
+                        fromLocalDate("09-08-2022")));
 
     }
 

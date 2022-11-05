@@ -1,9 +1,7 @@
 package com.github.cargoclean.core.model.cargo;
 
-import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
-import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -27,8 +25,8 @@ public class DeliveryTest {
                                 .eventId(EventId.of(1L))
                                 .location(UnLocode.of("USDAL"))
                                 .cargoId(TrackingId.of("8E062F47"))
-                                .registrationTime(localDate("05-07-2022"))
-                                .completionTime(localDate("05-07-2022"))
+                                .registrationTime(fromLocalDate("05-07-2022"))
+                                .completionTime(fromLocalDate("05-07-2022"))
                                 .voyageNumber(VoyageNumber.of("100S"))
                                 .build()))
                         .build());

@@ -131,4 +131,5 @@ public class Cargo {
                 .delivery(Delivery.derivedFrom(routeSpecification, itinerary, handlingHistory))
                 .build();
     }
+
 }

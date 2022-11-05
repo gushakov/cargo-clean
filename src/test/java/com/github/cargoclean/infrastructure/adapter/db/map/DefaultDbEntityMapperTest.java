@@ -105,6 +105,11 @@ public class DefaultDbEntityMapperTest {
     }
 
     @Test
+    void should_map_cargo_model_to_db_entity_with_delivery(){
+        final Cargo cargo = cargo("CC3A58FB");
+    }
+
+    @Test
     void should_map_cargo_db_entity_to_model() {
         CargoDbEntity cargoDbEntity = CargoDbEntity.builder()
                 .trackingId("ABCDEF12")
@@ -196,6 +201,6 @@ public class DefaultDbEntityMapperTest {
                 .containsExactly(tuple(TrackingId.of("8E062F47"),
                         VoyageNumber.of("100S"),
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
-                        localDate("05-07-2022"), localDate("05-08-2022")));
+                        fromLocalDate("05-07-2022"), fromLocalDate("05-08-2022")));
     }
 }

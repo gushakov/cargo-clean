@@ -21,8 +21,10 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Optional;
 
+import static com.github.cargoclean.core.model.cargo.RoutingStatus.*;
 import static com.github.cargoclean.core.model.cargo.TransportStatus.*;
 
 
@@ -32,6 +34,10 @@ import static com.github.cargoclean.core.model.cargo.TransportStatus.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Delivery {
 
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#ETA_UNKOWN".
+     */
+    private static final Date ETA_UNKOWN = null;
 
     HandlingEvent lastEvent;
 
@@ -45,6 +51,17 @@ public class Delivery {
     @Getter
     VoyageNumber currentVoyage;
 
+    @NotNull
+    @Getter
+    Date eta;
+
+    @NotNull
+    @Getter
+    RoutingStatus routingStatus;
+
+    @Getter
+    boolean misdirected;
+
     /**
      * This constructor is needed for MapStruct mapper to map a database entity
      * {@code DeliveryDbEntity} to corresponding {@code Delivery} value object
@@ -53,14 +70,21 @@ public class Delivery {
      *
      * @param transportStatus   current transport status for the cargo
      * @param lastKnownLocation UnLocode for last known location of the cargo, can be {@code null}
-     * @param currentVoyage current voyage the cargo is on, can be {@code null}
+     * @param currentVoyage     current voyage the cargo is on, can be {@code null}
+     * @param eta               estimated date of arrival for the cargo
+     * @param routingStatus     routing status of the cargo
+     * @param misdirected       indicates whether the cargo is misdirected
      */
     @Builder
-    public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage) {
+    public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage,
+                    Date eta, RoutingStatus routingStatus, boolean misdirected) {
         this.transportStatus = transportStatus;
         this.lastKnownLocation = lastKnownLocation;
         this.currentVoyage = currentVoyage;
         this.lastEvent = null;
+        this.eta = eta;
+        this.routingStatus = routingStatus;
+        this.misdirected = misdirected;
     }
 
     static Delivery derivedFrom(RouteSpecification routeSpecification, Itinerary itinerary, HandlingHistory handlingHistory) {
@@ -73,6 +97,9 @@ public class Delivery {
         this.transportStatus = calculateTransportStatus();
         this.lastKnownLocation = calculateLastKnownLocation().orElse(null);
         this.currentVoyage = calculateCurrentVoyage().orElse(null);
+        this.eta = calculateEta(itinerary);
+        this.routingStatus = calculateRoutingStatus(itinerary, routeSpecification);
+        this.misdirected = calculateMisdirectionStatus(itinerary);
     }
 
 
@@ -102,15 +129,68 @@ public class Delivery {
         }
     }
 
+    // Copied froim "se.citerus.dddsample.domain.model.cargo.Delivery#calculateEta".
+    private Date calculateEta(Itinerary itinerary) {
+        if (onTrack()) {
+            return itinerary.finalArrivalDate();
+        } else {
+            return ETA_UNKOWN;
+        }
+    }
+
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#calculateCurrentVoyage".
      */
-    private Optional<VoyageNumber> calculateCurrentVoyage(){
-        if (getTransportStatus() == ONBOARD_CARRIER && lastEvent != null){
+    private Optional<VoyageNumber> calculateCurrentVoyage() {
+        if (getTransportStatus() == ONBOARD_CARRIER && lastEvent != null) {
             return Optional.ofNullable(lastEvent.getVoyageNumber());
-        }
-        else {
+        } else {
             return Optional.empty();
         }
     }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#estimatedTimeOfArrival".
+     */
+    public Date estimatedTimeOfArrival() {
+        if (eta != ETA_UNKOWN) {
+            return new Date(eta.getTime());
+        } else {
+            return ETA_UNKOWN;
+        }
+    }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#onTrack".
+     */
+    private boolean onTrack() {
+        return routingStatus.equals(ROUTED) && !misdirected;
+    }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#calculateRoutingStatus".
+     */
+    private RoutingStatus calculateRoutingStatus(Itinerary itinerary, RouteSpecification routeSpecification) {
+        if (itinerary == null) {
+            return NOT_ROUTED;
+        } else {
+            if (routeSpecification.isSatisfiedBy(itinerary)) {
+                return ROUTED;
+            } else {
+                return MISROUTED;
+            }
+        }
+    }
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#calculateMisdirectionStatus".
+     */
+    private boolean calculateMisdirectionStatus(Itinerary itinerary) {
+        if (lastEvent == null) {
+            return false;
+        } else {
+            return !itinerary.isExpected(lastEvent);
+        }
+    }
+
 }

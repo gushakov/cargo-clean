@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Column;
 
+import java.time.Instant;
+
 @Data
 @Builder
 public class DeliveryDbEntity {
@@ -16,5 +18,14 @@ public class DeliveryDbEntity {
 
     @Column("current_voyage")
     String currentVoyage;
+
+    @Column("eta")
+    Instant eta;
+
+    @Column("routing_status")
+    String routingStatus;
+
+    @Column("is_misdirected")
+    boolean misdirected;
 
 }

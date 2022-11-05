@@ -29,4 +29,7 @@ public class TrackingInfo {
 
     String statusText;
 
+    String destination;
+
+    String eta;
 }
