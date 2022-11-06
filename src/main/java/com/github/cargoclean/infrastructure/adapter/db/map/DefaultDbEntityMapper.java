@@ -1,16 +1,10 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
-import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.Delivery;
-import com.github.cargoclean.core.model.cargo.Leg;
-import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.*;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
@@ -69,6 +63,10 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     abstract HandlingEvent map(HandlingEventEntity handlingEventEntity);
 
     abstract HandlingEventEntity map(HandlingEvent handlingEvent);
+
+    abstract HandlingActivity map(HandlingActivityDbEntity handlingActivityDbEntity);
+
+    abstract HandlingActivityDbEntity map(HandlingActivity handlingActivity);
 
     @IgnoreForMapping
     @Override

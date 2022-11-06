@@ -3,7 +3,10 @@ package com.github.cargoclean.infrastructure.adapter.web.tracking;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
+import com.github.cargoclean.core.model.cargo.HandlingActivity;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
@@ -73,6 +76,30 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
 
         if (eta == null || eta.isUnknown()) return "?";
         else return eta.toString();
+    }
+
+    /*
+        Copied from "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getNextExpectedActivity".
+     */
+    public String getNextExpectedActivity(Delivery delivery) {
+        HandlingActivity activity = delivery.getNextExpectedActivity();
+        if (activity == null) {
+            return "";
+        }
+
+        String text = "Next expected activity is to ";
+        HandlingEventType type = activity.getType();
+        if (type == HandlingEventType.LOAD) {
+            return
+                    text + type.name().toLowerCase() + " cargo onto voyage " + activity.getVoyageNumber() +
+                            " in " + activity.getLocation();
+        } else if (type == HandlingEventType.UNLOAD) {
+            return
+                    text + type.name().toLowerCase() + " cargo off of " + activity.getVoyageNumber() +
+                            " in " + activity.getLocation();
+        } else {
+            return text + type.name().toLowerCase() + " cargo in " + activity.getLocation();
+        }
     }
 
 }

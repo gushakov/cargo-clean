@@ -13,6 +13,7 @@ package com.github.cargoclean.core.model.cargo;
 
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+import java.util.Iterator;
 import java.util.Optional;
 
 import static com.github.cargoclean.core.model.cargo.RoutingStatus.*;
@@ -38,6 +40,11 @@ public class Delivery {
         Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#ETA_UNKOWN".
      */
     private static final UtcDateTime ETA_UNKOWN = null;
+
+    /*
+        Copied from "se.citerus.dddsample.domain.model.cargo.Delivery#NO_ACTIVITY".
+     */
+    private static final HandlingActivity NO_ACTIVITY = null;
 
     HandlingEvent lastEvent;
 
@@ -62,22 +69,29 @@ public class Delivery {
     @Getter
     boolean misdirected;
 
+    @Getter
+    HandlingActivity nextExpectedActivity;
+
     /**
      * This constructor is needed for MapStruct mapper to map a database entity
      * {@code DeliveryDbEntity} to corresponding {@code Delivery} value object
      * associated with each cargo. All the fields for "Delivery" which are persisted
      * in the database need to be initialized here.
      *
-     * @param transportStatus   current transport status for the cargo
-     * @param lastKnownLocation UnLocode for last known location of the cargo, can be {@code null}
-     * @param currentVoyage     current voyage the cargo is on, can be {@code null}
-     * @param eta               estimated date of arrival for the cargo
-     * @param routingStatus     routing status of the cargo
-     * @param misdirected       indicates whether the cargo is misdirected
+     * @param transportStatus               current transport status for the cargo
+     * @param lastKnownLocation             UnLocode for last known location of the cargo, can be {@code null}
+     * @param currentVoyage                 current voyage the cargo is on, can be {@code null}
+     * @param eta                           estimated date of arrival for the cargo
+     * @param routingStatus                 routing status of the cargo
+     * @param misdirected                   indicates whether the cargo is misdirected
+     * @param nextExpectedHandlingEventType next expected handling event
+     * @param nextExpectedLocation          next expected location
+     * @param nextExpectedVoyage            next expected voyage number, can be {@code null}
      */
     @Builder
     public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage,
-                    UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected) {
+                    UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected, HandlingEventType nextExpectedHandlingEventType,
+                    UnLocode nextExpectedLocation, VoyageNumber nextExpectedVoyage) {
         this.transportStatus = transportStatus;
         this.lastKnownLocation = lastKnownLocation;
         this.currentVoyage = currentVoyage;
@@ -85,6 +99,15 @@ public class Delivery {
         this.eta = eta;
         this.routingStatus = routingStatus;
         this.misdirected = misdirected;
+
+        // make an instance of HandlingActivity
+        HandlingActivity.HandlingActivityBuilder handlingActivityBuilder = HandlingActivity.builder()
+                .type(nextExpectedHandlingEventType)
+                .location(nextExpectedLocation);
+        if (nextExpectedVoyage != null) {
+            handlingActivityBuilder.voyageNumber(nextExpectedVoyage);
+        }
+        this.nextExpectedActivity = handlingActivityBuilder.build();
     }
 
     static Delivery derivedFrom(RouteSpecification routeSpecification, Itinerary itinerary, HandlingHistory handlingHistory) {
@@ -100,6 +123,7 @@ public class Delivery {
         this.lastKnownLocation = calculateLastKnownLocation().orElse(null);
         this.currentVoyage = calculateCurrentVoyage().orElse(null);
         this.eta = calculateEta(itinerary);
+        this.nextExpectedActivity = calculateNextExpectedActivity(routeSpecification, itinerary);
     }
 
     /*
@@ -188,4 +212,61 @@ public class Delivery {
         }
     }
 
+    /*
+        Copied and modified from "se.citerus.dddsample.domain.model.cargo.Delivery#calculateNextExpectedActivity".
+     */
+    private HandlingActivity calculateNextExpectedActivity(RouteSpecification routeSpecification, Itinerary itinerary) {
+        if (!onTrack()) return NO_ACTIVITY;
+
+        if (lastEvent == null) return HandlingActivity.builder()
+                .type(HandlingEventType.RECEIVE)
+                .location(routeSpecification.getOrigin())
+                .build();
+
+        switch (lastEvent.getType()) {
+
+            case LOAD:
+                for (Leg leg : itinerary.getLegs()) {
+                    if (leg.getLoadLocation().equals(lastEvent.getLocation())) {
+                        return new HandlingActivity(HandlingEventType.UNLOAD, leg.getUnloadLocation(), leg.getVoyageNumber());
+                    }
+                }
+
+                return NO_ACTIVITY;
+
+            case UNLOAD:
+                for (Iterator<Leg> it = itinerary.getLegs().iterator(); it.hasNext(); ) {
+                    final Leg leg = it.next();
+                    if (leg.getUnloadLocation().equals(lastEvent.getLocation())) {
+                        if (it.hasNext()) {
+                            final Leg nextLeg = it.next();
+                            return HandlingActivity.builder()
+                                    .type(HandlingEventType.LOAD)
+                                    .location(nextLeg.getLoadLocation())
+                                    .voyageNumber(nextLeg.getVoyageNumber())
+                                    .build();
+                        } else {
+                            return HandlingActivity.builder()
+                                    .type(HandlingEventType.CLAIM)
+                                    .location(leg.getUnloadLocation())
+                                    .build();
+                        }
+                    }
+                }
+
+                return NO_ACTIVITY;
+
+            case RECEIVE:
+                final Leg firstLeg = itinerary.getLegs().iterator().next();
+                return HandlingActivity.builder()
+                        .type(HandlingEventType.LOAD)
+                        .location(firstLeg.getLoadLocation())
+                        .voyageNumber(firstLeg.getVoyageNumber())
+                        .build();
+
+            case CLAIM:
+            default:
+                return NO_ACTIVITY;
+        }
+    }
 }

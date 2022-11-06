@@ -3,6 +3,7 @@ package com.github.cargoclean.infrastructure.adapter.db.cargo;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 import java.time.Instant;
 
@@ -28,4 +29,6 @@ public class DeliveryDbEntity {
     @Column("is_misdirected")
     boolean misdirected;
 
+    @Embedded.Nullable
+    HandlingActivityDbEntity nextExpectedActivity;
 }
