@@ -32,4 +32,6 @@ public class TrackingInfo {
     String destination;
 
     String eta;
+
+    boolean misdirected;
 }

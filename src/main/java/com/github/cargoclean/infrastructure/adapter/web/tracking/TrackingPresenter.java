@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -36,15 +37,17 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
             In original application this done in "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter".
          */
 
+        Delivery delivery = cargo.getDelivery();
         presentModelAndView(Map.of("trackingForm", TrackingForm.builder()
                         .trackingId(cargo.getTrackingId().getId())
                         .build(),
                 "trackingInfo", TrackingInfo.builder()
                         .trackingId(cargo.getTrackingId().toString())
-                        .statusText(makeCargoStatusText(cargo.getDelivery().getTransportStatus(), lastKnownLocation,
-                                cargo.getDelivery().getCurrentVoyage()))
+                        .statusText(makeCargoStatusText(delivery.getTransportStatus(), lastKnownLocation,
+                                delivery.getCurrentVoyage()))
                         .destination(cargo.getRouteSpecification().getDestination().toString())
                         .eta(getEta(cargo))
+                        .misdirected(delivery.isMisdirected())
                         .build()), "track-cargo");
     }
 
