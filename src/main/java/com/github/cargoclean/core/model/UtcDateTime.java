@@ -119,7 +119,7 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
         return new UtcDateTime(dateTimeAtUtc.plusDays(days));
     }
 
-    public Date getDate(){
+    public Date getDate() {
         return new Date(dateTimeAtUtc.toInstant().toEpochMilli());
     }
 

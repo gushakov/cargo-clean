@@ -56,6 +56,11 @@
                 <span th:text="${trackingInfo.eta}"></span>
             </div>
 
+            <div class="mt-3">
+                Next expected activity:
+                <span th:text="${trackingInfo.nextExpectedActivity}"></span>
+            </div>
+
             <div th:if="${trackingInfo.misdirected}" class="mt-3 alert alert-danger col-6" role="alert">
                 <i style="color: red;" class="bi bi-x-circle-fill"></i>
                 Cargo is misdirected !

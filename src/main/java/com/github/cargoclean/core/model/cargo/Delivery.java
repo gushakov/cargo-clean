@@ -78,20 +78,18 @@ public class Delivery {
      * associated with each cargo. All the fields for "Delivery" which are persisted
      * in the database need to be initialized here.
      *
-     * @param transportStatus               current transport status for the cargo
-     * @param lastKnownLocation             UnLocode for last known location of the cargo, can be {@code null}
-     * @param currentVoyage                 current voyage the cargo is on, can be {@code null}
-     * @param eta                           estimated date of arrival for the cargo
-     * @param routingStatus                 routing status of the cargo
-     * @param misdirected                   indicates whether the cargo is misdirected
-     * @param nextExpectedHandlingEventType next expected handling event
-     * @param nextExpectedLocation          next expected location
-     * @param nextExpectedVoyage            next expected voyage number, can be {@code null}
+     * @param transportStatus      current transport status for the cargo
+     * @param lastKnownLocation    UnLocode for last known location of the cargo, can be {@code null}
+     * @param currentVoyage        current voyage the cargo is on, can be {@code null}
+     * @param eta                  estimated date of arrival for the cargo
+     * @param routingStatus        routing status of the cargo
+     * @param misdirected          indicates whether the cargo is misdirected
+     * @param nextExpectedActivity next expected handling activity
      */
     @Builder
     public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage,
-                    UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected, HandlingEventType nextExpectedHandlingEventType,
-                    UnLocode nextExpectedLocation, VoyageNumber nextExpectedVoyage) {
+                    UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected,
+                    HandlingActivity nextExpectedActivity) {
         this.transportStatus = transportStatus;
         this.lastKnownLocation = lastKnownLocation;
         this.currentVoyage = currentVoyage;
@@ -99,15 +97,7 @@ public class Delivery {
         this.eta = eta;
         this.routingStatus = routingStatus;
         this.misdirected = misdirected;
-
-        // make an instance of HandlingActivity
-        HandlingActivity.HandlingActivityBuilder handlingActivityBuilder = HandlingActivity.builder()
-                .type(nextExpectedHandlingEventType)
-                .location(nextExpectedLocation);
-        if (nextExpectedVoyage != null) {
-            handlingActivityBuilder.voyageNumber(nextExpectedVoyage);
-        }
-        this.nextExpectedActivity = handlingActivityBuilder.build();
+        this.nextExpectedActivity = nextExpectedActivity;
     }
 
     static Delivery derivedFrom(RouteSpecification routeSpecification, Itinerary itinerary, HandlingHistory handlingHistory) {

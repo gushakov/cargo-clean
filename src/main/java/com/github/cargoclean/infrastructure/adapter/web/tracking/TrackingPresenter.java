@@ -5,7 +5,6 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.HandlingActivity;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
-import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -51,6 +50,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
                         .destination(cargo.getRouteSpecification().getDestination().toString())
                         .eta(getEta(cargo))
                         .misdirected(delivery.isMisdirected())
+                        .nextExpectedActivity(getNextExpectedActivity(delivery))
                         .build()), "track-cargo");
     }
 

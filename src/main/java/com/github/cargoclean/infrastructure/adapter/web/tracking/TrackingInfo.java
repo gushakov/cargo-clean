@@ -34,4 +34,6 @@ public class TrackingInfo {
     String eta;
 
     boolean misdirected;
+
+    String nextExpectedActivity;
 }
