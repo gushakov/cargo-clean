@@ -17,23 +17,26 @@ import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 /**
  * Code copied and modified from original "se.citerus.dddsample.domain.model.cargo.RouteSpecification".
  */
 @Value
-@Builder
 public class RouteSpecification implements Specification<Itinerary> {
 
-    @NotNull
     UnLocode origin;
 
-    @NotNull
     UnLocode destination;
 
-    @NotNull
     UtcDateTime arrivalDeadline;
+
+    @Builder
+    public RouteSpecification(UnLocode origin, UnLocode destination, UtcDateTime arrivalDeadline) {
+        this.origin = notNull(origin);
+        this.destination = notNull(destination);
+        this.arrivalDeadline = notNull(arrivalDeadline);
+    }
 
     public RouteSpecification withOrigin(UnLocode origin) {
         return newRouteSpecification().origin(origin).build();
