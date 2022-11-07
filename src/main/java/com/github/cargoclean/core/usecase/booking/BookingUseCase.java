@@ -65,6 +65,12 @@ public class BookingUseCase implements BookingInputPort {
             UnLocode origin = UnLocode.of(originUnLocode);
             UnLocode destination = UnLocode.of(destinationUnLocode);
 
+            RouteSpecification routeSpecification = RouteSpecification.builder()
+                    .origin(origin)
+                    .destination(destination)
+                    .arrivalDeadline(deliveryDeadline)
+                    .build();
+
             // we create new Cargo object
 
             trackingId = gatewayOps.nextTrackingId();
@@ -76,11 +82,7 @@ public class BookingUseCase implements BookingInputPort {
                             .routingStatus(RoutingStatus.NOT_ROUTED)
                             .misdirected(false)
                             .build())
-                    .routeSpecification(RouteSpecification.builder()
-                            .origin(origin)
-                            .destination(destination)
-                            .arrivalDeadline(deliveryDeadline)
-                            .build())
+                    .routeSpecification(routeSpecification)
                     .build();
 
             // save Cargo to the database

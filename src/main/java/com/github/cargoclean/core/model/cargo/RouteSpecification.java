@@ -12,6 +12,7 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.Specification;
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
@@ -36,6 +37,16 @@ public class RouteSpecification implements Specification<Itinerary> {
         this.origin = notNull(origin);
         this.destination = notNull(destination);
         this.arrivalDeadline = notNull(arrivalDeadline);
+
+        /*
+            Another invariant assertion: route specification cannot
+            have the same origin and destination.
+         */
+        if (origin.equals(destination)) {
+            throw new InvalidDomainObjectError(("Invalid route specification, the origin (%s) " +
+                    "must not be the same as the destination (%s)")
+                    .formatted(origin, destination));
+        }
     }
 
     public RouteSpecification withOrigin(UnLocode origin) {

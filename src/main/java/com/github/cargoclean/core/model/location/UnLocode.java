@@ -27,10 +27,12 @@ public class UnLocode {
 
     @Builder
     public UnLocode(String code) {
+
         // Must not be null and must conform to UN location code format
         if (!notNull(code).matches("^[a-zA-Z]{2}[a-zA-Z2-9]{3}$")) {
             throw new InvalidDomainObjectError("Invalid UN/LOCODE: <%s>".formatted(code));
         }
+
         this.code = code.toUpperCase();
     }
 

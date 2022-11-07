@@ -15,19 +15,20 @@ import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 /*
     Modeled after "se.citerus.dddsample.domain.model.handling.HandlingEvent".
  */
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Builder
 public class HandlingEvent {
 
     /*
@@ -35,30 +36,37 @@ public class HandlingEvent {
         in the same location, and they are of the same type.
      */
 
-    @NotNull
     EventId eventId;
 
     @EqualsAndHashCode.Include
     VoyageNumber voyageNumber;
 
-    @NotNull
     @EqualsAndHashCode.Include
     UnLocode location;
 
-    @NonNull
     @EqualsAndHashCode.Include
     TrackingId cargoId;
 
-    @NotNull
     UtcDateTime completionTime;
 
-    @NotNull
     UtcDateTime registrationTime;
 
-    @NotNull
     @EqualsAndHashCode.Include
     HandlingEventType type;
 
     Integer version;
 
+    @Builder
+    public HandlingEvent(EventId eventId, VoyageNumber voyageNumber, UnLocode location, TrackingId cargoId,
+                         UtcDateTime completionTime, UtcDateTime registrationTime, HandlingEventType type,
+                         Integer version) {
+        this.eventId = notNull(eventId);
+        this.voyageNumber = voyageNumber;
+        this.location = notNull(location);
+        this.cargoId = cargoId;
+        this.completionTime = notNull(completionTime);
+        this.registrationTime = notNull(registrationTime);
+        this.type = notNull(type);
+        this.version = version;
+    }
 }
