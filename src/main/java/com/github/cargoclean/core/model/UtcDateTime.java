@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
+
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 /**
  * Wrapper around {@link ZonedDateTime} fixed to the {@code UTC} timezone.
@@ -45,21 +46,15 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
     private final ZonedDateTime dateTimeAtUtc;
 
     public UtcDateTime(Instant instant) {
-        this.dateTimeAtUtc = Optional.ofNullable(instant)
-                .orElseThrow(() -> new InvalidDomainObjectError("Source instant cannot be null"))
-                .atZone(UTC);
+        this.dateTimeAtUtc = notNull(instant).atZone(UTC);
     }
 
     public UtcDateTime(ZonedDateTime fromDateTime) {
-        this.dateTimeAtUtc = Optional.ofNullable(fromDateTime)
-                .orElseThrow(() -> new InvalidDomainObjectError("Source date-time cannot be null"))
-                .withZoneSameInstant(UTC);
+        this.dateTimeAtUtc = notNull(fromDateTime).withZoneSameInstant(UTC);
     }
 
     public UtcDateTime(Date fromDate) {
-        this.dateTimeAtUtc = Instant.ofEpochMilli(Optional.ofNullable(fromDate)
-                .orElseThrow(() -> new InvalidDomainObjectError("Source date cannot be null"))
-                .getTime()).atZone(UTC);
+        this.dateTimeAtUtc = Instant.ofEpochMilli(notNull(fromDate).getTime()).atZone(UTC);
     }
 
     public UtcDateTime(String fromString) {

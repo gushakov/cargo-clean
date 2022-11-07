@@ -15,8 +15,10 @@ import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQu
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.Instant;
 import java.util.List;
 
 import static com.github.cargoclean.core.model.MockModels.*;
@@ -58,6 +60,7 @@ public class DefaultDbEntityMapperTest {
 
         final Delivery delivery = Delivery.builder()
                 .transportStatus(TransportStatus.IN_PORT)
+                .routingStatus(RoutingStatus.ROUTED)
                 .build();
 
         final DeliveryDbEntity dbEntity = mapper.map(delivery);
@@ -72,6 +75,7 @@ public class DefaultDbEntityMapperTest {
 
         final DeliveryDbEntity deliveryDbEntity = DeliveryDbEntity.builder()
                 .transportStatus(TransportStatus.IN_PORT.name())
+                .routingStatus(RoutingStatus.ROUTED.name())
                 .build();
 
         final Delivery delivery = mapper.map(deliveryDbEntity);
@@ -143,6 +147,7 @@ public class DefaultDbEntityMapperTest {
                 .origin("USDAL")
                 .delivery(DeliveryDbEntity.builder()
                         .transportStatus(TransportStatus.IN_PORT.name())
+                        .routingStatus(RoutingStatus.ROUTED.name())
                         .build())
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
@@ -201,6 +206,7 @@ public class DefaultDbEntityMapperTest {
                 .origin("USDAL")
                 .delivery(DeliveryDbEntity.builder()
                         .transportStatus(TransportStatus.ONBOARD_CARRIER.name())
+                        .routingStatus(RoutingStatus.NOT_ROUTED.name())
                         .build())
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
