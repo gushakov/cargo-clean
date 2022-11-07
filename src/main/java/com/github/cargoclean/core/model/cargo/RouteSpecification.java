@@ -49,21 +49,6 @@ public class RouteSpecification implements Specification<Itinerary> {
         }
     }
 
-    public RouteSpecification withOrigin(UnLocode origin) {
-        return newRouteSpecification().origin(origin).build();
-    }
-
-    public RouteSpecification withDestination(UnLocode destination) {
-        return newRouteSpecification().destination(destination).build();
-    }
-
-    private RouteSpecificationBuilder newRouteSpecification() {
-        return RouteSpecification.builder()
-                .origin(origin)
-                .destination(destination)
-                .arrivalDeadline(arrivalDeadline);
-    }
-
     /*
         Copied from "se.citerus.dddsample.domain.model.cargo.RouteSpecification#isSatisfiedBy".
      */

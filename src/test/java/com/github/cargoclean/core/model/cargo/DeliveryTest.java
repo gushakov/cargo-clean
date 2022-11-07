@@ -29,7 +29,7 @@ public class DeliveryTest {
                                 .cargoId(TrackingId.of("8E062F47"))
                                 .registrationTime(UtcDateTime.of("05-07-2022"))
                                 .completionTime(UtcDateTime.of("05-07-2022"))
-                                .voyageNumber(VoyageNumber.of("100S"))
+                                .voyageNumber(VoyageNumber.of("0100S"))
                                 .build()))
                         .build());
 
