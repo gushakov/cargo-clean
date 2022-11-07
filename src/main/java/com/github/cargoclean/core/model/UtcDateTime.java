@@ -1,7 +1,5 @@
 package com.github.cargoclean.core.model;
 
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

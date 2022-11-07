@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.model.location;
 
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,7 +23,7 @@ public class LocationTest {
     @NullSource
     @ValueSource(strings = {"", "123", "foo bar"})
     void should_not_accept_invalid_unlocodes(String code) {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidDomainObjectError.class,
                 () -> UnLocode.builder().code(code).build());
     }
 }

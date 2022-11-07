@@ -55,11 +55,6 @@
         </dependency>
 
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
@@ -100,12 +95,6 @@
             <artifactId>lombok-mapstruct-binding</artifactId>
             <version>${mapstruct.lombok.binding.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

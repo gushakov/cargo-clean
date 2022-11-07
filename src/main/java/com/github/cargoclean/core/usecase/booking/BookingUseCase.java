@@ -1,13 +1,12 @@
 package com.github.cargoclean.core.usecase.booking;
 
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
-import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,9 +27,6 @@ public class BookingUseCase implements BookingInputPort {
     // here is our Presenter
     private final BookingPresenterOutputPort presenter;
 
-    // validation service
-    private final Validator validator;
-
     // here is our gateway
     private final PersistenceGatewayOutputPort gatewayOps;
 
@@ -41,7 +37,7 @@ public class BookingUseCase implements BookingInputPort {
         try {
             // retrieve all locations from the gateway
 
-            locations = validator.validate(gatewayOps.allLocations());
+            locations = gatewayOps.allLocations();
 
         } catch (Exception e) {
             // if anything went wrong: present the error and return
@@ -71,7 +67,7 @@ public class BookingUseCase implements BookingInputPort {
 
             // we create new Cargo object
 
-            trackingId = validator.validate(gatewayOps.nextTrackingId());
+            trackingId = gatewayOps.nextTrackingId();
             final Cargo cargo = Cargo.builder()
                     .origin(origin)
                     .trackingId(trackingId)
@@ -86,9 +82,6 @@ public class BookingUseCase implements BookingInputPort {
                             .arrivalDeadline(deliveryDeadline)
                             .build())
                     .build();
-
-            // validate newly constructed Cargo domain object
-            validator.validate(cargo);
 
             // save Cargo to the database
             gatewayOps.saveCargo(cargo);

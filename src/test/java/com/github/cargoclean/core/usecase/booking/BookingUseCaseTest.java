@@ -1,15 +1,13 @@
 package com.github.cargoclean.core.usecase.booking;
 
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.InvalidDestinationSpecificationError;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
-import com.github.cargoclean.core.validator.BeanValidator;
-import com.github.cargoclean.core.validator.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +21,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingUseCaseTest {
-
-    private final Validator validator = new BeanValidator();
-
     @Mock
     private BookingPresenterOutputPort presenter;
 
@@ -47,7 +42,7 @@ public class BookingUseCaseTest {
                     return MockModels.location(unLocode.getCode());
                 });
 
-        useCase = new BookingUseCase(presenter, validator, gatewayOps);
+        useCase = new BookingUseCase(presenter, gatewayOps);
 
     }
 
@@ -100,6 +95,6 @@ public class BookingUseCaseTest {
                 .forClass(Exception.class);
         verify(presenter, times(1)).presentError(errorArg.capture());
 
-        assertThat(errorArg.getValue()).isInstanceOf(InvalidDestinationSpecificationError.class);
+        assertThat(errorArg.getValue()).isInstanceOf(InvalidDomainObjectError.class);
     }
 }

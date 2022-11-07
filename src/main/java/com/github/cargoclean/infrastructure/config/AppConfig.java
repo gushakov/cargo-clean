@@ -28,8 +28,6 @@ import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
 import com.github.cargoclean.core.usecase.tracking.TrackingInputPort;
 import com.github.cargoclean.core.usecase.tracking.TrackingUseCase;
-import com.github.cargoclean.core.validator.BeanValidator;
-import com.github.cargoclean.core.validator.Validator;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.internal.GraphDAOStub;
@@ -65,15 +63,6 @@ public class AppConfig {
     }
 
     /*
-        Create validator service to be used in use cases.
-     */
-
-    @Bean
-    public Validator validator() {
-        return new BeanValidator();
-    }
-
-    /*
         Pathfinder service configuration.
      */
 
@@ -91,18 +80,16 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
-                                                   Validator validator,
                                                    PersistenceGatewayOutputPort gatewayOps) {
-        return new BookingUseCase(presenter, validator, gatewayOps);
+        return new BookingUseCase(presenter, gatewayOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
-                                           Validator validator,
                                            PersistenceGatewayOutputPort gatewayOps,
                                            RoutingServiceOutputPort routingServiceOps) {
-        return new RoutingUseCase(presenter, validator, gatewayOps, routingServiceOps);
+        return new RoutingUseCase(presenter, gatewayOps, routingServiceOps);
     }
 
     @Bean
@@ -122,8 +109,7 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
-                                             Validator validator,
                                              PersistenceGatewayOutputPort gatewayOps) {
-        return new HandlingUseCase(presenter, validator, gatewayOps);
+        return new HandlingUseCase(presenter, gatewayOps);
     }
 }

@@ -10,13 +10,10 @@ package com.github.cargoclean.core.model.cargo;
     "original-license.txt", as well.
  */
 
-import com.github.cargoclean.core.annotation.Default;
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notBlank;
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.TrackingId".
@@ -24,17 +21,12 @@ import javax.validation.constraints.NotNull;
 @Value
 public class TrackingId {
 
-    @NotNull
-    @NotBlank
     String id;
 
     @Builder
-    @Default
     public TrackingId(String id) {
-        if (id == null || id.isEmpty() || id.isBlank()) {
-            throw new InvalidDomainObjectError("Invalid tracking ID: <%s>".formatted(id));
-        }
-        this.id = id;
+        // Make sure we cannot construct an invalid tracking ID.
+        this.id = notBlank(id);
     }
 
     @Override

@@ -13,10 +13,15 @@ package com.github.cargoclean.core.model.cargo;
 
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
+
+
 
 /*
     References:
@@ -31,22 +36,16 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Builder
 public class Cargo {
 
-    @NotNull
     @EqualsAndHashCode.Include
     TrackingId trackingId;
 
-    @NotNull
     UnLocode origin;
 
-    @NotNull
     Delivery delivery;
 
-    @NotNull
     RouteSpecification routeSpecification;
 
     // itinerary is null before cargo is routed
@@ -58,6 +57,30 @@ public class Cargo {
      * the persistent entity.
      */
     Integer version;
+
+    /*
+        This is the only constructor for "Cargo" domain object, we
+        make sure no invalid values (nulls) are passed for the
+        mandatory attributes.
+     */
+    @Builder
+    public Cargo(TrackingId trackingId, UnLocode origin, Delivery delivery,
+                 RouteSpecification routeSpecification, Itinerary itinerary, Integer version) {
+
+        /*
+           These are mandatory always non-null attributes. We do
+           not need to see if these value objects are valid (themselves),
+           this will be done upon construction of each object.
+         */
+        this.trackingId = notNull(trackingId);
+        this.origin = notNull(origin);
+        this.delivery = notNull(delivery);
+        this.routeSpecification = notNull(routeSpecification);
+
+        // these can be null for some instances of Cargo, i.e. initially before routing
+        this.itinerary = itinerary;
+        this.version = version;
+    }
 
     public boolean exists() {
         return version != null;

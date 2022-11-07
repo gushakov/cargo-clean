@@ -10,11 +10,12 @@ package com.github.cargoclean.core.model.location;
     "original-license.txt", as well.
  */
 
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
+
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.location.UnLocode".
@@ -22,16 +23,13 @@ import javax.validation.constraints.NotNull;
 @Value
 public class UnLocode {
 
-    @NotNull
-    @NotBlank
     String code;
 
     @Builder
     public UnLocode(String code) {
-
-        if (code == null ||
-                !code.matches("^[a-zA-Z]{2}[a-zA-Z2-9]{3}$")) {
-            throw new IllegalArgumentException("Invalid UN/LOCODE: <%s>".formatted(code));
+        // Must not be null and must conform to UN location code format
+        if (!notNull(code).matches("^[a-zA-Z]{2}[a-zA-Z2-9]{3}$")) {
+            throw new InvalidDomainObjectError("Invalid UN/LOCODE: <%s>".formatted(code));
         }
         this.code = code.toUpperCase();
     }

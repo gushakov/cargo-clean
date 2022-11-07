@@ -1,7 +1,7 @@
 package com.github.cargoclean.core.model.handling;
 
 import com.github.cargoclean.core.annotation.Default;
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import lombok.Builder;
 import lombok.Value;
 
