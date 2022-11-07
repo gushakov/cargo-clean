@@ -17,22 +17,25 @@ import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 /**
  * Modeled after "se.citerus.dddsample.domain.model.cargo.HandlingActivity".
  */
 
 @Value
-@Builder
 public class HandlingActivity {
 
-    @NotNull
     HandlingEventType type;
 
-    @NotNull
     UnLocode location;
 
     VoyageNumber voyageNumber;
 
+    @Builder
+    public HandlingActivity(HandlingEventType type, UnLocode location, VoyageNumber voyageNumber) {
+        this.type = notNull(type);
+        this.location = notNull(location);
+        this.voyageNumber = voyageNumber;
+    }
 }

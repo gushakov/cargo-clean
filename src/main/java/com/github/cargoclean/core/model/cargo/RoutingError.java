@@ -7,7 +7,4 @@ public class RoutingError extends GenericCargoError {
         super(message);
     }
 
-    public RoutingError(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

@@ -22,10 +22,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
 import java.util.Iterator;
 import java.util.Optional;
 
+import static com.github.cargoclean.core.model.Assert.notNull;
 import static com.github.cargoclean.core.model.cargo.RoutingStatus.*;
 import static com.github.cargoclean.core.model.cargo.TransportStatus.*;
 
@@ -48,7 +48,6 @@ public class Delivery {
 
     HandlingEvent lastEvent;
 
-    @NotNull
     @Getter
     TransportStatus transportStatus;
 
@@ -58,11 +57,9 @@ public class Delivery {
     @Getter
     VoyageNumber currentVoyage;
 
-    @NotNull
     @Getter
     UtcDateTime eta;
 
-    @NotNull
     @Getter
     RoutingStatus routingStatus;
 
@@ -71,6 +68,11 @@ public class Delivery {
 
     @Getter
     HandlingActivity nextExpectedActivity;
+
+    static Delivery derivedFrom(RouteSpecification routeSpecification, Itinerary itinerary, HandlingHistory handlingHistory) {
+
+        return new Delivery(handlingHistory.mostRecentlyCompletedEvent().orElse(null), itinerary, routeSpecification);
+    }
 
     /**
      * This constructor is needed for MapStruct mapper to map a database entity
@@ -90,26 +92,21 @@ public class Delivery {
     public Delivery(TransportStatus transportStatus, UnLocode lastKnownLocation, VoyageNumber currentVoyage,
                     UtcDateTime eta, RoutingStatus routingStatus, boolean misdirected,
                     HandlingActivity nextExpectedActivity) {
-        this.transportStatus = transportStatus;
+        this.transportStatus = notNull(transportStatus);
         this.lastKnownLocation = lastKnownLocation;
         this.currentVoyage = currentVoyage;
         this.lastEvent = null;
         this.eta = eta;
-        this.routingStatus = routingStatus;
+        this.routingStatus = notNull(routingStatus);
         this.misdirected = misdirected;
         this.nextExpectedActivity = nextExpectedActivity;
-    }
-
-    static Delivery derivedFrom(RouteSpecification routeSpecification, Itinerary itinerary, HandlingHistory handlingHistory) {
-
-        return new Delivery(handlingHistory.mostRecentlyCompletedEvent().orElse(null), itinerary, routeSpecification);
     }
 
     private Delivery(HandlingEvent lastEvent, Itinerary itinerary, RouteSpecification routeSpecification) {
         this.lastEvent = lastEvent;
         this.misdirected = calculateMisdirectionStatus(itinerary);
-        this.routingStatus = calculateRoutingStatus(itinerary, routeSpecification);
-        this.transportStatus = calculateTransportStatus();
+        this.routingStatus = notNull(calculateRoutingStatus(itinerary, routeSpecification));
+        this.transportStatus = notNull(calculateTransportStatus());
         this.lastKnownLocation = calculateLastKnownLocation().orElse(null);
         this.currentVoyage = calculateCurrentVoyage().orElse(null);
         this.eta = calculateEta(itinerary);
@@ -142,7 +139,9 @@ public class Delivery {
         }
     }
 
-    // Copied froim "se.citerus.dddsample.domain.model.cargo.Delivery#calculateEta".
+    /*
+        Copied froim "se.citerus.dddsample.domain.model.cargo.Delivery#calculateEta".
+     */
     private UtcDateTime calculateEta(Itinerary itinerary) {
         if (onTrack()) {
             return itinerary.finalArrivalDate();

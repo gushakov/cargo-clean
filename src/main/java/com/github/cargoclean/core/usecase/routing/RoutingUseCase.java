@@ -4,7 +4,6 @@ import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
-import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,9 +16,6 @@ public class RoutingUseCase implements RoutingInputPort {
 
     private final RoutingPresenterOutputPort presenter;
 
-    // validation service
-    private final Validator validator;
-
     private final PersistenceGatewayOutputPort gatewayOps;
 
     // output port for external routing service
@@ -29,7 +25,7 @@ public class RoutingUseCase implements RoutingInputPort {
     public void showCargo(TrackingId trackingId) {
         final Cargo cargo;
         try {
-            cargo = validator.validate(gatewayOps.obtainCargoByTrackingId(trackingId));
+            cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
         } catch (Exception e) {
             presenter.presentError(e);
             return;
@@ -46,7 +42,7 @@ public class RoutingUseCase implements RoutingInputPort {
         try {
 
             // load cargo
-            cargo = validator.validate(gatewayOps.obtainCargoByTrackingId(trackingId));
+            cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
             if (cargo.isRouted()) {
                 throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId));
@@ -88,7 +84,7 @@ public class RoutingUseCase implements RoutingInputPort {
             Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
             // actually route this cargo and validate
-            Cargo routedCargo = validator.validate(cargo.assignItinerary(itinerary));
+            Cargo routedCargo = cargo.assignItinerary(itinerary);
 
             // persist updated cargo
             gatewayOps.saveCargo(routedCargo);

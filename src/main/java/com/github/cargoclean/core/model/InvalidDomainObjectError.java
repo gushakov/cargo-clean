@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.validator;
+package com.github.cargoclean.core.model;
 
 import com.github.cargoclean.core.GenericCargoError;
 

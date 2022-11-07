@@ -1,6 +1,7 @@
 package com.github.cargoclean.core.usecase.handling;
 
 import com.github.cargoclean.core.GenericCargoError;
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -11,8 +12,6 @@ import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
-import com.github.cargoclean.core.validator.Validator;
 import lombok.RequiredArgsConstructor;
 
 import javax.transaction.Transactional;
@@ -23,8 +22,6 @@ import java.util.Optional;
 public class HandlingUseCase implements HandlingInputPort {
 
     private final HandlingPresenterOutputPort presenter;
-
-    private final Validator validator;
 
     private final PersistenceGatewayOutputPort gatewayOps;
 
@@ -45,7 +42,7 @@ public class HandlingUseCase implements HandlingInputPort {
 
             // construct and validate new handling event
             try {
-                handlingEvent = validator.validate(HandlingEvent.builder()
+                handlingEvent = HandlingEvent.builder()
                         .eventId(gatewayOps.nextEventId())
                         .voyageNumber(voyageNumber)
                         .location(location)
@@ -53,7 +50,7 @@ public class HandlingUseCase implements HandlingInputPort {
                         .completionTime(UtcDateTime.of(completionTime))
                         .registrationTime(UtcDateTime.now())
                         .type(type)
-                        .build());
+                        .build();
             } catch (InvalidDomainObjectError e) {
                 presenter.presentInvalidParametersError(e);
                 return;

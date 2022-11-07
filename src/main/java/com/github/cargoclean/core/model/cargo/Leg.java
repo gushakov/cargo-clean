@@ -16,11 +16,12 @@ import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;
 import lombok.Value;
 
+import static com.github.cargoclean.core.model.Assert.notNull;
+
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.cargo.Leg".
  */
 @Value
-@Builder
 public class Leg {
 
     TrackingId cargoTrackingId;
@@ -33,4 +34,14 @@ public class Leg {
     UtcDateTime loadTime;
     UtcDateTime unloadTime;
 
+    @Builder
+    public Leg(TrackingId cargoTrackingId, VoyageNumber voyageNumber, UnLocode loadLocation,
+               UnLocode unloadLocation, UtcDateTime loadTime, UtcDateTime unloadTime) {
+        this.cargoTrackingId = notNull(cargoTrackingId);
+        this.voyageNumber = notNull(voyageNumber);
+        this.loadLocation = notNull(loadLocation);
+        this.unloadLocation = notNull(unloadLocation);
+        this.loadTime = notNull(loadTime);
+        this.unloadTime = notNull(unloadTime);
+    }
 }

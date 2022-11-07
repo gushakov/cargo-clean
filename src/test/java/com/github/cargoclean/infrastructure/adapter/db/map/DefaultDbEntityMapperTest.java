@@ -15,8 +15,10 @@ import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQu
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.Instant;
 import java.util.List;
 
 import static com.github.cargoclean.core.model.MockModels.*;
@@ -58,6 +60,7 @@ public class DefaultDbEntityMapperTest {
 
         final Delivery delivery = Delivery.builder()
                 .transportStatus(TransportStatus.IN_PORT)
+                .routingStatus(RoutingStatus.ROUTED)
                 .build();
 
         final DeliveryDbEntity dbEntity = mapper.map(delivery);
@@ -72,6 +75,7 @@ public class DefaultDbEntityMapperTest {
 
         final DeliveryDbEntity deliveryDbEntity = DeliveryDbEntity.builder()
                 .transportStatus(TransportStatus.IN_PORT.name())
+                .routingStatus(RoutingStatus.ROUTED.name())
                 .build();
 
         final Delivery delivery = mapper.map(deliveryDbEntity);
@@ -143,6 +147,7 @@ public class DefaultDbEntityMapperTest {
                 .origin("USDAL")
                 .delivery(DeliveryDbEntity.builder()
                         .transportStatus(TransportStatus.IN_PORT.name())
+                        .routingStatus(RoutingStatus.ROUTED.name())
                         .build())
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
@@ -186,10 +191,10 @@ public class DefaultDbEntityMapperTest {
                         LegDbEntity::getUnloadLocation,
                         LegDbEntity::getLoadTime,
                         LegDbEntity::getUnloadTime)
-                .containsExactly(tuple("8E062F47", "100S", "USDAL", "AUMEL",
+                .containsExactly(tuple("8E062F47", "0100S", "USDAL", "AUMEL",
                                 UtcDateTime.of("05-07-2022").toInstant(),
                                 UtcDateTime.of("23-07-2022").toInstant()),
-                        tuple("8E062F47", "200S", "AUMEL", "JNTKO",
+                        tuple("8E062F47", "0200S", "AUMEL", "JNTKO",
                                 UtcDateTime.of("25-07-2022").toInstant(),
                                 UtcDateTime.of("05-08-2022").toInstant()));
     }
@@ -201,6 +206,7 @@ public class DefaultDbEntityMapperTest {
                 .origin("USDAL")
                 .delivery(DeliveryDbEntity.builder()
                         .transportStatus(TransportStatus.ONBOARD_CARRIER.name())
+                        .routingStatus(RoutingStatus.NOT_ROUTED.name())
                         .build())
                 .routeSpecification(RouteSpecificationDbEntity.builder()
                         .origin("USDAL")
@@ -209,7 +215,7 @@ public class DefaultDbEntityMapperTest {
                         .build())
                 .legs(List.of(LegDbEntity.builder()
                         .cargoTrackingId("8E062F47")
-                        .voyageNumber("100S")
+                        .voyageNumber("0100S")
                         .loadLocation("USDAL")
                         .unloadLocation("AUMEL")
                         .loadTime(UtcDateTime.of("05-07-2022").toInstant())
@@ -228,7 +234,7 @@ public class DefaultDbEntityMapperTest {
                         Leg::getLoadTime,
                         Leg::getUnloadTime)
                 .containsExactly(tuple(TrackingId.of("8E062F47"),
-                        VoyageNumber.of("100S"),
+                        VoyageNumber.of("0100S"),
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
                         UtcDateTime.of("05-07-2022"),
                         UtcDateTime.of("05-08-2022")));

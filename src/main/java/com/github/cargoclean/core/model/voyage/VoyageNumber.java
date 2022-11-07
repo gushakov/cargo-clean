@@ -13,19 +13,20 @@ package com.github.cargoclean.core.model.voyage;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notBlank;
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.voyage.VoyageNumber".
  */
 @Value
-@Builder
 public class VoyageNumber {
 
-    @NotNull
-    @NotBlank
     String number;
+
+    @Builder
+    public VoyageNumber(String number) {
+        this.number = notBlank(number);
+    }
 
     public static VoyageNumber of(String number) {
         return VoyageNumber.builder()

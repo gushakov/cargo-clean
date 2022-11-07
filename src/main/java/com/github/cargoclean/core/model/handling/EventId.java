@@ -1,11 +1,9 @@
 package com.github.cargoclean.core.model.handling;
 
-import com.github.cargoclean.core.annotation.Default;
-import com.github.cargoclean.core.validator.InvalidDomainObjectError;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Optional;
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 @Value
 public class EventId {
@@ -19,10 +17,8 @@ public class EventId {
     Long id;
 
     @Builder
-    @Default
     public EventId(Long id) {
-        this.id = Optional.ofNullable(id)
-                .orElseThrow(() -> new InvalidDomainObjectError("Event ID cannot be null"));
+        this.id = notNull(id);
     }
 
     @Override

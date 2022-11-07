@@ -5,8 +5,6 @@ import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
-import com.github.cargoclean.core.validator.BeanValidator;
-import com.github.cargoclean.core.validator.Validator;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.ExternalRoutingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +24,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class RoutingUseCaseTest {
 
-    private final Validator validator = new BeanValidator();
-
     @Mock
     private RoutingPresenterOutputPort presenter;
 
@@ -40,7 +36,7 @@ public class RoutingUseCaseTest {
     @Test
     void should_assign_new_route_to_cargo() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, validator, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -82,7 +78,7 @@ public class RoutingUseCaseTest {
 
     @Test
     void should_present_routing_error_if_selected_route_does_not_satisfy_specification() {
-        RoutingInputPort useCase = new RoutingUseCase(presenter, validator, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -104,7 +100,7 @@ public class RoutingUseCaseTest {
     @Test
     void should_present_routing_error_when_routing_cargo_with_existing_itinerary() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, validator, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
 
         // create a spy of an existing cargo to simulate a cargo which has already been
         // routed
@@ -129,6 +125,7 @@ public class RoutingUseCaseTest {
         return RouteDto.builder()
                 .legs(List.of(LegDto.builder()
                         .cargoTrackingId(trackingId)
+                        .voyageNumber("0100S")
                         .from("USDAL")
                         .to("JNTKO")
                         .loadTime(UtcDateTime.of("15-07-2022"))
@@ -141,6 +138,7 @@ public class RoutingUseCaseTest {
         return RouteDto.builder()
                 .legs(List.of(LegDto.builder()
                         .cargoTrackingId(trackingId)
+                        .voyageNumber("0100S")
                         .from("USDAL")
                         .to("AUMEL")
                         .loadTime(UtcDateTime.of("15-07-2022"))

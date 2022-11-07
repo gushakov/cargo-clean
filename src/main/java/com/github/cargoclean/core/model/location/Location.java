@@ -10,19 +10,23 @@ package com.github.cargoclean.core.model.location;
     "original-license.txt", as well.
  */
 
-import lombok.*;
+import com.github.cargoclean.core.model.Assert;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notBlank;
+import static com.github.cargoclean.core.model.Assert.notNull;
+
 
 /**
  * Modeled after original "se.citerus.dddsample.domain.model.location.Location".
  */
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Builder
 public class Location {
 
     /*
@@ -34,11 +38,15 @@ public class Location {
             .build();
 
     @EqualsAndHashCode.Include
-    @NotNull
     UnLocode unlocode;
 
-    @NotNull
     String name;
+
+    @Builder
+    public Location(UnLocode unlocode, String name) {
+        this.unlocode = notNull(unlocode);
+        this.name = notBlank(name);
+    }
 
     @Override
     public String toString() {

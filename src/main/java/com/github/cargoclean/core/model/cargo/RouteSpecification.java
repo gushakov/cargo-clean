@@ -12,42 +12,41 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.Specification;
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.NotNull;
+import static com.github.cargoclean.core.model.Assert.notNull;
 
 /**
  * Code copied and modified from original "se.citerus.dddsample.domain.model.cargo.RouteSpecification".
  */
 @Value
-@Builder
 public class RouteSpecification implements Specification<Itinerary> {
 
-    @NotNull
     UnLocode origin;
 
-    @NotNull
     UnLocode destination;
 
-    @NotNull
     UtcDateTime arrivalDeadline;
 
-    public RouteSpecification withOrigin(UnLocode origin) {
-        return newRouteSpecification().origin(origin).build();
-    }
+    @Builder
+    public RouteSpecification(UnLocode origin, UnLocode destination, UtcDateTime arrivalDeadline) {
+        this.origin = notNull(origin);
+        this.destination = notNull(destination);
+        this.arrivalDeadline = notNull(arrivalDeadline);
 
-    public RouteSpecification withDestination(UnLocode destination) {
-        return newRouteSpecification().destination(destination).build();
-    }
-
-    private RouteSpecificationBuilder newRouteSpecification() {
-        return RouteSpecification.builder()
-                .origin(origin)
-                .destination(destination)
-                .arrivalDeadline(arrivalDeadline);
+        /*
+            Another invariant assertion: route specification cannot
+            have the same origin and destination.
+         */
+        if (origin.equals(destination)) {
+            throw new InvalidDomainObjectError(("Invalid route specification, the origin (%s) " +
+                    "must not be the same as the destination (%s)")
+                    .formatted(origin, destination));
+        }
     }
 
     /*

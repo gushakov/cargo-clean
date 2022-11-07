@@ -19,7 +19,7 @@ public class HandlingHistoryTest {
         UtcDateTime timeLater = time.plusSeconds(1L);
         HandlingEvent event1 = HandlingEvent.builder()
                 .eventId(EventId.of(1L))
-                .voyageNumber(VoyageNumber.of("100S"))
+                .voyageNumber(VoyageNumber.of("0100S"))
                 .cargoId(TrackingId.of("C1"))
                 .location(UnLocode.of("AUMEL"))
                 .type(HandlingEventType.LOAD)
@@ -28,7 +28,7 @@ public class HandlingHistoryTest {
                 .build();
         HandlingEvent event2 = HandlingEvent.builder()
                 .eventId(EventId.of(2L))
-                .voyageNumber(VoyageNumber.of("100S"))
+                .voyageNumber(VoyageNumber.of("0100S"))
                 .cargoId(TrackingId.of("C1"))
                 .location(UnLocode.of("AUMEL"))
                 .type(HandlingEventType.LOAD)
