@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -52,23 +52,27 @@ public class BookingUseCase implements BookingInputPort {
 
     @Transactional
     @Override
-    public void bookCargo(String originUnLocode, String destinationUnLocode, UtcDateTime deliveryDeadline) {
+    public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
 
         final TrackingId trackingId;
         try {
 
-            // we validate the inputs to the use case
-            if (deliveryDeadline == null) {
-                throw new InvalidDomainObjectError("arrival deadline must not be null");
-            }
+            /*
+                Point of interest:
+                -----------------
+                Out value objects and entities will throw "InvalidDomainObjectError"
+                for any invalid input during construction. This is a part of our
+                validation strategy where validation is handled by the model itself.
+             */
 
             UnLocode origin = UnLocode.of(originUnLocode);
             UnLocode destination = UnLocode.of(destinationUnLocode);
+            UtcDateTime deliveryDeadlineDateTime = UtcDateTime.of(deliveryDeadline);
 
             RouteSpecification routeSpecification = RouteSpecification.builder()
                     .origin(origin)
                     .destination(destination)
-                    .arrivalDeadline(deliveryDeadline)
+                    .arrivalDeadline(deliveryDeadlineDateTime)
                     .build();
 
             // we create new Cargo object

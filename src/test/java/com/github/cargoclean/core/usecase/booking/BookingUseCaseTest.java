@@ -15,6 +15,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -49,9 +51,9 @@ public class BookingUseCaseTest {
     @Test
     void should_create_and_save_new_cargo() {
 
-        UtcDateTime monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay();
+        Date monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay().getDate();
 
-        // booking a new cargo from Dallas to Melbourne, to arrive no later then a month from now
+        // booking a new cargo from Dallas to Melbourne, to arrive no later than a month from now
         useCase.bookCargo("USDAL", "AUMEL",
                 monthFromNow);
 
@@ -72,7 +74,7 @@ public class BookingUseCaseTest {
         assertThat(cargo.getRouteSpecification().getDestination())
                 .isEqualTo(UnLocode.of("AUMEL"));
         assertThat(cargo.getRouteSpecification().getArrivalDeadline().toDateTimeAtUtc())
-                .isEqualToIgnoringSeconds(monthFromNow.toDateTimeAtUtc());
+                .isEqualToIgnoringSeconds(UtcDateTime.of(monthFromNow).toDateTimeAtUtc());
 
         // verify presenter was called to present the tracking ID of the new cargo
 
@@ -85,7 +87,7 @@ public class BookingUseCaseTest {
     @Test
     void should_not_book_cargo_with_invalid_route_specification_same_origin_destination() {
 
-        UtcDateTime monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay();
+        Date monthFromNow = UtcDateTime.now().plusMonths(1).atStartOfDay().getDate();
 
         // booking a new cargo from Dallas to Melbourne, to arrive no later than a month from now
         useCase.bookCargo("USDAL", "USDAL",
