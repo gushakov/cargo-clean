@@ -9,7 +9,6 @@ package com.github.cargoclean.infrastructure.adapter.web;
 
  */
 
-import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -68,22 +67,7 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
 
     @Override
     public void presentError(Exception t) {
-
-        /*
-            Point of interest:
-            -----------------
-            We can distinguish here between different types of errors.
-            For "InvalidDomainObject", we may want to present response
-            with status "Bad request". For problems with persistence,
-            we may want to present "Internal server error".
-         */
-
-        if (t instanceof InvalidDomainObjectError) {
-            doPresentError(t, HttpStatus.BAD_REQUEST);
-        } else {
-            doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public void presentClientError(Exception t) {

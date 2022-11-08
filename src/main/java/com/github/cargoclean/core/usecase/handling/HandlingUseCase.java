@@ -5,6 +5,7 @@ import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -34,16 +35,18 @@ public class HandlingUseCase implements HandlingInputPort {
         HandlingEvent handlingEvent;
         try {
 
-            // parse identifiers
-            VoyageNumber voyageNumber = Optional.ofNullable(voyageNumberStr)
-                    .map(VoyageNumber::of).orElse(null);
-            UnLocode location = UnLocode.of(locationStr);
-            cargoId = TrackingId.of(cargoIdStr);
+            EventId eventId = gatewayOps.nextEventId();
 
-            // construct and validate new handling event
             try {
+                // parse identifiers
+                VoyageNumber voyageNumber = Optional.ofNullable(voyageNumberStr)
+                        .map(VoyageNumber::of).orElse(null);
+                UnLocode location = UnLocode.of(locationStr);
+                cargoId = TrackingId.of(cargoIdStr);
+
+                // construct new handling event
                 handlingEvent = HandlingEvent.builder()
-                        .eventId(gatewayOps.nextEventId())
+                        .eventId(eventId)
                         .voyageNumber(voyageNumber)
                         .location(location)
                         .cargoId(cargoId)
