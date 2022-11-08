@@ -33,31 +33,36 @@ public class HandlingUseCase implements HandlingInputPort {
 
         TrackingId cargoId;
         HandlingEvent handlingEvent;
+        EventId eventId;
+        VoyageNumber voyageNumber;
+        UnLocode location;
+        UtcDateTime completionDateTime;
         try {
 
-            EventId eventId = gatewayOps.nextEventId();
+            eventId = gatewayOps.nextEventId();
 
+            // parse identifiers and create value objects
             try {
-                // parse identifiers
-                VoyageNumber voyageNumber = Optional.ofNullable(voyageNumberStr)
+                voyageNumber = Optional.ofNullable(voyageNumberStr)
                         .map(VoyageNumber::of).orElse(null);
-                UnLocode location = UnLocode.of(locationStr);
+                location = UnLocode.of(locationStr);
                 cargoId = TrackingId.of(cargoIdStr);
-
-                // construct new handling event
-                handlingEvent = HandlingEvent.builder()
-                        .eventId(eventId)
-                        .voyageNumber(voyageNumber)
-                        .location(location)
-                        .cargoId(cargoId)
-                        .completionTime(UtcDateTime.of(completionTime))
-                        .registrationTime(UtcDateTime.now())
-                        .type(type)
-                        .build();
+                completionDateTime = UtcDateTime.of(completionTime);
             } catch (InvalidDomainObjectError e) {
                 presenter.presentInvalidParametersError(e);
                 return;
             }
+
+            // construct new handling event
+            handlingEvent = HandlingEvent.builder()
+                    .eventId(eventId)
+                    .voyageNumber(voyageNumber)
+                    .location(location)
+                    .cargoId(cargoId)
+                    .completionTime(completionDateTime)
+                    .registrationTime(UtcDateTime.now())
+                    .type(type)
+                    .build();
 
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
