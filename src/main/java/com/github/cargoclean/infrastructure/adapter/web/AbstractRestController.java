@@ -13,6 +13,12 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractRestController {
 
+    /*
+        This will be called for any exception not handled
+        by the presenters. For example, when there is a
+        problem with binding request parameters.
+     */
+
     @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleRestError(Exception e) {
         log.error(e.getMessage(), e);
