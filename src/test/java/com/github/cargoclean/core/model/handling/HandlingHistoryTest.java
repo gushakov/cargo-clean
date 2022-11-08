@@ -6,7 +6,6 @@ import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -10,7 +10,6 @@ package com.github.cargoclean.core.model.location;
     "original-license.txt", as well.
  */
 
-import com.github.cargoclean.core.model.Assert;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

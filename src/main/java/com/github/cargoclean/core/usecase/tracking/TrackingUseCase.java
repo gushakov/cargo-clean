@@ -33,8 +33,9 @@ public class TrackingUseCase implements TrackingInputPort {
             cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
             /*
-                Here is an interesting point:
-                since we have modeled "Cargo" aggregate with IDs, and not references, to other
+                Point of interest:
+                -----------------
+                Since we have modeled "Cargo" aggregate with IDs, and not references, to other
                 aggregate roots, like "Location", we need to load and provide the necessary
                 information from other aggregates to the presenter. In the original, "DDDSample",
                 this is different since "Cargo" aggregate directly references "Location", which
