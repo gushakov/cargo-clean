@@ -2,10 +2,17 @@ package com.github.cargoclean.infrastructure.adapter.db;
 
 import com.github.cargoclean.CargoCleanApplication;
 import com.github.cargoclean.core.model.UtcDateTime;
-import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.handling.EventId;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
+import com.github.cargoclean.core.model.handling.HandlingEventType;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
+import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -84,24 +91,6 @@ public class DbPersistenceGatewayTestIT {
     }
 
     @Test
-    void should_save_cargo_load_update_and_save_again() {
-        TrackingId trackingId = TrackingId.of("75FC0BD4");
-        dbGateway.deleteCargo(trackingId);
-
-        final Cargo cargoToSave = cargo(trackingId.getId());
-        final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
-        final Cargo updatedCargo = savedCargo.withDelivery(Delivery.builder()
-                .transportStatus(TransportStatus.CLAIMED)
-                .routingStatus(RoutingStatus.ROUTED)
-                .eta(UtcDateTime.of("24-08-2022"))
-                .misdirected(false)
-                .build());
-        Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
-        assertThat(savedAgainCargo.getDelivery().getTransportStatus())
-                .isEqualTo(TransportStatus.CLAIMED);
-    }
-
-    @Test
     void should_query_for_number_of_arrivals_by_destination_city() {
         List<ExpectedArrivals> expectedArrivals = dbGateway.queryForExpectedArrivals();
         assertThat(expectedArrivals.stream()
@@ -111,11 +100,38 @@ public class DbPersistenceGatewayTestIT {
     }
 
     @Test
-    void should_persist_cargo_with_itinerary() {
-        dbGateway.deleteCargo(TrackingId.of("8E062F47"));
-        Cargo cargo = cargo("8E062F47").assignItinerary(itinerary(1, 2));
-        Cargo savedCargo = dbGateway.saveCargo(cargo);
-        assertThat(savedCargo.getItinerary().getLegs())
-                .hasSize(2);
+    void should_save_cargo_load_route_update_delivery_progress_save_load_again() {
+        TrackingId trackingId = TrackingId.of("8E062F47");
+        dbGateway.deleteCargo(trackingId);
+        final Cargo cargo = cargo(trackingId.getId());
+        final Cargo savedCargo = dbGateway.saveCargo(cargo);
+
+        // update itinerary
+        Cargo routedCargo = savedCargo.assignItinerary(itinerary(1, 2));
+
+        // update delivery
+        HandlingHistory handlingHistory = HandlingHistory.builder()
+                .handlingEvents(List.of(HandlingEvent.builder()
+                        .type(HandlingEventType.UNLOAD)
+                        .cargoId(trackingId)
+                        .voyageNumber(VoyageNumber.of("0200S"))
+                        .location(UnLocode.of("JNTKO"))
+                        .eventId(EventId.of(1L))
+                        .completionTime(UtcDateTime.of("05-08-2022"))
+                        .registrationTime(UtcDateTime.of("05-08-2022"))
+                        .build()))
+                .build();
+
+        final Cargo updatedCargo = routedCargo.updateDeliveryProgress(handlingHistory);
+        Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
+        Cargo loadedAgainCargo = dbGateway.obtainCargoByTrackingId(savedAgainCargo.getTrackingId());
+
+        assertThat(loadedAgainCargo.getDelivery().getTransportStatus())
+                .isEqualTo(TransportStatus.IN_PORT);
+        assertThat(loadedAgainCargo.getDelivery().isMisdirected())
+                .isFalse();
+        assertThat(loadedAgainCargo.getDelivery().getLastKnownLocation())
+                .isEqualTo(UnLocode.of("JNTKO"));
     }
+
 }

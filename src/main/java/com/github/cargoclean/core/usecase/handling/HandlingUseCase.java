@@ -5,6 +5,7 @@ import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -32,29 +33,36 @@ public class HandlingUseCase implements HandlingInputPort {
 
         TrackingId cargoId;
         HandlingEvent handlingEvent;
+        EventId eventId;
+        VoyageNumber voyageNumber;
+        UnLocode location;
+        UtcDateTime completionDateTime;
         try {
 
-            // parse identifiers
-            VoyageNumber voyageNumber = Optional.ofNullable(voyageNumberStr)
-                    .map(VoyageNumber::of).orElse(null);
-            UnLocode location = UnLocode.of(locationStr);
-            cargoId = TrackingId.of(cargoIdStr);
+            eventId = gatewayOps.nextEventId();
 
-            // construct and validate new handling event
+            // parse identifiers and create value objects
             try {
-                handlingEvent = HandlingEvent.builder()
-                        .eventId(gatewayOps.nextEventId())
-                        .voyageNumber(voyageNumber)
-                        .location(location)
-                        .cargoId(cargoId)
-                        .completionTime(UtcDateTime.of(completionTime))
-                        .registrationTime(UtcDateTime.now())
-                        .type(type)
-                        .build();
+                voyageNumber = Optional.ofNullable(voyageNumberStr)
+                        .map(VoyageNumber::of).orElse(null);
+                location = UnLocode.of(locationStr);
+                cargoId = TrackingId.of(cargoIdStr);
+                completionDateTime = UtcDateTime.of(completionTime);
             } catch (InvalidDomainObjectError e) {
                 presenter.presentInvalidParametersError(e);
                 return;
             }
+
+            // construct new handling event
+            handlingEvent = HandlingEvent.builder()
+                    .eventId(eventId)
+                    .voyageNumber(voyageNumber)
+                    .location(location)
+                    .cargoId(cargoId)
+                    .completionTime(completionDateTime)
+                    .registrationTime(UtcDateTime.now())
+                    .type(type)
+                    .build();
 
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);

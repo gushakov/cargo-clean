@@ -15,10 +15,8 @@ import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQu
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.time.Instant;
 import java.util.List;
 
 import static com.github.cargoclean.core.model.MockModels.*;

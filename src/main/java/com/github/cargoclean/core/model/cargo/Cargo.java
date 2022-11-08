@@ -87,13 +87,6 @@ public class Cargo {
     }
 
     /**
-     * Used for tests only.
-     */
-    public Cargo withDelivery(Delivery delivery) {
-        return newCargo().delivery(delivery).build();
-    }
-
-    /**
      * Routes this cargo by assigning new {@code itinerary} to it.
      *
      * @param itinerary itinerary for this cargo
@@ -114,9 +107,18 @@ public class Cargo {
                     .formatted(trackingId));
         }
 
+        // return new instance of "Cargo" with updated itinerary
         return newCargo().itinerary(itinerary).build();
     }
 
+    /*
+        Point of interest:
+        -----------------
+        This helper is used to create a copy of this instance so
+        that we can return a new (modified) copy after each method
+        which changes the state of "Cargo". This renders "Cargo"
+        entity effectively immutable.
+     */
     private CargoBuilder newCargo() {
 
         return Cargo.builder()

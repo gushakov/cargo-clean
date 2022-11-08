@@ -19,9 +19,9 @@ import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public abstract class AbstractRestPresenter extends AbstractErrorHandler implements ErrorHandlingPresenterOutputPort {
@@ -29,33 +29,45 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
     private final HttpServletResponse httpServletResponse;
     private final MappingJackson2HttpMessageConverter jacksonConverter;
 
+    private final AtomicBoolean presentedOnceAlready;
+
     protected AbstractRestPresenter(HttpServletResponse httpServletResponse, MappingJackson2HttpMessageConverter jacksonConverter) {
         this.httpServletResponse = httpServletResponse;
         this.jacksonConverter = jacksonConverter;
+        this.presentedOnceAlready = new AtomicBoolean(false);
     }
 
     // REST presenter for Clean Architecture
-    // copied from https://github.com/gushakov/clean-rest
+    // based on the idea from https://github.com/gushakov/clean-rest
     public <T> void presentOk(T content) {
 
-        final DelegatingServerHttpResponse httpOutputMessage =
-                new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse));
+        /*
+            Point of interest:
+            -----------------
+            A REST presenter bean is "request" scoped, so it may, potentially,
+            be called several times (from several consecutive use cases) which
+            share the reference to it. We should either coordinate calls to use
+            cases to avoid this situation or synchronize output message processing
+            in this presenter.
+         */
 
-        httpOutputMessage.setStatusCode(HttpStatus.OK);
-
-        try {
-            jacksonConverter.write(content, MediaType.APPLICATION_JSON, httpOutputMessage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!presentedOnceAlready.getAndSet(true)) {
+            try (final DelegatingServerHttpResponse httpOutputMessage =
+                         new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse))) {
+                httpOutputMessage.setStatusCode(HttpStatus.OK);
+                jacksonConverter.write(content, MediaType.APPLICATION_JSON, httpOutputMessage);
+                httpOutputMessage.flush();
+            } catch (Exception e) {
+                log.error("[REST][Presenter] Error while presenting OK content. %s"
+                        .formatted(e.getMessage()), e);
+            }
         }
 
     }
 
     @Override
     public void presentError(Exception t) {
-
         doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
-
     }
 
     public void presentClientError(Exception t) {
@@ -64,19 +76,21 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
 
     protected void doPresentError(Exception t, HttpStatus status) {
 
-        logErrorAndRollBack(t);
+        if (!presentedOnceAlready.getAndSet(true)) {
+            logErrorAndRollBack(t);
 
-        final DelegatingServerHttpResponse httpOutputMessage =
-                new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse));
-
-        httpOutputMessage.setStatusCode(status);
-
-        try {
-            jacksonConverter.write(Map.of("error", Optional.ofNullable(t.getMessage()).orElse("null")),
-                    MediaType.APPLICATION_JSON, httpOutputMessage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            try (final DelegatingServerHttpResponse httpOutputMessage =
+                         new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse))) {
+                httpOutputMessage.setStatusCode(status);
+                jacksonConverter.write(Map.of("error", Optional.ofNullable(t.getMessage()).orElse("null")),
+                        MediaType.APPLICATION_JSON, httpOutputMessage);
+                httpOutputMessage.flush();
+            } catch (Exception e) {
+                log.error("[REST][Presenter] Error while presenting an error: %s. %s"
+                        .formatted(t.getMessage(), e.getMessage()), e);
+            }
         }
+
     }
 
 }

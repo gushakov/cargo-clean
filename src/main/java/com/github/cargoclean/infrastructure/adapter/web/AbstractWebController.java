@@ -22,9 +22,10 @@ import java.io.IOException;
  */
 @Slf4j
 public abstract class AbstractWebController {
-
-    // This will be called for any error which was not handled through
-    // presenters.
+    /*
+        This will be called for any error which was not handled through
+        presenters.
+     */
 
     @ExceptionHandler
     public void redirectOnError(HttpServletRequest request, HttpServletResponse response, Exception exception) {
