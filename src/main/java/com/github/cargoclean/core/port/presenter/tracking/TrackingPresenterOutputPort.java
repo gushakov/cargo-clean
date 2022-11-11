@@ -7,5 +7,5 @@ import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 public interface TrackingPresenterOutputPort extends ErrorHandlingPresenterOutputPort {
     void presentInitialViewForCargoTracking();
 
-    void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation);
+    void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation, Location locationForNexExpectedActivity);
 }

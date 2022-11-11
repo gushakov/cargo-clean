@@ -49,6 +49,6 @@ public class Location {
 
     @Override
     public String toString() {
-        return "%s, %s".formatted(name, unlocode);
+        return "%s (%s)".formatted(name, unlocode);
     }
 }

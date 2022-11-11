@@ -32,7 +32,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     }
 
     @Override
-    public void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation) {
+    public void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation, Location locationForNexExpectedActivity) {
 
         /*
             We are preparing all the information to be displayed by the "track cargo" view.
@@ -50,7 +50,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
                         .destination(cargo.getRouteSpecification().getDestination().toString())
                         .eta(getEta(cargo))
                         .misdirected(delivery.isMisdirected())
-                        .nextExpectedActivity(getNextExpectedActivity(delivery))
+                        .nextExpectedActivity(getNextExpectedActivity(delivery, locationForNexExpectedActivity))
                         .build()), "track-cargo");
     }
 
@@ -61,7 +61,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     private String makeCargoStatusText(TransportStatus transportStatus, Location lastKnownLocation, VoyageNumber currentVoyage) {
 
         return switch (transportStatus) {
-            case IN_PORT -> "In port: %s".formatted(lastKnownLocation);
+            case IN_PORT -> "In port: %s".formatted(lastKnownLocation.getName());
             case ONBOARD_CARRIER -> "On board carrier, voyage: %s".formatted(currentVoyage);
             case CLAIMED, NOT_RECEIVED, UNKNOWN -> "Unknown";
         };
@@ -79,9 +79,10 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     }
 
     /*
-        Copied from "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getNextExpectedActivity".
+        Copied and modified slightly from the original
+        "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter#getNextExpectedActivity".
      */
-    public String getNextExpectedActivity(Delivery delivery) {
+    public String getNextExpectedActivity(Delivery delivery, Location locationForNexExpectedActivity) {
         HandlingActivity activity = delivery.getNextExpectedActivity();
         if (activity == null) {
             return "";
@@ -92,13 +93,13 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
         if (type == HandlingEventType.LOAD) {
             return
                     text + type.name().toLowerCase() + " cargo onto voyage " + activity.getVoyageNumber() +
-                            " in " + activity.getLocation();
+                            " in " + locationForNexExpectedActivity.getName();
         } else if (type == HandlingEventType.UNLOAD) {
             return
                     text + type.name().toLowerCase() + " cargo off of " + activity.getVoyageNumber() +
-                            " in " + activity.getLocation();
+                            " in " + locationForNexExpectedActivity.getName();
         } else {
-            return text + type.name().toLowerCase() + " cargo in " + activity.getLocation();
+            return text + type.name().toLowerCase() + " cargo in " + locationForNexExpectedActivity.getName();
         }
     }
 
