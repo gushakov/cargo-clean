@@ -57,7 +57,7 @@ public class TrackingUseCase implements TrackingInputPort {
             locationForNexExpectedActivity = Optional.ofNullable(cargo.getDelivery().getNextExpectedActivity())
                     .map(HandlingActivity::getLocation)
                     .map(gatewayOps::obtainLocationByUnLocode)
-                    .orElse(null);
+                    .orElse(Location.UNKNOWN);
 
         } catch (GenericCargoError e) {
             presenter.presentError(e);
