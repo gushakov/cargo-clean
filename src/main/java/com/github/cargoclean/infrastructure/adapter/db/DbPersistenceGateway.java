@@ -39,6 +39,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.NoTransactionException;
+import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.List;
 import java.util.UUID;
@@ -189,6 +191,17 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain handling history for cargo with tracking ID: %s"
                     .formatted(cargoId), e);
+        }
+    }
+
+    @Override
+    public void rollback() {
+        // roll back any transaction, if needed
+        // code from: https://stackoverflow.com/a/23502214
+        try {
+            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
+        } catch (NoTransactionException e) {
+            // do nothing if not running in a transactional context
         }
     }
 

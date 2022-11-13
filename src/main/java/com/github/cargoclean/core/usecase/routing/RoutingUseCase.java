@@ -90,6 +90,7 @@ public class RoutingUseCase implements RoutingInputPort {
             gatewayOps.saveCargo(routedCargo);
 
         } catch (Exception e) {
+            gatewayOps.rollback();
             presenter.presentError(e);
             return;
         }

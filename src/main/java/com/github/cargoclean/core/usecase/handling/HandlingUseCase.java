@@ -68,6 +68,7 @@ public class HandlingUseCase implements HandlingInputPort {
             gatewayOps.recordHandlingEvent(handlingEvent);
 
         } catch (GenericCargoError e) {
+            gatewayOps.rollback();
             presenter.presentError(e);
             return;
         }
@@ -95,6 +96,7 @@ public class HandlingUseCase implements HandlingInputPort {
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
         } catch (GenericCargoError e) {
+            gatewayOps.rollback();
             presenter.presentError(e);
         }
 

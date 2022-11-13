@@ -77,7 +77,7 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
     protected void doPresentError(Exception t, HttpStatus status) {
 
         if (!presentedOnceAlready.getAndSet(true)) {
-            logErrorAndRollBack(t);
+            logError(t);
 
             try (final DelegatingServerHttpResponse httpOutputMessage =
                          new DelegatingServerHttpResponse(new ServletServerHttpResponse(httpServletResponse))) {

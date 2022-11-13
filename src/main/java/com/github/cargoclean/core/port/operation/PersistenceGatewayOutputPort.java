@@ -60,4 +60,6 @@ public interface PersistenceGatewayOutputPort {
     void recordHandlingEvent(HandlingEvent event);
 
     HandlingHistory handlingHistory(TrackingId cargoId);
+
+    void rollback();
 }

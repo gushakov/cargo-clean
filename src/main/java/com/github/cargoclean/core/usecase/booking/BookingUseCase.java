@@ -96,6 +96,7 @@ public class BookingUseCase implements BookingInputPort {
 
 
         } catch (Exception e) {
+            gatewayOps.rollback();
             presenter.presentError(e);
             return;
         }
