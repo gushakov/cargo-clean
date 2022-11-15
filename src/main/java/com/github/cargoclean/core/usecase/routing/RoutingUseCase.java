@@ -22,10 +22,10 @@ public class RoutingUseCase implements RoutingInputPort {
     private final RoutingServiceOutputPort routingServiceOps;
 
     @Override
-    public void showCargo(TrackingId trackingId) {
+    public void showCargo(String cargoTrackingId) {
         final Cargo cargo;
         try {
-            cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
+            cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
         } catch (Exception e) {
             presenter.presentError(e);
             return;
@@ -36,16 +36,19 @@ public class RoutingUseCase implements RoutingInputPort {
     }
 
     @Override
-    public void selectItinerary(TrackingId trackingId) {
+    public void selectItinerary(String cargoTrackingId) {
         Cargo cargo;
         List<Itinerary> itineraries;
+        TrackingId trackingId;
         try {
+
+            trackingId = TrackingId.of(cargoTrackingId);
 
             // load cargo
             cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
             if (cargo.isRouted()) {
-                throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId));
+                throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId.toString()));
             }
 
             // get route specification for cargo

@@ -40,7 +40,7 @@ public class RoutingController extends AbstractWebController {
 
         RoutingInputPort useCase = appContext.getBean(RoutingInputPort.class);
 
-        useCase.showCargo(TrackingId.of(trackingId));
+        useCase.showCargo(trackingId);
 
     }
 
@@ -51,7 +51,7 @@ public class RoutingController extends AbstractWebController {
 
         RoutingInputPort useCase = appContext.getBean(RoutingInputPort.class);
 
-        useCase.selectItinerary(TrackingId.of(trackingId));
+        useCase.selectItinerary(trackingId);
 
     }
 

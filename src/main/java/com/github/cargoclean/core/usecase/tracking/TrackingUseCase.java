@@ -25,13 +25,13 @@ public class TrackingUseCase implements TrackingInputPort {
     }
 
     @Override
-    public void trackCargo(String trackingIdText) {
+    public void trackCargo(String cargoTrackingId) {
         TrackingId trackingId;
         Cargo cargo;
         Location lastKnownLocation;
         Location locationForNexExpectedActivity;
         try {
-            trackingId = TrackingId.of(trackingIdText);
+            trackingId = TrackingId.of(cargoTrackingId);
             cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
             /*
