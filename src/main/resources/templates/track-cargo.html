@@ -66,6 +66,14 @@
                 Cargo is misdirected !
             </div>
 
+            <div th:if="${!trackingInfo.events.isEmpty()}" class="mt-3">
+                <div class="mt-3" th:each="event: ${trackingInfo.events}">
+                    <span th:if="${event.expected}" class="bi-check-circle" style="color: green;"></span>
+                    <span th:if="${!event.expected}" class="bi-x-circle" style="color: red;"></span>
+                    <span th:text="${event.description}"></span>
+                </div>
+            </div>
+
         </th:block>
 
     </div>

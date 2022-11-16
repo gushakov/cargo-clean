@@ -1,12 +1,26 @@
 package com.github.cargoclean.infrastructure.adapter.web.tracking;
 
+/*
+    Notice on COPYRIGHT:
+    -------------------
+
+    Some code in this file is based on, copied from, and or modified from
+    the code in the original DDDSample application. Please, see the copyright
+    notice in "README.md" and the copy of the original licence in
+    "original-license.txt", as well.
+ */
+
+
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.HandlingActivity;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
@@ -16,7 +30,21 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/*
+    References:
+    ----------
+
+    1.  Some code in this class is copied and/or modified from "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter"
+        and "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter"
+        classes in the original application "DDDSample" application.
+ */
 
 @Component
 @Scope(scopeName = "request")
@@ -32,12 +60,37 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     }
 
     @Override
-    public void presentCargoTrackingInformation(Cargo cargo, Location lastKnownLocation, Location locationForNexExpectedActivity) {
+    public void presentCargoTrackingInformation(Cargo cargo, HandlingHistory handlingHistory, List<Location> allLocations) {
 
         /*
             We are preparing all the information to be displayed by the "track cargo" view.
-            In original application this done in "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter".
+            In original application this done in "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter",
+            and "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter".
          */
+
+        // convert all locations list to a map for easier lookup
+        Map<UnLocode, Location> locations = allLocations.stream()
+                .collect(Collectors.toMap(Location::getUnlocode, Function.identity()));
+
+        // resolve last known location, if any
+        Location lastKnownLocation = Optional.ofNullable(cargo.getDelivery().getLastKnownLocation())
+                .map(locations::get)
+                .orElse(Location.UNKNOWN);
+
+        // resolve next expected activity, if any
+        Location locationForNexExpectedActivity = Optional.ofNullable(cargo.getDelivery().getNextExpectedActivity())
+                .map(HandlingActivity::getLocation)
+                .map(locations::get)
+                .orElse(Location.UNKNOWN);
+
+        // map handling history to the list of events for presentation
+        List<HandlingEventTrackingInfo> events = handlingHistory.historyOfEvents()
+                .stream()
+                .map(handlingEvent -> HandlingEventTrackingInfo.builder()
+                        .expected(isEventExpected(handlingEvent, cargo))
+                        .description(eventDescription(handlingEvent, locations))
+                        .build())
+                .toList();
 
         Delivery delivery = cargo.getDelivery();
         presentModelAndView(Map.of("trackingForm", TrackingForm.builder()
@@ -51,7 +104,34 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
                         .eta(getEta(cargo))
                         .misdirected(delivery.isMisdirected())
                         .nextExpectedActivity(getNextExpectedActivity(delivery, locationForNexExpectedActivity))
+                        .events(events)
                         .build()), "track-cargo");
+    }
+
+    /*
+        Copied from original "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter#isExpected".
+    */
+    private boolean isEventExpected(HandlingEvent handlingEvent, Cargo cargo) {
+        return cargo.getItinerary().isExpected(handlingEvent);
+    }
+
+    /*
+        Copied and modified from original "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter#getDescription".
+     */
+    private String eventDescription(HandlingEvent event, Map<UnLocode, Location> locations) {
+
+        final String atLocation = locations.get(event.getLocation()).getName();
+        final String completionTime = event.getCompletionTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
+        return switch (event.getType()) {
+            case LOAD -> "Loaded onto voyage %s in %s, at %s"
+                    .formatted(event.getVoyageNumber(), atLocation, completionTime);
+            case UNLOAD -> "Unloaded off voyage %s in %s, at %s"
+                    .formatted(event.getVoyageNumber(), atLocation, completionTime);
+            case RECEIVE -> "Received in %s, at %s".formatted(atLocation, completionTime);
+            case CLAIM -> "Claimed in %s, at %s".formatted(atLocation, completionTime);
+            case CUSTOMS -> "Cleared customs in %s, at %s".formatted(atLocation, completionTime);
+        };
+
     }
 
     /*

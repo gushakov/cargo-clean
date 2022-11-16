@@ -13,6 +13,8 @@ package com.github.cargoclean.infrastructure.adapter.web.tracking;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.List;
+
 /*
     References:
     ----------
@@ -36,4 +38,6 @@ public class TrackingInfo {
     boolean misdirected;
 
     String nextExpectedActivity;
+
+    List<HandlingEventTrackingInfo> events;
 }

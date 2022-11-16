@@ -30,6 +30,8 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HandlingHistory {
 
+    private static final Comparator<HandlingEvent> BY_COMPLETION_EARLIEST_FIRST_COMPARATOR =
+            Comparator.comparing(HandlingEvent::getCompletionTime);
     private static final Comparator<HandlingEvent> BY_COMPLETION_LATEST_FIRST_COMPARATOR =
             Comparator.comparing(HandlingEvent::getCompletionTime).reversed();
 
@@ -67,6 +69,17 @@ public class HandlingHistory {
 
     int numberOfEvents() {
         return handlingEvents.size();
+    }
+
+    /**
+     * Returns a list of handling events sorted by their completion time, the earliest event first.
+     *
+     * @return unmodifiable list of handling events
+     */
+    public List<HandlingEvent> historyOfEvents() {
+        List<HandlingEvent> sortedEvents = new ArrayList<>(List.copyOf(handlingEvents));
+        sortedEvents.sort(BY_COMPLETION_EARLIEST_FIRST_COMPARATOR);
+        return List.copyOf(sortedEvents);
     }
 
 }
