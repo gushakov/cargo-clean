@@ -48,7 +48,7 @@ public class HandlingController extends AbstractRestController {
 
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @Parameter(name = "completionTime",
-                    description = "Event completion date and time (ISO format)",
+                    description = "Event completion date and time (ISO format, i.e. `2022-12-01T01:29:00Z`)",
                     schema = @Schema(type = "string", format = "date-time"))
             @RequestParam Instant completionTime,
 
