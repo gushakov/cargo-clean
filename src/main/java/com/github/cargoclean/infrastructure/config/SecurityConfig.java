@@ -2,11 +2,13 @@ package com.github.cargoclean.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +30,23 @@ import static com.github.cargoclean.infrastructure.adapter.security.CargoSecurit
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /*
+        Point of interest:
+        -----------------
+
+     */
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .anyRequest()
+                .permitAll()
+                .and()
+                .formLogin();
+
+       return http.build();
+    }
 
     /*
         Set up users and roles for the application.
@@ -40,22 +59,21 @@ public class SecurityConfig {
 
         // Agent: cannot create new "Location"s and cannot route cargoes through Oceania
 
-        userDetailsManager.createUser(new User(
-                "agent",
-                "test123",
-                Stream.of(ROLE_CARGO_AGENT).map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toSet())
-        ));
+        userDetailsManager.createUser(
+                User.withDefaultPasswordEncoder()
+                        .username("agent")
+                        .password("test")
+                        .authorities(ROLE_CARGO_AGENT)
+                        .build());
 
         // Manger: can do anything
 
-        userDetailsManager.createUser(new User(
-                "manager",
-                "test123",
-                Stream.of(ROLE_CARGO_AGENT,
-                                ROLE_CARGO_MANAGER).map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toSet())
-        ));
+        userDetailsManager.createUser(
+                User.withDefaultPasswordEncoder()
+                        .username("manager")
+                        .password("test")
+                        .authorities(ROLE_CARGO_AGENT, ROLE_CARGO_MANAGER)
+                        .build());
 
         return userDetailsManager;
 

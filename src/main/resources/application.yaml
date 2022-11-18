@@ -25,3 +25,4 @@ logging:
         jdbc: debug
         data:
           jdbc: debug
+        security: debug
