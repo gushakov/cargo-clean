@@ -4,6 +4,7 @@ import com.github.cargoclean.core.CargoSecurityError;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.port.operation.SecurityOutputPort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,32 +19,43 @@ import static com.github.cargoclean.core.model.location.Region.Oceania;
  * Default security adapter based on Spring Security.
  */
 @Service
-public final class CargoSecurityAdapter {
+public final class CargoSecurityAdapter implements SecurityOutputPort {
 
     // Roles for the Cargo tracking application users
 
     public static final String ROLE_CARGO_AGENT = "CARGO_AGENT";
     public static final String ROLE_CARGO_MANAGER = "CARGO_MANGER";
 
-    public void assertAgentRole() {
+    @Override
+    public void assertThatUserIsAgent() {
 
-        if (!hasRole(getAuthentication(), ROLE_CARGO_AGENT)) {
-            throw new CargoSecurityError("User does not have role %s"
-                    .formatted(ROLE_CARGO_AGENT));
+        try {
+            if (!hasRole(getAuthentication(), ROLE_CARGO_AGENT)) {
+                throw new CargoSecurityError("User does not have role %s"
+                        .formatted(ROLE_CARGO_AGENT));
+            }
+        } catch (AuthenticationRequiredException e) {
+            throw new CargoSecurityError("User is not authenticated", false);
         }
 
     }
 
-    public void assertManagerRole() {
+    @Override
+    public void assertThatUserIsManager() {
 
-        if (!hasRole(getAuthentication(), ROLE_CARGO_MANAGER)) {
-            throw new CargoSecurityError("User does not have role %s"
-                    .formatted(ROLE_CARGO_MANAGER));
+        try {
+            if (!hasRole(getAuthentication(), ROLE_CARGO_MANAGER)) {
+                throw new CargoSecurityError("User does not have role %s"
+                        .formatted(ROLE_CARGO_MANAGER));
+            }
+        } catch (AuthenticationRequiredException e) {
+            throw new CargoSecurityError("User is not authenticated", false);
         }
 
     }
 
-    public void assertPermissionToRouteCargo(Itinerary itinerary, Map<UnLocode, Region> regions) {
+    @Override
+    public void assertThatUserHasPermissionToRouteCargoThroughRegions(Itinerary itinerary, Map<UnLocode, Region> regions) {
 
         // see if the itinerary contains a leg with a location from Oceania
 
@@ -52,7 +64,7 @@ public final class CargoSecurityAdapter {
                         || regions.get(leg.getUnloadLocation()) == Oceania)) {
 
             // only manager can route Cargo through Oceania
-            assertManagerRole();
+            assertThatUserIsManager();
         }
 
     }
@@ -65,9 +77,9 @@ public final class CargoSecurityAdapter {
                 .anyMatch(authority -> authority.equals(role.toUpperCase()));
     }
 
-    private Authentication getAuthentication() {
+    private Authentication getAuthentication() throws AuthenticationRequiredException {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .orElseThrow(() -> new CargoSecurityError("User is not authenticated"));
+                .orElseThrow(AuthenticationRequiredException::new);
     }
 
 }

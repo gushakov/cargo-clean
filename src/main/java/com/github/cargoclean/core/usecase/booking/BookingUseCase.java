@@ -5,6 +5,7 @@ import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class BookingUseCase implements BookingInputPort {
 
     // here is our Presenter
     private final BookingPresenterOutputPort presenter;
+
+    private final SecurityOutputPort securityOps;
 
     // here is our gateway
     private final PersistenceGatewayOutputPort gatewayOps;

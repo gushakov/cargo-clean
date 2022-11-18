@@ -4,14 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.github.cargoclean.infrastructure.adapter.security.CargoSecurityAdapter.ROLE_CARGO_AGENT;
 import static com.github.cargoclean.infrastructure.adapter.security.CargoSecurityAdapter.ROLE_CARGO_MANAGER;
@@ -30,14 +26,17 @@ import static com.github.cargoclean.infrastructure.adapter.security.CargoSecurit
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /*
-        Point of interest:
-        -----------------
-
-     */
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        /*
+            Point of interest:
+            -----------------
+            We do not specify authorized requests for any of URLs here.
+            It will be the use cases which will decide whether a user
+            executing the use case is allowed or not to proceed.
+         */
+
 
         http.authorizeRequests()
                 .anyRequest()
@@ -45,11 +44,14 @@ public class SecurityConfig {
                 .and()
                 .formLogin();
 
-       return http.build();
+        return http.build();
     }
 
     /*
         Set up users and roles for the application.
+        Anonymous: can see arrivals report and track cargoes
+        Agent: cannot create new locations and cannot route cargoes through Oceania
+        Manager: can do anything
      */
 
     @Bean
@@ -57,16 +59,12 @@ public class SecurityConfig {
 
         InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
 
-        // Agent: cannot create new "Location"s and cannot route cargoes through Oceania
-
         userDetailsManager.createUser(
                 User.withDefaultPasswordEncoder()
                         .username("agent")
                         .password("test")
                         .authorities(ROLE_CARGO_AGENT)
                         .build());
-
-        // Manger: can do anything
 
         userDetailsManager.createUser(
                 User.withDefaultPasswordEncoder()
