@@ -1,8 +1,11 @@
 package com.github.cargoclean.infrastructure.adapter.web;
 
+import com.github.cargoclean.core.CargoSecurityError;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -47,6 +50,19 @@ public abstract class AbstractWebPresenter extends AbstractErrorHandler {
         redirectError(e.getMessage());
     }
 
+    public void presentSecurityError(CargoSecurityError e){
+        logError(e);
+
+        if (e.isUserAuthenticated()){
+            // if user is authenticated show a message
+            redirectError(e.getMessage());
+        }
+        else {
+            // if user is not authenticated redirect to the login page
+            redirectLogin();
+        }
+    }
+
     protected void presentModelAndView(Map<String, Object> responseModel, String viewName) {
         final ModelAndView mav = new ModelAndView(viewName, responseModel);
         try {
@@ -73,6 +89,14 @@ public abstract class AbstractWebPresenter extends AbstractErrorHandler {
         try {
             httpRequest.getSession().setAttribute("errorMessage", errorMessage);
             httpResponse.sendRedirect("/error");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void redirectLogin() {
+        try {
+            httpResponse.sendRedirect("/login");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

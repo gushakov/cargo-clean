@@ -1,10 +1,13 @@
 package com.github.cargoclean.infrastructure.adapter.security;
 
-import com.github.cargoclean.core.CargoSecurityError;
+import com.github.cargoclean.core.AuthenticationRequiredException;
+import com.github.cargoclean.core.InsufficientPrivilegesError;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.SecurityOutputPort;
+import com.github.cargoclean.core.usecase.routing.RegionForbiddenForRoutingError;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,16 +29,13 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
     public static final String ROLE_CARGO_AGENT = "CARGO_AGENT";
     public static final String ROLE_CARGO_MANAGER = "CARGO_MANGER";
 
+    public static final Region SPECIAL_REGION = Oceania;
+
     @Override
     public void assertThatUserIsAgent() {
 
-        try {
-            if (!hasRole(getAuthentication(), ROLE_CARGO_AGENT)) {
-                throw new CargoSecurityError("User does not have role %s"
-                        .formatted(ROLE_CARGO_AGENT));
-            }
-        } catch (AuthenticationRequiredException e) {
-            throw new CargoSecurityError("User is not authenticated", false);
+        if (!hasRole(getAuthentication(), ROLE_CARGO_AGENT)) {
+            throw new InsufficientPrivilegesError(ROLE_CARGO_AGENT);
         }
 
     }
@@ -43,13 +43,8 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
     @Override
     public void assertThatUserIsManager() {
 
-        try {
-            if (!hasRole(getAuthentication(), ROLE_CARGO_MANAGER)) {
-                throw new CargoSecurityError("User does not have role %s"
-                        .formatted(ROLE_CARGO_MANAGER));
-            }
-        } catch (AuthenticationRequiredException e) {
-            throw new CargoSecurityError("User is not authenticated", false);
+        if (!hasRole(getAuthentication(), ROLE_CARGO_MANAGER)) {
+            throw new InsufficientPrivilegesError(ROLE_CARGO_MANAGER);
         }
 
     }
@@ -60,11 +55,15 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
         // see if the itinerary contains a leg with a location from Oceania
 
         if (itinerary.getLegs().stream()
-                .anyMatch(leg -> regions.get(leg.getLoadLocation()) == Oceania
-                        || regions.get(leg.getUnloadLocation()) == Oceania)) {
+                .anyMatch(leg -> regions.get(leg.getLoadLocation()) == SPECIAL_REGION
+                        || regions.get(leg.getUnloadLocation()) == SPECIAL_REGION)) {
 
             // only manager can route Cargo through Oceania
-            assertThatUserIsManager();
+            try {
+                assertThatUserIsManager();
+            } catch (Exception e) {
+                throw new RegionForbiddenForRoutingError();
+            }
         }
 
     }
@@ -77,8 +76,10 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
                 .anyMatch(authority -> authority.equals(role.toUpperCase()));
     }
 
-    private Authentication getAuthentication() throws AuthenticationRequiredException {
+    private Authentication getAuthentication() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .filter(authentication -> authentication.isAuthenticated()
+                        && !(authentication instanceof AnonymousAuthenticationToken))
                 .orElseThrow(AuthenticationRequiredException::new);
     }
 

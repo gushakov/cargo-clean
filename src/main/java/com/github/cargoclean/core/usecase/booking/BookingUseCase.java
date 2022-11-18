@@ -1,5 +1,7 @@
 package com.github.cargoclean.core.usecase.booking;
 
+import com.github.cargoclean.core.CargoSecurityError;
+import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
@@ -38,12 +40,22 @@ public class BookingUseCase implements BookingInputPort {
 
         final List<Location> locations;
         try {
+
+            // check if the user has the role of agent
+            securityOps.assertThatUserIsAgent();
+
             // retrieve all locations from the gateway
 
             locations = gatewayOps.allLocations();
 
-        } catch (Exception e) {
-            // if anything went wrong: present the error and return
+        }
+        catch (CargoSecurityError e){
+            // handle security error
+            presenter.presentSecurityError(e);
+            return;
+        }
+        catch (GenericCargoError e) {
+            // if anything else went wrong: present the error and return
             presenter.presentError(e);
             return;
         }

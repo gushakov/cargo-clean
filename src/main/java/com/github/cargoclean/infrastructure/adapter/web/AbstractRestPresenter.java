@@ -9,6 +9,7 @@ package com.github.cargoclean.infrastructure.adapter.web;
 
  */
 
+import com.github.cargoclean.core.CargoSecurityError;
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +69,11 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
     @Override
     public void presentError(Exception t) {
         doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public void presentSecurityError(CargoSecurityError e) {
+        // FIXME: implement
     }
 
     public void presentClientError(Exception t) {
