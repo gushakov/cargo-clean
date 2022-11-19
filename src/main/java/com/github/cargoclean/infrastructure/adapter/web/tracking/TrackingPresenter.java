@@ -60,7 +60,8 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     }
 
     @Override
-    public void presentCargoTrackingInformation(Cargo cargo, HandlingHistory handlingHistory, List<Location> allLocations) {
+    public void presentCargoTrackingInformation(Cargo cargo, HandlingHistory handlingHistory,
+                                                Map<UnLocode, Location> allLocationsMap) {
 
         /*
             We are preparing all the information to be displayed by the "track cargo" view.
@@ -68,19 +69,15 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
             and "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter".
          */
 
-        // convert all locations list to a map for easier lookup
-        Map<UnLocode, Location> locations = allLocations.stream()
-                .collect(Collectors.toMap(Location::getUnlocode, Function.identity()));
-
         // resolve last known location, if any
         Location lastKnownLocation = Optional.ofNullable(cargo.getDelivery().getLastKnownLocation())
-                .map(locations::get)
+                .map(allLocationsMap::get)
                 .orElse(Location.UNKNOWN);
 
         // resolve next expected activity, if any
         Location locationForNexExpectedActivity = Optional.ofNullable(cargo.getDelivery().getNextExpectedActivity())
                 .map(HandlingActivity::getLocation)
-                .map(locations::get)
+                .map(allLocationsMap::get)
                 .orElse(Location.UNKNOWN);
 
         // map handling history to the list of events for presentation
@@ -88,7 +85,7 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
                 .stream()
                 .map(handlingEvent -> HandlingEventTrackingInfo.builder()
                         .expected(isEventExpected(handlingEvent, cargo))
-                        .description(eventDescription(handlingEvent, locations))
+                        .description(eventDescription(handlingEvent, allLocationsMap))
                         .build())
                 .toList();
 
@@ -118,9 +115,9 @@ public class TrackingPresenter extends AbstractWebPresenter implements TrackingP
     /*
         Copied and modified from original "se.citerus.dddsample.interfaces.tracking.CargoTrackingViewAdapter.HandlingEventViewAdapter#getDescription".
      */
-    private String eventDescription(HandlingEvent event, Map<UnLocode, Location> locations) {
+    private String eventDescription(HandlingEvent event, Map<UnLocode, Location> allLocationsMap) {
 
-        final String atLocation = locations.get(event.getLocation()).getName();
+        final String atLocation = allLocationsMap.get(event.getLocation()).getName();
         final String completionTime = event.getCompletionTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
         return switch (event.getType()) {
             case LOAD -> "Loaded onto voyage %s in %s, at %s"

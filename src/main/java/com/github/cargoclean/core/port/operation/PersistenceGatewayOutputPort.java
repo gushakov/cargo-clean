@@ -6,10 +6,14 @@ import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public interface PersistenceGatewayOutputPort {
 
@@ -62,4 +66,15 @@ public interface PersistenceGatewayOutputPort {
     HandlingHistory handlingHistory(TrackingId cargoId);
 
     void rollback();
+
+    default Map<UnLocode, Region> allRegionsMap(){
+       return allLocations().stream()
+                .collect(Collectors.toUnmodifiableMap(Location::getUnlocode,
+                        Location::getRegion));
+    }
+
+    default Map<UnLocode, Location> allLocationsMap(){
+        return allLocations().stream()
+                .collect(Collectors.toMap(Location::getUnlocode, Function.identity()));
+    }
 }

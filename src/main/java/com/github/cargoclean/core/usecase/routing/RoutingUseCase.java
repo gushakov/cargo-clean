@@ -109,11 +109,8 @@ public class RoutingUseCase implements RoutingInputPort {
                 the selected itinerary.
              */
 
-            Map<UnLocode, Region> regions = gatewayOps.allLocations().stream()
-                    .collect(Collectors.toUnmodifiableMap(Location::getUnlocode,
-                            Location::getRegion));
             securityOps.assertThatUserHasPermissionToRouteCargoThroughRegions(itinerary,
-                    regions);
+                    gatewayOps.allRegionsMap());
 
             // actually route this cargo
             Cargo routedCargo = cargo.assignItinerary(itinerary);

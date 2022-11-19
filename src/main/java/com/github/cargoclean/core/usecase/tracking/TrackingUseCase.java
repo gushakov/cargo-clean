@@ -6,12 +6,13 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class TrackingUseCase implements TrackingInputPort {
@@ -42,7 +43,7 @@ public class TrackingUseCase implements TrackingInputPort {
         TrackingId trackingId;
         Cargo cargo;
         HandlingHistory handlingHistory;
-        List<Location> allLocations;
+        Map<UnLocode, Location> allLocationsMap;
         try {
             securityOps.assertThatUserIsAgent();
 
@@ -57,14 +58,17 @@ public class TrackingUseCase implements TrackingInputPort {
             /*
                 Point of interest:
                 -----------------
-                Since we have modeled "Cargo" aggregate with "UnLocode"s (IDs), and not references
-                to "Location", we need to load all "Locations" and them to the presenter.
-                In the original, "DDDSample", this is different since "Cargo" aggregate directly references
-                "Location", which is loaded by the ORM.
+                Since we have modeled "Cargo" aggregate with
+                "UnLocode"s (IDs), and not references to
+                "Location", we need to load all "Locations"
+                and pass them to the presenter.
+                In the original, "DDDSample", this is different since
+                "Cargo" aggregate directly references "Location",
+                which is loaded by the ORM.
              */
 
-            // load all locations
-            allLocations = gatewayOps.allLocations();
+            // load all locations and make a map of UnLocode to Locations
+            allLocationsMap = gatewayOps.allLocationsMap();
 
         } catch (CargoSecurityError e) {
             presenter.presentSecurityError(e);
@@ -74,6 +78,6 @@ public class TrackingUseCase implements TrackingInputPort {
             return;
         }
 
-        presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocations);
+        presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocationsMap);
     }
 }
