@@ -9,8 +9,7 @@ package com.github.cargoclean.infrastructure.adapter.web;
 
  */
 
-import com.github.cargoclean.core.CargoSecurityError;
-import com.github.cargoclean.core.InsufficientPrivilegesError;
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.extern.slf4j.Slf4j;

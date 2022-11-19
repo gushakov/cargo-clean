@@ -1,4 +1,4 @@
-package com.github.cargoclean.core;
+package com.github.cargoclean.core.port.operation.security;
 
 import lombok.Getter;
 

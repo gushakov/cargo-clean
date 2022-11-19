@@ -1,4 +1,4 @@
-package com.github.cargoclean.core;
+package com.github.cargoclean.core.port.operation.security;
 
 /**
  * Error thrown if authentication is required but the user has not yet been authenticated.

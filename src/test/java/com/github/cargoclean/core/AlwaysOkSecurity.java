@@ -1,6 +1,6 @@
 package com.github.cargoclean.core;
 
-import com.github.cargoclean.core.port.operation.SecurityOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 
 /**
  * Security profile for testing which will assume user has all roles.

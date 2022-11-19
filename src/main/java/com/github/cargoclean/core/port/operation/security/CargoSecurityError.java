@@ -1,6 +1,7 @@
-package com.github.cargoclean.core;
+package com.github.cargoclean.core.port.operation.security;
 
 
+import com.github.cargoclean.core.GenericCargoError;
 import lombok.Getter;
 
 /**

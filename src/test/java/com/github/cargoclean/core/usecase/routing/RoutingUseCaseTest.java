@@ -5,7 +5,7 @@ import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.SecurityOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.ExternalRoutingService;
 import org.junit.jupiter.api.Test;

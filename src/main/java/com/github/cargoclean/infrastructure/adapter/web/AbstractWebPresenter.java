@@ -1,11 +1,9 @@
 package com.github.cargoclean.infrastructure.adapter.web;
 
-import com.github.cargoclean.core.CargoSecurityError;
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 

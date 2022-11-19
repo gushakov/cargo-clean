@@ -13,7 +13,7 @@ package com.github.cargoclean.infrastructure.config;
 
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
-import com.github.cargoclean.core.port.operation.SecurityOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;

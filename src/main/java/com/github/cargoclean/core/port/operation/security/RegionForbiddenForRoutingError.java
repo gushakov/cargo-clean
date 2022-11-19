@@ -1,6 +1,4 @@
-package com.github.cargoclean.core.usecase.routing;
-
-import com.github.cargoclean.core.CargoSecurityError;
+package com.github.cargoclean.core.port.operation.security;
 
 /**
  * Error thrown if the authenticated user does not have a permission to route cargo

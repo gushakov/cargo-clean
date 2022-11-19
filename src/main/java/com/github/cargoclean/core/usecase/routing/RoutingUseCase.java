@@ -1,22 +1,17 @@
 package com.github.cargoclean.core.usecase.routing;
 
-import com.github.cargoclean.core.CargoSecurityError;
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.*;
-import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.model.location.Region;
-import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
-import com.github.cargoclean.core.port.operation.SecurityOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
