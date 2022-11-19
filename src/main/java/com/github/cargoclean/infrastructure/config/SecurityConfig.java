@@ -29,21 +29,22 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-        /*
-            Point of interest:
-            -----------------
-            We do not configure any security restrictions on any
-            URLs in any of the security schemes for the application.
-            We permit all requests. It is in the use cases where
-            we shall assert security rules.
-         */
-
-    // security profile for REST endpoint (record handling events),
-    // uses HTTP Basic authentication
+    /*
+        Point of interest:
+        -----------------
+        This is for illustration only. We shall do all security checks
+        exclusively in the use cases. So we do not require any
+        authorizations for any requests here. Normally, some
+        restrictions should be configured for additional security.
+     */
 
     @Bean
     @Order(1)
     public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        // security profile for REST endpoint (record handling events),
+        // uses HTTP Basic authentication
+
         http.csrf().disable()
                 .antMatcher("/recordEvent/**")
                 .authorizeRequests()
@@ -55,10 +56,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // security profile for the web application
-
     @Bean
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        // security profile for the web application, uses standard
+        // form-based login
 
         http.authorizeRequests()
                 .anyRequest()
@@ -74,8 +76,9 @@ public class SecurityConfig {
 
     /*
         Set up users and roles for the application.
-        Anonymous:  can see arrivals report and track cargoes
-        Agent:      cannot create new locations, cannot record handling events,
+        Anonymous:  can see arrivals report
+        Agent:      can book cargoes, can route cargoes, can track cargos,
+                    cannot create new locations, cannot record handling events,
                     and cannot route cargoes through Oceania
         Manager:    can do anything
      */

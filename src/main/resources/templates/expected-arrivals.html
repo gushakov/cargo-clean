@@ -30,7 +30,7 @@
             </thead>
             <tbody>
             <tr th:each="arrivals: ${expectedArrivals}">
-                <td th:text="${arrivals.city.name}"></td>
+                <td th:text="${arrivals.city}"></td>
                 <td th:text="${arrivals.numberOfArrivals}"></td>
             </tr>
             </tbody>

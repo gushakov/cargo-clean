@@ -7,6 +7,9 @@ import com.github.cargoclean.core.port.operation.SecurityOutputPort;
 
 import java.util.Map;
 
+/**
+ * No-op security which does not throw any exceptions for any checks.
+ */
 public class NoOpSecurity implements SecurityOutputPort {
     @Override
     public void assertThatUserIsAgent() {

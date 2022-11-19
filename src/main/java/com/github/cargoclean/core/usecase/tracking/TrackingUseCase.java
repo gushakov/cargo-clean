@@ -1,11 +1,13 @@
 package com.github.cargoclean.core.usecase.tracking;
 
+import com.github.cargoclean.core.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 
@@ -16,11 +18,22 @@ public class TrackingUseCase implements TrackingInputPort {
 
     private final TrackingPresenterOutputPort presenter;
 
+    private final SecurityOutputPort securityOps;
+
     private final PersistenceGatewayOutputPort gatewayOps;
 
 
     @Override
     public void initializeCargoTrackingView() {
+        try {
+            securityOps.assertThatUserIsAgent();
+        } catch (CargoSecurityError e) {
+            presenter.presentSecurityError(e);
+            return;
+        } catch (GenericCargoError e) {
+            presenter.presentError(e);
+            return;
+        }
         presenter.presentInitialViewForCargoTracking();
     }
 
@@ -28,11 +41,11 @@ public class TrackingUseCase implements TrackingInputPort {
     public void trackCargo(String cargoTrackingId) {
         TrackingId trackingId;
         Cargo cargo;
-        Location lastKnownLocation;
-        Location locationForNexExpectedActivity;
         HandlingHistory handlingHistory;
         List<Location> allLocations;
         try {
+            securityOps.assertThatUserIsAgent();
+
             trackingId = TrackingId.of(cargoTrackingId);
 
             // load cargo
@@ -53,6 +66,9 @@ public class TrackingUseCase implements TrackingInputPort {
             // load all locations
             allLocations = gatewayOps.allLocations();
 
+        } catch (CargoSecurityError e) {
+            presenter.presentSecurityError(e);
+            return;
         } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;

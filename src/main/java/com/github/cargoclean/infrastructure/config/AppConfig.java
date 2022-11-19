@@ -89,9 +89,10 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
+                                           SecurityOutputPort securityOps,
                                            PersistenceGatewayOutputPort gatewayOps,
                                            RoutingServiceOutputPort routingServiceOps) {
-        return new RoutingUseCase(presenter, gatewayOps, routingServiceOps);
+        return new RoutingUseCase(presenter, securityOps, gatewayOps, routingServiceOps);
     }
 
     @Bean
@@ -104,8 +105,9 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
+                                             SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps) {
-        return new TrackingUseCase(presenter, gatewayOps);
+        return new TrackingUseCase(presenter, securityOps, gatewayOps);
     }
 
     @Bean

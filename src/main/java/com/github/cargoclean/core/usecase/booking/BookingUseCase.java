@@ -48,13 +48,11 @@ public class BookingUseCase implements BookingInputPort {
 
             locations = gatewayOps.allLocations();
 
-        }
-        catch (CargoSecurityError e){
+        } catch (CargoSecurityError e) {
             // handle security error
             presenter.presentSecurityError(e);
             return;
-        }
-        catch (GenericCargoError e) {
+        } catch (GenericCargoError e) {
             // if anything else went wrong: present the error and return
             presenter.presentError(e);
             return;
@@ -71,6 +69,7 @@ public class BookingUseCase implements BookingInputPort {
 
         final TrackingId trackingId;
         try {
+            securityOps.assertThatUserIsAgent();
 
             /*
                 Point of interest:
@@ -110,7 +109,10 @@ public class BookingUseCase implements BookingInputPort {
             log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
 
-        } catch (Exception e) {
+        } catch (CargoSecurityError e) {
+            presenter.presentSecurityError(e);
+            return;
+        } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
             return;
