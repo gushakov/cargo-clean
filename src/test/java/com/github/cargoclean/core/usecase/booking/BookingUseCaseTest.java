@@ -1,6 +1,6 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.NoOpSecurity;
+import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.UtcDateTime;
@@ -41,7 +41,7 @@ public class BookingUseCaseTest {
     void setUp() {
 
         // no-op security
-        securityOps = new NoOpSecurity();
+        securityOps = new AlwaysOkSecurity();
 
         lenient().when(gatewayOps.nextTrackingId()).thenReturn(trackingId);
 

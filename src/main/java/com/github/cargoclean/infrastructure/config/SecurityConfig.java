@@ -77,9 +77,7 @@ public class SecurityConfig {
     /*
         Set up users and roles for the application.
         Anonymous:  can see arrivals report
-        Agent:      can book cargoes, can route cargoes, can track cargos,
-                    cannot create new locations, cannot record handling events,
-                    and cannot route cargoes through Oceania
+        Agent:      can book cargoes, can route cargoes, can track cargos
         Manager:    can do anything
      */
 

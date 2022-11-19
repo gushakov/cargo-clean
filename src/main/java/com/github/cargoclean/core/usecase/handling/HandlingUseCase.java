@@ -74,15 +74,13 @@ public class HandlingUseCase implements HandlingInputPort {
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
-        }
-            catch (CargoSecurityError e){
-                gatewayOps.rollback();
-                presenter.presentSecurityError(e);
-                return;
-            }
-            catch (GenericCargoError e) {
-                gatewayOps.rollback();
-                presenter.presentError(e);
+        } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
+            presenter.presentSecurityError(e);
+            return;
+        } catch (GenericCargoError e) {
+            gatewayOps.rollback();
+            presenter.presentError(e);
             return;
         }
 
@@ -94,6 +92,8 @@ public class HandlingUseCase implements HandlingInputPort {
     public void updateDeliveryAfterHandlingActivity(String cargoIdStr) {
 
         try {
+
+            securityOps.assertThatUserIsManager();
 
             TrackingId trackingId = TrackingId.of(cargoIdStr);
 
@@ -108,10 +108,12 @@ public class HandlingUseCase implements HandlingInputPort {
 
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
+        } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
+            presenter.presentSecurityError(e);
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
         }
-
     }
 }

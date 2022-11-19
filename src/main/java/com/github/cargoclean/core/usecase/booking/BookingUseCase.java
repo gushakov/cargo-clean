@@ -110,6 +110,7 @@ public class BookingUseCase implements BookingInputPort {
 
 
         } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
             presenter.presentSecurityError(e);
             return;
         } catch (GenericCargoError e) {

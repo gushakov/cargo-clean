@@ -1,6 +1,6 @@
 package com.github.cargoclean.core.usecase.routing;
 
-import com.github.cargoclean.core.NoOpSecurity;
+import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -29,7 +29,7 @@ public class RoutingUseCaseTest {
     @Mock
     private RoutingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps = new NoOpSecurity();
+    private final SecurityOutputPort securityOps = new AlwaysOkSecurity();
 
     @Mock
     private PersistenceGatewayOutputPort gatewayOps;

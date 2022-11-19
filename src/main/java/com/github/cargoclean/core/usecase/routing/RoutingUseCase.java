@@ -119,6 +119,7 @@ public class RoutingUseCase implements RoutingInputPort {
             gatewayOps.saveCargo(routedCargo);
 
         } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
             presenter.presentSecurityError(e);
             return;
         } catch (GenericCargoError e) {
