@@ -56,8 +56,6 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
         for each "unlocode".
      */
     @Mapping(target = "numberOfArrivals", source = "arrivals")
-    @Mapping(target = "city.unlocode", source = "unlocode")
-    @Mapping(target = "city.name", source = "city")
     abstract ExpectedArrivals map(ExpectedArrivalsQueryRow arrivalsQueryRow);
 
     abstract HandlingEvent map(HandlingEventEntity handlingEventEntity);

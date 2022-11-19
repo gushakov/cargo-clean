@@ -21,4 +21,6 @@ public class LocationDbEntity {
     @Column("name")
     private String name;
 
+    @Column("region")
+    private String region;
 }

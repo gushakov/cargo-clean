@@ -1,6 +1,7 @@
 package com.github.cargoclean.core.model.location;
 
 public enum Region {
+    Unknown("Unknown"),
     Africa("Africa"),
     Asia("Asia"),
     Oceania("Oceania"),

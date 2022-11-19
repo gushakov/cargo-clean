@@ -2,6 +2,7 @@ package com.github.cargoclean.core.model;
 
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 
@@ -35,6 +36,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("JNTKO")
                                 .build())
+                        .region(Region.Asia)
                         .build(),
 
                 "NLRTM",
@@ -43,6 +45,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("NLRTM")
                                 .build())
+                        .region(Region.Europe)
                         .build(),
 
                 "USDAL",
@@ -51,6 +54,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("USDAL")
                                 .build())
+                        .region(Region.NorthAmerica)
                         .build(),
 
                 "SEGOT",
@@ -59,6 +63,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("SEGOT")
                                 .build())
+                        .region(Region.Europe)
                         .build(),
 
                 "FIHEL",
@@ -67,6 +72,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("FIHEL")
                                 .build())
+                        .region(Region.Europe)
                         .build(),
 
                 "AUMEL",
@@ -75,6 +81,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("AUMEL")
                                 .build())
+                        .region(Region.Oceania)
                         .build()
 
         );
