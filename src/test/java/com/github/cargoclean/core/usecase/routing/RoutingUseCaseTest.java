@@ -1,9 +1,11 @@
 package com.github.cargoclean.core.usecase.routing;
 
+import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.ExternalRoutingService;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,8 @@ public class RoutingUseCaseTest {
     @Mock
     private RoutingPresenterOutputPort presenter;
 
+    private final SecurityOutputPort securityOps = new AlwaysOkSecurity();
+
     @Mock
     private PersistenceGatewayOutputPort gatewayOps;
 
@@ -36,7 +40,7 @@ public class RoutingUseCaseTest {
     @Test
     void should_assign_new_route_to_cargo() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -78,7 +82,7 @@ public class RoutingUseCaseTest {
 
     @Test
     void should_present_routing_error_if_selected_route_does_not_satisfy_specification() {
-        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -100,7 +104,7 @@ public class RoutingUseCaseTest {
     @Test
     void should_present_routing_error_when_routing_cargo_with_existing_itinerary() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
 
         // create a spy of an existing cargo to simulate a cargo which has already been
         // routed

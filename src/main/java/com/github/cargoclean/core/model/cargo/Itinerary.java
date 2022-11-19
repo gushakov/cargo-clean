@@ -16,6 +16,7 @@ import com.github.cargoclean.core.model.handling.HandlingEventType;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,15 @@ public class Itinerary {
 
     public Leg last() {
         return legs.stream().skip(legs.size() - 1).findFirst().orElse(null);
+    }
+
+    public List<Leg> intermediate() {
+        int size = legs.size();
+        if (size < 3) {
+            return List.of();
+        }
+        return Arrays.stream(Arrays.copyOfRange(legs.toArray(new Leg[0]), 1, size - 1))
+                .toList();
     }
 
     /*

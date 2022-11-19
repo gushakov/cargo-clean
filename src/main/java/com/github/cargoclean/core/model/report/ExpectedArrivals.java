@@ -12,7 +12,7 @@ import lombok.Value;
 @Value
 public class ExpectedArrivals {
 
-    Location city;
+    String city;
     Integer numberOfArrivals;
 
 }

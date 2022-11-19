@@ -34,6 +34,7 @@ public class Location {
     public static final Location UNKNOWN = Location.builder()
             .name("UNKNOWN")
             .unlocode(UnLocode.of("XXXXX"))
+            .region(Region.Unknown)
             .build();
 
     @EqualsAndHashCode.Include
@@ -41,10 +42,13 @@ public class Location {
 
     String name;
 
+    Region region;
+
     @Builder
-    public Location(UnLocode unlocode, String name) {
+    public Location(UnLocode unlocode, String name, Region region) {
         this.unlocode = notNull(unlocode);
         this.name = notBlank(name);
+        this.region = notNull(region);
     }
 
     @Override

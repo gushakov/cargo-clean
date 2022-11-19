@@ -13,6 +13,7 @@ package com.github.cargoclean.infrastructure.config;
 
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
@@ -80,16 +81,18 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
+                                                   SecurityOutputPort securityOps,
                                                    PersistenceGatewayOutputPort gatewayOps) {
-        return new BookingUseCase(presenter, gatewayOps);
+        return new BookingUseCase(presenter, securityOps, gatewayOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
+                                           SecurityOutputPort securityOps,
                                            PersistenceGatewayOutputPort gatewayOps,
                                            RoutingServiceOutputPort routingServiceOps) {
-        return new RoutingUseCase(presenter, gatewayOps, routingServiceOps);
+        return new RoutingUseCase(presenter, securityOps, gatewayOps, routingServiceOps);
     }
 
     @Bean
@@ -102,14 +105,16 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
+                                             SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps) {
-        return new TrackingUseCase(presenter, gatewayOps);
+        return new TrackingUseCase(presenter, securityOps, gatewayOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
+                                             SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps) {
-        return new HandlingUseCase(presenter, gatewayOps);
+        return new HandlingUseCase(presenter, securityOps,  gatewayOps);
     }
 }

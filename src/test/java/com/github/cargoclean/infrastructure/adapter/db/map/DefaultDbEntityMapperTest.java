@@ -44,6 +44,7 @@ public class DefaultDbEntityMapperTest {
         final LocationDbEntity dbEntity = LocationDbEntity.builder()
                 .unlocode("JNTKO")
                 .name("Tokyo")
+                .region("Asia")
                 .build();
 
         final Location location = mapper.convert(dbEntity);
@@ -164,7 +165,6 @@ public class DefaultDbEntityMapperTest {
     @Test
     void should_map_expected_arrivals_query_row_to_model() {
         ExpectedArrivalsQueryRow queryRow = ExpectedArrivalsQueryRow.builder()
-                .unlocode("AUMEL")
                 .city("Melbourne")
                 .arrivals(2)
                 .build();
@@ -173,7 +173,7 @@ public class DefaultDbEntityMapperTest {
 
         assertThat(expectedArrivals)
                 .extracting(ExpectedArrivals::getCity, ExpectedArrivals::getNumberOfArrivals)
-                .containsExactly(location("AUMEL"), 2);
+                .containsExactly("Melbourne", 2);
     }
 
     @Test

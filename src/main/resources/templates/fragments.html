@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head th:fragment="head">
     <title>Example application</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -11,8 +11,17 @@
 <div th:fragment="header" class="row-cols-1 mt-5 rounded" style="background-color: beige; text-align: center;">
 
     <div class="row">
-        <a href="/">Home</a>
+        <span class="p-1">
+            <a href="/">Home</a>
+            <a sec:authorize="isAnonymous()" href="/login">Login</a>
+            <a sec:authorize="isAuthenticated()" href="/logout">Logout</a>
+        </span>
     </div>
+
+    <div sec:authorize="isAnonymous()" class="row mt-1">
+        <span class="small">To login use <b>agent</b> or <b>manger</b> with password <b>test</b>.</span>
+    </div>
+
     <h2>Cargo tracking with Clean DDD</h2>
 
     This is a revisit of the original cargo tracking application,

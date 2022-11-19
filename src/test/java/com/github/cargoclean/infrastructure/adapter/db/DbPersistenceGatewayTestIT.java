@@ -10,6 +10,7 @@ import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
@@ -59,16 +60,17 @@ public class DbPersistenceGatewayTestIT {
     void should_process_flyway_initialization_scripts() {
         final Integer locationsCount = jdbcTemplate.queryForObject("select count(*) from public.location",
                 Map.of(), Integer.class);
-        assertThat(locationsCount).isEqualTo(13);
+        assertThat(locationsCount).isGreaterThan(10);
     }
 
     @Test
     void should_load_all_locations() {
         final List<Location> locations = dbGateway.allLocations();
         assertThat(locations)
-                .hasSize(13)
-                .extracting(Location::getUnlocode, Location::getName)
-                .contains(tuple(UnLocode.of("USNYC"), "New York"));
+                .extracting(Location::getUnlocode,
+                        Location::getName,
+                        Location::getRegion)
+                .contains(tuple(UnLocode.of("USNYC"), "New York", Region.NorthAmerica));
 
         // locations should not be modifiable
 

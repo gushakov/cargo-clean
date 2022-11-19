@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.usecase.booking;
 
+import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.UtcDateTime;
@@ -7,6 +8,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,8 @@ public class BookingUseCaseTest {
     @Mock
     private BookingPresenterOutputPort presenter;
 
+    private SecurityOutputPort securityOps;
+
     @Mock
     private PersistenceGatewayOutputPort gatewayOps;
 
@@ -36,6 +40,9 @@ public class BookingUseCaseTest {
     @BeforeEach
     void setUp() {
 
+        // no-op security
+        securityOps = new AlwaysOkSecurity();
+
         lenient().when(gatewayOps.nextTrackingId()).thenReturn(trackingId);
 
         lenient().when(gatewayOps.obtainLocationByUnLocode(any(UnLocode.class)))
@@ -44,7 +51,7 @@ public class BookingUseCaseTest {
                     return MockModels.location(unLocode.getCode());
                 });
 
-        useCase = new BookingUseCase(presenter, gatewayOps);
+        useCase = new BookingUseCase(presenter, securityOps, gatewayOps);
 
     }
 

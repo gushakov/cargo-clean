@@ -1,8 +1,11 @@
 package com.github.cargoclean.core.usecase.routing;
 
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
+import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,8 @@ public class RoutingUseCase implements RoutingInputPort {
 
     private final RoutingPresenterOutputPort presenter;
 
+    private final SecurityOutputPort securityOps;
+
     private final PersistenceGatewayOutputPort gatewayOps;
 
     // output port for external routing service
@@ -25,6 +30,7 @@ public class RoutingUseCase implements RoutingInputPort {
     public void showCargo(String cargoTrackingId) {
         final Cargo cargo;
         try {
+            securityOps.assertThatUserIsAgent();
             cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
         } catch (Exception e) {
             presenter.presentError(e);
@@ -42,6 +48,8 @@ public class RoutingUseCase implements RoutingInputPort {
         TrackingId trackingId;
         try {
 
+            securityOps.assertThatUserIsAgent();
+
             trackingId = TrackingId.of(cargoTrackingId);
 
             // load cargo
@@ -57,8 +65,10 @@ public class RoutingUseCase implements RoutingInputPort {
             // get candidate itineraries from external service
             itineraries = routingServiceOps.fetchRoutesForSpecification(trackingId, routeSpecification);
 
-
-        } catch (Exception e) {
+        } catch (CargoSecurityError e) {
+            presenter.presentSecurityError(e);
+            return;
+        } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;
         }
@@ -86,13 +96,28 @@ public class RoutingUseCase implements RoutingInputPort {
             // load cargo
             Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
-            // actually route this cargo and validate
+            /*
+                Point of interest:
+                -----------------
+                This is how we can do domain object security in the use case.
+                We check that user has permission to route the cargo through
+                the selected itinerary.
+             */
+
+            securityOps.assertThatUserHasPermissionToRouteCargoThroughRegions(itinerary,
+                    gatewayOps.allRegionsMap());
+
+            // actually route this cargo
             Cargo routedCargo = cargo.assignItinerary(itinerary);
 
             // persist updated cargo
             gatewayOps.saveCargo(routedCargo);
 
-        } catch (Exception e) {
+        } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
+            presenter.presentSecurityError(e);
+            return;
+        } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
             return;

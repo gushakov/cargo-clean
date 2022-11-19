@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.usecase.handling;
 
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
@@ -12,6 +13,7 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,8 @@ import java.util.Optional;
 public class HandlingUseCase implements HandlingInputPort {
 
     private final HandlingPresenterOutputPort presenter;
+
+    private final SecurityOutputPort securityOps;
 
     private final PersistenceGatewayOutputPort gatewayOps;
 
@@ -38,6 +42,9 @@ public class HandlingUseCase implements HandlingInputPort {
         UnLocode location;
         UtcDateTime completionDateTime;
         try {
+
+            // make sure user is a manager
+            securityOps.assertThatUserIsManager();
 
             eventId = gatewayOps.nextEventId();
 
@@ -67,6 +74,10 @@ public class HandlingUseCase implements HandlingInputPort {
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
+        } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
+            presenter.presentSecurityError(e);
+            return;
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
@@ -82,6 +93,8 @@ public class HandlingUseCase implements HandlingInputPort {
 
         try {
 
+            securityOps.assertThatUserIsManager();
+
             TrackingId trackingId = TrackingId.of(cargoIdStr);
 
             // retrieve cargo
@@ -95,10 +108,12 @@ public class HandlingUseCase implements HandlingInputPort {
 
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
+        } catch (CargoSecurityError e) {
+            gatewayOps.rollback();
+            presenter.presentSecurityError(e);
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
         }
-
     }
 }
