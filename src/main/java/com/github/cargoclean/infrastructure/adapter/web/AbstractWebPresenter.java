@@ -44,19 +44,26 @@ public abstract class AbstractWebPresenter extends AbstractErrorHandler {
 
         logError(e);
 
-        // redirect to special error handling controller
-        redirectError(e.getMessage());
-    }
+        // see if this is a security error
+        if (e instanceof CargoSecurityError) {
+            presentSecurityError((CargoSecurityError) e);
+        } else {
 
-    public void presentSecurityError(CargoSecurityError e){
-        logError(e);
-
-        if (e.isUserAuthenticated()){
-            // if user is authenticated show a message
+            // redirect to special error handling controller
             redirectError(e.getMessage());
         }
-        else {
-            // if user is not authenticated redirect to the login page
+
+    }
+
+    protected void presentSecurityError(CargoSecurityError e) {
+        logError(e);
+
+        if (e.isUserAuthenticated()) {
+            // if user is authenticated, this is a permission error:
+            // go the error view, as usual
+            redirectError(e.getMessage());
+        } else {
+            // redirect to the login page if user is not authenticated
             redirectLogin();
         }
     }

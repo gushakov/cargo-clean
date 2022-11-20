@@ -1,7 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.web.routing;
 
 import com.github.cargoclean.core.model.cargo.RouteDto;
-import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebController;
 import lombok.RequiredArgsConstructor;

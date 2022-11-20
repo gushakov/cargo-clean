@@ -9,8 +9,8 @@ package com.github.cargoclean.infrastructure.adapter.web;
 
  */
 
-import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.infrastructure.adapter.AbstractErrorHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -68,16 +68,20 @@ public abstract class AbstractRestPresenter extends AbstractErrorHandler impleme
 
     @Override
     public void presentError(Exception t) {
-        doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        if (t instanceof CargoSecurityError) {
+            presentSecurityError((CargoSecurityError) t);
+        } else {
+            doPresentError(t, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
-    @Override
-    public void presentSecurityError(CargoSecurityError e) {
+    protected void presentSecurityError(CargoSecurityError e) {
 
-        if (e.isUserAuthenticated()){
+        if (e.isUserAuthenticated()) {
             doPresentError(e, HttpStatus.FORBIDDEN);
-        }
-        else {
+        } else {
             doPresentError(e, HttpStatus.UNAUTHORIZED);
         }
 

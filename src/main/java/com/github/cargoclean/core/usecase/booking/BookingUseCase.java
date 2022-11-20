@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
@@ -48,12 +47,22 @@ public class BookingUseCase implements BookingInputPort {
 
             locations = gatewayOps.allLocations();
 
-        } catch (CargoSecurityError e) {
-            // handle security error
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
-            // if anything else went wrong: present the error and return
+
+            /*
+                Point of interest:
+                -----------------
+                As a rule of thumb, we handle only "GenericCargoError"
+                or its subclasses in use cases. All other runtime errors
+                should be allowed to bubble up so that we can readily
+                identify them during the development phase.
+                Also, we handle specific errors here only if it requires
+                interacting with output ports (secondary adapters). If
+                we only need to differentiate presentation, depending on
+                the exact type of errors, we let it be handled in the
+                presenter.
+             */
+
             presenter.presentError(e);
             return;
         }
@@ -62,6 +71,18 @@ public class BookingUseCase implements BookingInputPort {
         presenter.presentNewCargoBookingView(locations);
 
     }
+
+    /*
+        Point of interest:
+        -----------------
+        Notice "javax.transaction.Transactional" demarcation
+        on the entire method (the use case). This is a principle
+        deviation of Clean DDD from the classical DDD approach
+        where transactional boundary is around each aggregate.
+        This makes each use case operation a consistent one,
+        but requires some through design with respect to
+        the performance.
+     */
 
     @Transactional
     @Override
@@ -109,11 +130,17 @@ public class BookingUseCase implements BookingInputPort {
             log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
 
-        } catch (CargoSecurityError e) {
-            gatewayOps.rollback();
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
+
+            /*
+                Point of interest:
+                -----------------
+                Notice how we are calling the gateway here to
+                roll back the transaction. And not from the
+                presenter to remain within CA paradigm: output
+                ports are only called from a use case.
+             */
+
             gatewayOps.rollback();
             presenter.presentError(e);
             return;

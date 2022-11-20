@@ -34,6 +34,8 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
     public void presentNewCargoBookingView(List<Location> locations) {
 
         /*
+            Point of interest:
+            -----------------
             Notice that here we are deviating from the CA principles:
             this Presenter actually received a list of domain models,
             and it is here that we shall create the "Response Model"
@@ -41,11 +43,11 @@ public class BookingPresenter extends AbstractWebPresenter implements BookingPre
             Thymeleaf template with a backing bean.
          */
 
-        final List<String> allUnlocodes = locations.stream().map(Location::getUnlocode).map(UnLocode::getCode).toList();
+        final List<String> allUnLocodes = locations.stream().map(Location::getUnlocode).map(UnLocode::getCode).toList();
 
         final BookingForm bookingForm = BookingForm.builder()
                 .deliveryDeadline(new Date(System.currentTimeMillis()))
-                .locations(allUnlocodes)
+                .locations(allUnLocodes)
                 .build();
 
         Map<String, Object> responseModel = Map.of("bookingForm", bookingForm);

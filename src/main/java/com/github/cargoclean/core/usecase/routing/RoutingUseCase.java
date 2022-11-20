@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.routing;
 
-import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
@@ -65,9 +64,6 @@ public class RoutingUseCase implements RoutingInputPort {
             // get candidate itineraries from external service
             itineraries = routingServiceOps.fetchRoutesForSpecification(trackingId, routeSpecification);
 
-        } catch (CargoSecurityError e) {
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;
@@ -113,10 +109,6 @@ public class RoutingUseCase implements RoutingInputPort {
             // persist updated cargo
             gatewayOps.saveCargo(routedCargo);
 
-        } catch (CargoSecurityError e) {
-            gatewayOps.rollback();
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);

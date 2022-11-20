@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.tracking;
 
-import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -28,9 +27,6 @@ public class TrackingUseCase implements TrackingInputPort {
     public void initializeCargoTrackingView() {
         try {
             securityOps.assertThatUserIsAgent();
-        } catch (CargoSecurityError e) {
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;
@@ -70,9 +66,6 @@ public class TrackingUseCase implements TrackingInputPort {
             // load all locations and make a map of UnLocode to Locations
             allLocationsMap = gatewayOps.allLocationsMap();
 
-        } catch (CargoSecurityError e) {
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
             presenter.presentError(e);
             return;

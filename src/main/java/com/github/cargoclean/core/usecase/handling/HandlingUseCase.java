@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.handling;
 
-import com.github.cargoclean.core.port.operation.security.CargoSecurityError;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.UtcDateTime;
@@ -74,10 +73,6 @@ public class HandlingUseCase implements HandlingInputPort {
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
-        } catch (CargoSecurityError e) {
-            gatewayOps.rollback();
-            presenter.presentSecurityError(e);
-            return;
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
@@ -108,9 +103,6 @@ public class HandlingUseCase implements HandlingInputPort {
 
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
-        } catch (CargoSecurityError e) {
-            gatewayOps.rollback();
-            presenter.presentSecurityError(e);
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);

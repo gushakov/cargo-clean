@@ -115,6 +115,6 @@ public class AppConfig {
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
                                              SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps) {
-        return new HandlingUseCase(presenter, securityOps,  gatewayOps);
+        return new HandlingUseCase(presenter, securityOps, gatewayOps);
     }
 }

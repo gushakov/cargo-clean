@@ -67,13 +67,13 @@ public interface PersistenceGatewayOutputPort {
 
     void rollback();
 
-    default Map<UnLocode, Region> allRegionsMap(){
-       return allLocations().stream()
+    default Map<UnLocode, Region> allRegionsMap() {
+        return allLocations().stream()
                 .collect(Collectors.toUnmodifiableMap(Location::getUnlocode,
                         Location::getRegion));
     }
 
-    default Map<UnLocode, Location> allLocationsMap(){
+    default Map<UnLocode, Location> allLocationsMap() {
         return allLocations().stream()
                 .collect(Collectors.toMap(Location::getUnlocode, Function.identity()));
     }
