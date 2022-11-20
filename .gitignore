@@ -5,4 +5,4 @@
 *.bkp
 *.dtmp
 target
-/etc/doc/booking-use-case.drawio
+/etc/doc/*.drawio
