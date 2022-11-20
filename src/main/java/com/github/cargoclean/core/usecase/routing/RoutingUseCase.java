@@ -78,6 +78,8 @@ public class RoutingUseCase implements RoutingInputPort {
 
         try {
 
+            securityOps.assertThatUserIsAgent();
+
             // make sure we retrieved candidate route from the session successfully
             if (selectedRoute == null) {
                 throw new RoutingError("Cannot route cargo <%s>: no route selected."

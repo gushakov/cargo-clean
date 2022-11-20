@@ -1,6 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.security;
 
-import com.github.cargoclean.core.port.operation.security.AuthenticationRequiredException;
+import com.github.cargoclean.core.port.operation.security.AuthenticationRequiredError;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,7 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .filter(authentication -> authentication.isAuthenticated()
                         && !(authentication instanceof AnonymousAuthenticationToken))
-                .orElseThrow(AuthenticationRequiredException::new);
+                .orElseThrow(AuthenticationRequiredError::new);
     }
 
 }

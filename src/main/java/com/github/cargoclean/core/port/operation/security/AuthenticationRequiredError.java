@@ -3,11 +3,11 @@ package com.github.cargoclean.core.port.operation.security;
 /**
  * Error thrown if authentication is required but the user has not yet been authenticated.
  */
-public class AuthenticationRequiredException extends CargoSecurityError {
+public class AuthenticationRequiredError extends CargoSecurityError {
     /**
      * Assumes that user has not been authenticated yet.
      */
-    public AuthenticationRequiredException() {
+    public AuthenticationRequiredError() {
         super("Access denied: user has not been authenticated", false);
     }
 }
