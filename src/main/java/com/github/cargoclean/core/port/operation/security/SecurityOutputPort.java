@@ -6,6 +6,7 @@ import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static com.github.cargoclean.core.model.location.Region.Europe;
 
@@ -26,6 +27,11 @@ public interface SecurityOutputPort {
     Region SPECIAL_REGION = Europe;
 
     boolean hasRole(String role);
+
+    // Update: add another method which needs to be implemented
+    // by the security adapter.
+
+    Optional<String> username();
 
     default boolean doesNotHaveRole(String role) {
         return !hasRole(role);

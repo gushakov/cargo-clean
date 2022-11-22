@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,6 +24,15 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
                 .map(GrantedAuthority::getAuthority)
                 .map(authority -> authority.replaceFirst("ROLE_", ""))
                 .anyMatch(authority -> authority.equals(role.toUpperCase()));
+    }
+
+    @Override
+    public Optional<String> username() {
+        try {
+            return Optional.of(((UserDetails)getAuthentication().getPrincipal()).getUsername());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private Authentication getAuthentication() {

@@ -20,6 +20,7 @@ import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutpu
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.welcome.WelcomePresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsInputPort;
@@ -32,6 +33,8 @@ import com.github.cargoclean.core.usecase.routing.RoutingInputPort;
 import com.github.cargoclean.core.usecase.routing.RoutingUseCase;
 import com.github.cargoclean.core.usecase.tracking.TrackingInputPort;
 import com.github.cargoclean.core.usecase.tracking.TrackingUseCase;
+import com.github.cargoclean.core.usecase.welcome.WelcomeInputPort;
+import com.github.cargoclean.core.usecase.welcome.WelcomeUseCase;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.internal.GraphDAOStub;
@@ -80,6 +83,11 @@ public class AppConfig {
         This way each request processing thread will get its own instance of each use case
         when it is looked up from the application context (in the controller).
      */
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public WelcomeInputPort welcomeUseCase(WelcomePresenterOutputPort presenter, SecurityOutputPort securityOps) {
+        return new WelcomeUseCase(presenter, securityOps);
+    }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -126,7 +134,7 @@ public class AppConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public EditLocationsInputPort editLocationsUseCase(EditLocationsPresenterOutputPort presenter,
                                                        SecurityOutputPort securityOps,
-                                                       PersistenceGatewayOutputPort gatewayOps){
+                                                       PersistenceGatewayOutputPort gatewayOps) {
         return new EditLocationsUseCase(presenter, securityOps, gatewayOps);
     }
 }

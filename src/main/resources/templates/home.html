@@ -14,7 +14,7 @@
 -->
 
 
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="container-fluid">
@@ -22,16 +22,21 @@
     <div th:replace="fragments :: header"></div>
 
     <div class="row-cols-1 mt-3">
-        Currently, we can do the following:
+        Hello,&nbsp;
+        <span sec:authorize="isAnonymous()">you are not authenticated.</span>
+        <th:block sec:authorize="isAuthenticated()">
+            <span sec:authorize="isAuthenticated()" th:text="${username}" class="fw-bold"></span>.
+        </th:block>
+        &nbsp;Here are the use cases:
     </div>
 
     <div class="row-cols-1">
         <ul>
-            <li><a th:href="@{/bookNewCargo}">Book new cargo</a></li>
-            <li><a th:href="@{/reportExpectedArrivals}">Report expected arrivals</a></li>
-            <li><a th:href="@{/swagger-ui/index.html}" target="_blank">Record handling event</a></li>
-            <li><a th:href="@{/cargoTracking}">Track a cargo</a></li>
-            <li><a th:href="@{/addNewLocation}">Add new location</a></li>
+            <li><a th:href="@{/bookNewCargo}">Book new cargo</a> (<i>agent, manager</i>)</li>
+            <li><a th:href="@{/reportExpectedArrivals}">Report expected arrivals</a> (<i>anybody</i>)</li>
+            <li><a th:href="@{/swagger-ui/index.html}" target="_blank">Record handling event</a> (<i>manager</i>)</li>
+            <li><a th:href="@{/cargoTracking}">Track a cargo</a> (<i>agent, manager</i>)</li>
+            <li><a th:href="@{/addNewLocation}">Add new location</a> (<i>manager</i>)</li>
         </ul>
     </div>
 
