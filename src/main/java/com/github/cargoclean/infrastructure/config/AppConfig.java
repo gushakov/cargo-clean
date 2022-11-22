@@ -15,12 +15,15 @@ import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
+import com.github.cargoclean.core.port.presenter.editlocations.EditLocationsPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.editlocation.EditLocationsInputPort;
+import com.github.cargoclean.core.usecase.editlocation.EditLocationsUseCase;
 import com.github.cargoclean.core.usecase.handling.HandlingInputPort;
 import com.github.cargoclean.core.usecase.handling.HandlingUseCase;
 import com.github.cargoclean.core.usecase.report.ReportInputPort;
@@ -116,5 +119,13 @@ public class AppConfig {
                                              SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps) {
         return new HandlingUseCase(presenter, securityOps, gatewayOps);
+    }
+
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public EditLocationsInputPort editLocationsUseCase(EditLocationsPresenterOutputPort presenter,
+                                                       SecurityOutputPort securityOps){
+        return new EditLocationsUseCase(presenter, securityOps);
     }
 }
