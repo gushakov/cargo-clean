@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+
+    <div th:replace="fragments :: header"></div>
+
+    <div class="row-cols-1 mt-3">
+
+        <!--/*@thymesVar id="addLocationForm" type="com.github.cargoclean.infrastructure.adapter.web.editlocations.AddLocationForm"*/-->
+        <form method="post" href="#" th:action="@{/registerNewLocation}" th:object="${addLocationForm}">
+            to do...
+        </form>
+
+    </div>
+
+</div>
+
+<th:block th:replace="fragments :: footer"></th:block>
+
+</body>
+</html>
