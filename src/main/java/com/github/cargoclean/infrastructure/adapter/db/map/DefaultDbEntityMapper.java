@@ -74,6 +74,12 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     @IgnoreForMapping
     @Override
+    public LocationDbEntity convert(Location location) {
+        return map(location);
+    }
+
+    @IgnoreForMapping
+    @Override
     public CargoDbEntity convert(Cargo cargo) {
         return map(cargo);
     }

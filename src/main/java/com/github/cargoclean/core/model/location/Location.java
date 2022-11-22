@@ -44,11 +44,14 @@ public class Location {
 
     Region region;
 
+    Integer version;
+
     @Builder
-    public Location(UnLocode unlocode, String name, Region region) {
+    public Location(UnLocode unlocode, String name, Region region, Integer version) {
         this.unlocode = notNull(unlocode);
         this.name = notBlank(name);
         this.region = notNull(region);
+        this.version = version;
     }
 
     @Override

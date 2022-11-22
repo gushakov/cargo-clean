@@ -17,6 +17,7 @@ public interface DbEntityMapper {
 
     Location convert(LocationDbEntity locationDbEntity);
 
+    LocationDbEntity convert(Location location);
     CargoDbEntity convert(Cargo cargo);
 
     Cargo convert(CargoDbEntity cargoDbEntity);

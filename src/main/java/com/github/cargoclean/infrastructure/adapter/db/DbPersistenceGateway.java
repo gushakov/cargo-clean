@@ -25,13 +25,14 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
-import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.PersistenceOperationError;
+import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.persistence.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
+import com.github.cargoclean.infrastructure.adapter.db.location.LocationExistsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,8 @@ import org.springframework.transaction.NoTransactionException;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -202,6 +205,33 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
         } catch (NoTransactionException e) {
             // do nothing if not running in a transactional context
+        }
+    }
+
+    @Override
+    public boolean locationExists(Location location) {
+
+        try {
+            return Optional.ofNullable(queryTemplate.queryForObject(LocationExistsQueryRow.SQL,
+                            Map.of("unlocode", location.getUnlocode().getCode()),
+                            new BeanPropertyRowMapper<>(LocationExistsQueryRow.class)))
+                    .orElseThrow().exists();
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Error when querying if location %s exists already"
+                    .formatted(location.getUnlocode()), e);
+        }
+
+    }
+
+    @Override
+    public Location saveLocation(Location location) {
+        try {
+            locationRepository.save(dbMapper.convert(location));
+            return obtainLocationByUnLocode(location.getUnlocode());
+        }
+        catch (Exception e){
+            throw new PersistenceOperationError("Error when saving location %s"
+                    .formatted(location.getUnlocode()), e);
         }
     }
 

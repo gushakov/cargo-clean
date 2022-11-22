@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation;
+package com.github.cargoclean.core.port.operation.persistence;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -77,4 +77,8 @@ public interface PersistenceGatewayOutputPort {
         return allLocations().stream()
                 .collect(Collectors.toMap(Location::getUnlocode, Function.identity()));
     }
+
+    boolean locationExists(Location location);
+
+    Location saveLocation(Location location);
 }

@@ -2,8 +2,8 @@ package com.github.cargoclean.core.usecase.routing;
 
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.*;
-import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
+import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
 import lombok.RequiredArgsConstructor;
