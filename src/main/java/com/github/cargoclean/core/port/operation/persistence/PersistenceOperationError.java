@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation;
+package com.github.cargoclean.core.port.operation.persistence;
 
 import com.github.cargoclean.core.GenericCargoError;
 

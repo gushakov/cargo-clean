@@ -11,8 +11,8 @@ package com.github.cargoclean.infrastructure.config;
  */
 
 
-import com.github.cargoclean.core.port.operation.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.RoutingServiceOutputPort;
+import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.operation.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.port.presenter.editlocations.EditLocationsPresenterOutputPort;
@@ -125,7 +125,8 @@ public class AppConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public EditLocationsInputPort editLocationsUseCase(EditLocationsPresenterOutputPort presenter,
-                                                       SecurityOutputPort securityOps){
-        return new EditLocationsUseCase(presenter, securityOps);
+                                                       SecurityOutputPort securityOps,
+                                                       PersistenceGatewayOutputPort gatewayOps){
+        return new EditLocationsUseCase(presenter, securityOps, gatewayOps);
     }
 }

@@ -4,7 +4,9 @@ import com.github.cargoclean.core.usecase.editlocation.EditLocationsInputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -18,6 +20,15 @@ public class EditLocationsController {
     public void showAddNewLocationForm() {
 
         useCase().prepareAddNewLocationView();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/registerNewLocation")
+    @ResponseBody
+    public void registerNewLocation(@ModelAttribute AddLocationForm addLocationForm) {
+
+        useCase().registerNewLocation(addLocationForm.getUnLocode(),
+                addLocationForm.getLocation(),
+                addLocationForm.getRegion());
     }
 
     private EditLocationsInputPort useCase() {
