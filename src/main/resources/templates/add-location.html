@@ -7,14 +7,51 @@
 
     <div th:replace="fragments :: header"></div>
 
-    <div class="row-cols-1 mt-3">
+    <!--/*@thymesVar id="addLocationForm" type="com.github.cargoclean.infrastructure.adapter.web.editlocations.AddLocationForm"*/-->
+    <form method="post" href="#" th:action="@{/registerNewLocation}" th:object="${addLocationForm}">
+        <div class="row mt-3">
+            <div class="col-12">
+                Enter a new location. You may want to consult <a target="_blank" th:href="*{unLocodeReferenceUrl}">UN/LOCODE database</a>
+                for some examples.
+            </div>
+        </div>
 
-        <!--/*@thymesVar id="addLocationForm" type="com.github.cargoclean.infrastructure.adapter.web.editlocations.AddLocationForm"*/-->
-        <form method="post" href="#" th:action="@{/registerNewLocation}" th:object="${addLocationForm}">
-            to do...
-        </form>
+        <div class="row-cols-1 mt-3">
 
-    </div>
+            <div class="row mb-3">
+                <label for="unLocode" class="col-2 col-form-label">UN/LOCODE</label>
+                <div class="col-1">
+                    <input id="unLocode" type="text" class="form-label"
+                           th:placeholder="*{hintUnLocode}"
+                           th:field="*{unLocode}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="location" class="col-2 col-form-label">Location</label>
+                <div class="col-1">
+                    <input id="location" type="text" class="form-label"
+                           th:placeholder="*{hintLocation}"
+                           th:field="*{location}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="region" class="col-2 col-form-label">Location</label>
+                <div class="col-1">
+                    <input id="region" type="text" class="form-label"
+                           th:placeholder="*{hintRegion}"
+                           th:field="*{region}">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Add location</button>
+            </div>
+        </div>
+    </form>
 
 </div>
 
