@@ -109,9 +109,9 @@ public class RoutingUseCase implements RoutingInputPort {
             // actually route this cargo
             Cargo routedCargo = cargo.assignItinerary(itinerary);
 
-            // Update: 26.11.2022, fix routing status not saved after routing
-            // update routing status of the cargo, handling history is empty
-            // for newly routed cargo
+            // Update: 26.11.2022
+            // fixed: update delivery progress of the cargo (routing status, ETA),
+            // handling history is empty for newly routed cargo
             Cargo updatedCargo = routedCargo.updateDeliveryProgress(HandlingHistory.EMPTY_HISTORY);
 
             // persist updated cargo
