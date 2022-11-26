@@ -35,6 +35,10 @@ public class HandlingHistory {
     private static final Comparator<HandlingEvent> BY_COMPLETION_LATEST_FIRST_COMPARATOR =
             Comparator.comparing(HandlingEvent::getCompletionTime).reversed();
 
+    public static final HandlingHistory EMPTY_HISTORY = HandlingHistory.builder()
+            .handlingEvents(List.of())
+            .build();
+
     List<HandlingEvent> handlingEvents;
 
     @Builder

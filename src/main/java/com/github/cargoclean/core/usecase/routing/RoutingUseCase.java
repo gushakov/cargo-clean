@@ -2,6 +2,7 @@ package com.github.cargoclean.core.usecase.routing;
 
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
@@ -108,8 +109,13 @@ public class RoutingUseCase implements RoutingInputPort {
             // actually route this cargo
             Cargo routedCargo = cargo.assignItinerary(itinerary);
 
+            // Update: 26.11.2022, fix routing status not saved after routing
+            // update routing status of the cargo, handling history is empty
+            // for newly routed cargo
+            Cargo updatedCargo = routedCargo.updateDeliveryProgress(HandlingHistory.EMPTY_HISTORY);
+
             // persist updated cargo
-            gatewayOps.saveCargo(routedCargo);
+            gatewayOps.saveCargo(updatedCargo);
 
         } catch (GenericCargoError e) {
             gatewayOps.rollback();

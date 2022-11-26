@@ -108,11 +108,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
         try {
-            return dbMapper.convert(locationRepository.findById(unLocode.getCode())
-                    .orElseThrow(() -> new IllegalStateException("Cannot load location with UnLocode: <%s>"
-                            .formatted(unLocode))));
-        } catch (IllegalStateException e) {
-            throw new PersistenceOperationError(e.getMessage());
+            return dbMapper.convert(locationRepository.findById(unLocode.getCode()).orElseThrow());
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain location with unLocode: <%s>"
                     .formatted(unLocode), e);
@@ -140,12 +136,8 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
         try {
-            CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId())
-                    .orElseThrow(() -> new IllegalStateException("Cannot find Cargo with tracking ID: <%s>"
-                            .formatted(trackingId)));
+            CargoDbEntity cargoDbEntity = cargoRepository.findById(trackingId.getId()).orElseThrow();
             return dbMapper.convert(cargoDbEntity);
-        } catch (IllegalStateException e) {
-            throw new PersistenceOperationError(e.getMessage());
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain cargo with tracking ID: <%s>"
                     .formatted(trackingId), e);
@@ -230,8 +222,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         try {
             locationRepository.save(dbMapper.convert(location));
             return obtainLocationByUnLocode(location.getUnlocode());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new PersistenceOperationError("Error when saving location %s"
                     .formatted(location.getUnlocode()), e);
         }
