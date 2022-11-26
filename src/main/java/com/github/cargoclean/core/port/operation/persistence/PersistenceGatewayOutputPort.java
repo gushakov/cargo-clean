@@ -1,6 +1,7 @@
 package com.github.cargoclean.core.port.operation.persistence;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
@@ -81,4 +82,6 @@ public interface PersistenceGatewayOutputPort {
     boolean locationExists(Location location);
 
     Location saveLocation(Location location);
+
+    List<CargoInfo> allCargoes();
 }

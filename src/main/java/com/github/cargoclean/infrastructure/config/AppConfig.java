@@ -85,8 +85,10 @@ public class AppConfig {
      */
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public WelcomeInputPort welcomeUseCase(WelcomePresenterOutputPort presenter, SecurityOutputPort securityOps) {
-        return new WelcomeUseCase(presenter, securityOps);
+    public WelcomeInputPort welcomeUseCase(WelcomePresenterOutputPort presenter,
+                                           SecurityOutputPort securityOps,
+                                           PersistenceGatewayOutputPort gatewayOps) {
+        return new WelcomeUseCase(presenter, securityOps, gatewayOps);
     }
 
     @Bean

@@ -18,6 +18,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
  */
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
@@ -29,6 +30,7 @@ import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayO
 import com.github.cargoclean.core.port.operation.persistence.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
@@ -232,6 +234,19 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         catch (Exception e){
             throw new PersistenceOperationError("Error when saving location %s"
                     .formatted(location.getUnlocode()), e);
+        }
+    }
+
+    @Override
+    public List<CargoInfo> allCargoes() {
+
+        try {
+            List<CargoInfoRow> rows = queryTemplate.query(CargoInfoRow.SQL,
+                    new BeanPropertyRowMapper<>(CargoInfoRow.class));
+
+            return rows.stream().map(dbMapper::convert).toList();
+        } catch (DataAccessException e) {
+            throw new PersistenceOperationError("Error when querying for information about all cargoes", e);
         }
     }
 

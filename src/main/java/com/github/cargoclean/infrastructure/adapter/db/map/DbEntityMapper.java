@@ -1,12 +1,14 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
@@ -36,4 +38,5 @@ public interface DbEntityMapper {
 
     HandlingEventEntity convert(HandlingEvent handlingEvent);
 
+    CargoInfo convert(CargoInfoRow cargoInfoRow);
 }

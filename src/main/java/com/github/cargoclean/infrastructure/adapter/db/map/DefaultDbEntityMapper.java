@@ -1,5 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.db.map;
 
+import com.github.cargoclean.core.GenericCargoError;
+import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
@@ -12,6 +14,7 @@ import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverter
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 /*
     References:
@@ -66,6 +69,26 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract HandlingActivityDbEntity map(HandlingActivity handlingActivity);
 
+    @Mapping(target = "routed", source = "routingStatus", qualifiedByName = "convertRoutingStatusStringToBoolean")
+    abstract CargoInfo map(CargoInfoRow cargoInfoRow);
+
+    @Named("convertRoutingStatusStringToBoolean")
+    protected boolean convertRoutingStatusStringToBoolean(String routingStatus){
+        if (routingStatus == null){
+            // should not happen
+            throw new GenericCargoError("Routing status is null");
+        }
+
+        final RoutingStatus status;
+        try {
+            status = RoutingStatus.valueOf(routingStatus);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDomainObjectError("Cannot determine routing status from %s".formatted(routingStatus), e);
+        }
+
+        return status == RoutingStatus.ROUTED;
+
+    }
     @IgnoreForMapping
     @Override
     public Location convert(LocationDbEntity locationDbEntity) {
@@ -130,5 +153,11 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Override
     public HandlingEventEntity convert(HandlingEvent handlingEvent) {
         return map(handlingEvent);
+    }
+
+    @IgnoreForMapping
+    @Override
+    public CargoInfo convert(CargoInfoRow cargoInfoRow) {
+        return map(cargoInfoRow);
     }
 }
