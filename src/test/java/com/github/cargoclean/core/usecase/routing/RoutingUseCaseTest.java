@@ -78,6 +78,9 @@ public class RoutingUseCaseTest {
                         UtcDateTime.of("15-07-2022"),
                         UtcDateTime.of("09-08-2022")));
 
+        assertThat(cargo.isRouted()).isTrue();
+        assertThat(cargo.getDelivery().getEta()).isNotNull();
+
     }
 
     @Test
