@@ -73,9 +73,6 @@ public class HandlingController extends AbstractRestController {
         // register new handling event
         useCase().recordHandlingEvent(voyageNumber, location, cargoId, completionTime, type);
 
-        // we are updating cargo's delivery synchronously
-        useCase().updateDeliveryAfterHandlingActivity(cargoId);
-
     }
 
     private HandlingInputPort useCase() {

@@ -11,6 +11,7 @@ package com.github.cargoclean.infrastructure.config;
  */
 
 
+import com.github.cargoclean.core.port.operation.events.EventDispatcherOutputPort;
 import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
@@ -127,8 +128,9 @@ public class AppConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
                                              SecurityOutputPort securityOps,
-                                             PersistenceGatewayOutputPort gatewayOps) {
-        return new HandlingUseCase(presenter, securityOps, gatewayOps);
+                                             PersistenceGatewayOutputPort gatewayOps,
+                                             EventDispatcherOutputPort eventsOps) {
+        return new HandlingUseCase(presenter, securityOps, gatewayOps, eventsOps);
     }
 
 

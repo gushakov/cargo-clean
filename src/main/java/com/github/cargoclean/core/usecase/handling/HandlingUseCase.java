@@ -11,6 +11,7 @@ import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
+import com.github.cargoclean.core.port.operation.events.EventDispatcherOutputPort;
 import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
@@ -28,6 +29,8 @@ public class HandlingUseCase implements HandlingInputPort {
     private final SecurityOutputPort securityOps;
 
     private final PersistenceGatewayOutputPort gatewayOps;
+
+    private final EventDispatcherOutputPort eventsOps;
 
     @Transactional
     @Override
@@ -73,6 +76,9 @@ public class HandlingUseCase implements HandlingInputPort {
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
+            // sent domain event signaling that a new handling event was recorded for the cargo
+            eventsOps.dispatch(handlingEvent);
+
         } catch (GenericCargoError e) {
             gatewayOps.rollback();
             presenter.presentError(e);
@@ -88,7 +94,11 @@ public class HandlingUseCase implements HandlingInputPort {
 
         try {
 
-            securityOps.assertThatUserIsManager();
+            /*
+                Update 1.7:
+                This use case will be executed by the system from the event handling adapter,
+                so we do not need to assert security.
+             */
 
             TrackingId trackingId = TrackingId.of(cargoIdStr);
 
