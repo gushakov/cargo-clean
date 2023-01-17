@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.handling;
  */
 
 
+import com.github.cargoclean.core.model.CargoEvent;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -27,7 +28,7 @@ import static com.github.cargoclean.core.model.Assert.notNull;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class HandlingEvent {
+public class HandlingEvent implements CargoEvent {
 
     /*
         Consider handling events as equal if they are for the same cargo (tracking ID), and they happened
