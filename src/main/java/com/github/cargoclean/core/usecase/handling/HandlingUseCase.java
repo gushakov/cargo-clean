@@ -76,7 +76,18 @@ public class HandlingUseCase implements HandlingInputPort {
             // record handling event
             gatewayOps.recordHandlingEvent(handlingEvent);
 
-            // sent domain event signaling that a new handling event was recorded for the cargo
+            /*
+                Point of interest:
+                -----------------
+                We a dispatching "HandlingEvent" as a domain event to be
+                processed by the primary adapter which will execute
+                (another) use case for updating delivery progress for
+                the cargo. Note that, in the current implementation,
+                event dispatch and event handling are performed synchronously
+                in the same thread.
+             */
+
+            // dispatch a domain event signaling that a new handling event was recorded for the cargo
             eventsOps.dispatch(handlingEvent);
 
         } catch (GenericCargoError e) {
@@ -95,7 +106,8 @@ public class HandlingUseCase implements HandlingInputPort {
         try {
 
             /*
-                Update 1.7:
+                Point of interest:
+                -----------------
                 This use case will be executed by the system from the event handling adapter,
                 so we do not need to assert security.
              */

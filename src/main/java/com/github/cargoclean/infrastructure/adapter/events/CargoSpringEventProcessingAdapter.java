@@ -16,6 +16,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
     1.  Baeldung, Spring Events: https://www.baeldung.com/spring-events
  */
+
+/**
+ * Primary adapter processing domain events.
+ */
 @Service
 @Slf4j
 public class CargoSpringEventProcessingAdapter {
@@ -25,6 +29,15 @@ public class CargoSpringEventProcessingAdapter {
     public CargoSpringEventProcessingAdapter(ApplicationContext appContext) {
         this.appContext = appContext;
     }
+
+    /*
+        Point of interest:
+        -----------------
+        Event listener for domain events needs to be aware of the transaction.
+        If a use case firing the event results in an error during persistence
+        of the modified aggregates, we do not want to perform any event
+        handling logic.
+     */
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleCargoEvent(CargoEvent event){

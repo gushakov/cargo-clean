@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
     1.  Baeldung, Spring Events: https://www.baeldung.com/spring-events
  */
 
+/**
+ * Domain events dispatcher working with Spring's {@link ApplicationEventPublisher}.
+ */
 @Service
 public class CargoSpringEventDispatcher implements EventDispatcherOutputPort {
 
