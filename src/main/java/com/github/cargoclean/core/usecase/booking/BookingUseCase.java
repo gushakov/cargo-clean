@@ -76,8 +76,8 @@ public class BookingUseCase implements BookingInputPort {
         Point of interest:
         -----------------
         Notice "javax.transaction.Transactional" demarcation
-        on the entire method (the use case). This is a principle
-        deviation of Clean DDD from the classical DDD approach
+        on the entire method (the use case). This is one of principal
+        deviations of Clean DDD from the classical DDD approach
         where transactional boundary is around each aggregate.
         This makes each use case operation a consistent one,
         but requires some through design with respect to
@@ -95,7 +95,7 @@ public class BookingUseCase implements BookingInputPort {
             /*
                 Point of interest:
                 -----------------
-                Out value objects and entities will throw "InvalidDomainObjectError"
+                Our value objects and entities will throw "InvalidDomainObjectError"
                 for any invalid input during construction. This is a part of our
                 validation strategy where validation is handled by the model itself.
              */
