@@ -40,9 +40,9 @@ public class CargoSpringEventProcessingAdapter {
      */
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleCargoEvent(CargoEvent event){
+    public void handleCargoEvent(CargoEvent event) {
 
-        if (event instanceof HandlingEvent handlingEvent){
+        if (event instanceof HandlingEvent handlingEvent) {
             TrackingId trackingId = handlingEvent.getCargoId();
             log.debug("[Event] Handling event for cargo {} was recorded, will update delivery history.", trackingId);
             HandlingUseCase useCase = appContext.getBean(HandlingUseCase.class);

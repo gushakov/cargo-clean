@@ -29,7 +29,7 @@ public final class CargoSecurityAdapter implements SecurityOutputPort {
     @Override
     public Optional<String> username() {
         try {
-            return Optional.of(((UserDetails)getAuthentication().getPrincipal()).getUsername());
+            return Optional.of(((UserDetails) getAuthentication().getPrincipal()).getUsername());
         } catch (Exception e) {
             return Optional.empty();
         }

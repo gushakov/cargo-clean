@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.Location;
@@ -47,15 +46,16 @@ public class BookingUseCase implements BookingInputPort {
 
             locations = gatewayOps.allLocations();
 
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
 
             /*
                 Point of interest:
                 -----------------
-                As a rule of thumb, we handle only "GenericCargoError"
-                or its subclasses in use cases. All other runtime errors
-                should be allowed to bubble up so that we can readily
-                identify them during the development phase.
+                Update 14.04.2024: We catch ALL exceptions here. We
+                differentiate the presentation for known exceptions
+                from "GenericCargoError" hierarchy from the unknown
+                (runtime) exceptions by calling specific presentation
+                methods, if needed.
                 Also, we handle specific errors here only if it requires
                 interacting with output ports (secondary adapters). If
                 we only need to differentiate presentation, depending on
@@ -130,7 +130,7 @@ public class BookingUseCase implements BookingInputPort {
             log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
 
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
 
             /*
                 Point of interest:
@@ -146,6 +146,15 @@ public class BookingUseCase implements BookingInputPort {
             return;
         }
 
+        /*
+            Point of interest:
+            -----------------
+            Present result of successful execution of the use case
+            outside transactional boundary. If something goes wrong
+            with presentation, we still have our new "Cargo" booked.
+            Note that this also requires that the call to the presentation
+            method below does not result in any exception either.
+        */
         presenter.presentResultOfNewCargoBooking(trackingId);
     }
 }

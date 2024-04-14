@@ -33,8 +33,8 @@ public class EditLocationsPresenter extends AbstractWebPresenter implements Edit
 
     @Override
     public void presentResultOfSuccessfulRegistrationOfNewLocation(Location location) {
-      log.debug("[Edit Locations] Successfully registered new location: %s"
-              .formatted(location.toString()));
-      redirect("/", Map.of());
+        log.debug("[Edit Locations] Successfully registered new location: %s"
+                .formatted(location.toString()));
+        redirect("/", Map.of());
     }
 }

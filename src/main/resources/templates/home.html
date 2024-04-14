@@ -63,7 +63,8 @@
             <!--/*@thymesVar id="cargoes" type="java.util.List<com.github.cargoclean.core.model.cargo.CargoInfo>"*/-->
             <tr th:each="cargoInfo: ${cargoes}">
                 <td>
-                    <a th:href="@{/showCargoDetails(trackingId=${cargoInfo.trackingId})}" th:text="${cargoInfo.trackingId}"></a>
+                    <a th:href="@{/showCargoDetails(trackingId=${cargoInfo.trackingId})}"
+                       th:text="${cargoInfo.trackingId}"></a>
                 </td>
                 <td th:text="${cargoInfo.origin}"></td>
                 <td th:text="${cargoInfo.destination}"></td>

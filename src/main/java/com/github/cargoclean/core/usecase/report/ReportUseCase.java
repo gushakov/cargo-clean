@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.report;
 
-import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
@@ -25,7 +24,7 @@ public class ReportUseCase implements ReportInputPort {
             // just query the gateway
             expectedArrivals = gatewayOps.queryForExpectedArrivals();
 
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
             presenter.presentError(e);
             return;
         }
