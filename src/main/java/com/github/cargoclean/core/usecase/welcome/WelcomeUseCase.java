@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.welcome;
 
-import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
@@ -28,7 +27,7 @@ public class WelcomeUseCase implements WelcomeInputPort {
 
             cargoes = gatewayOps.allCargoes();
 
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
             presenter.presentError(e);
             return;
         }

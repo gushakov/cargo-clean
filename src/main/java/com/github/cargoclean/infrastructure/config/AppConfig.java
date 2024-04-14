@@ -94,9 +94,9 @@ public class AppConfig {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public BookingInputPort newCargoBookingUseCase(BookingPresenterOutputPort presenter,
-                                                   SecurityOutputPort securityOps,
-                                                   PersistenceGatewayOutputPort gatewayOps) {
+    public BookingInputPort bookingUseCase(BookingPresenterOutputPort presenter,
+                                           SecurityOutputPort securityOps,
+                                           PersistenceGatewayOutputPort gatewayOps) {
         return new BookingUseCase(presenter, securityOps, gatewayOps);
     }
 

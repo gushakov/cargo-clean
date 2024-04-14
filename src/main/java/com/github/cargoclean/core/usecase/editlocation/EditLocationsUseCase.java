@@ -1,6 +1,5 @@
 package com.github.cargoclean.core.usecase.editlocation;
 
-import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.location.DuplicateLocationError;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.Region;
@@ -27,7 +26,7 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
         try {
             // only manager can add locations
             securityOps.assertThatUserIsManager();
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
             presenter.presentError(e);
             return;
         }
@@ -60,9 +59,9 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
             }
 
             // save new Location
-           savedLocation = gatewayOps.saveLocation(location);
+            savedLocation = gatewayOps.saveLocation(location);
 
-        } catch (GenericCargoError e) {
+        } catch (Exception e) {
             gatewayOps.rollback();
             presenter.presentError(e);
             return;

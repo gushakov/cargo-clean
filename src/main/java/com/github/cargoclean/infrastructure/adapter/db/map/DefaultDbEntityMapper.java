@@ -73,8 +73,8 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     abstract CargoInfo map(CargoInfoRow cargoInfoRow);
 
     @Named("convertRoutingStatusStringToBoolean")
-    protected boolean convertRoutingStatusStringToBoolean(String routingStatus){
-        if (routingStatus == null){
+    protected boolean convertRoutingStatusStringToBoolean(String routingStatus) {
+        if (routingStatus == null) {
             // should not happen
             throw new GenericCargoError("Routing status is null");
         }
@@ -89,6 +89,7 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
         return status == RoutingStatus.ROUTED;
 
     }
+
     @IgnoreForMapping
     @Override
     public Location convert(LocationDbEntity locationDbEntity) {
