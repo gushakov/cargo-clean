@@ -1,4 +1,4 @@
-package com.github.cargoclean;
+package com.github.cargoclean.infrastructure;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

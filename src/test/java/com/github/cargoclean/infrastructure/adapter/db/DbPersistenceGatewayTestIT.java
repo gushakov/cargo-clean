@@ -1,6 +1,6 @@
 package com.github.cargoclean.infrastructure.adapter.db;
 
-import com.github.cargoclean.CargoCleanApplication;
+import com.github.cargoclean.infrastructure.CargoCleanApplication;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
