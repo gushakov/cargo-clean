@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.routing;
+package com.github.cargoclean.core.port.routing;
 /*
     Notice on COPYRIGHT:
     -------------------

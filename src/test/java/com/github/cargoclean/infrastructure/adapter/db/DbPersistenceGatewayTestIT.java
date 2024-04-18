@@ -1,6 +1,5 @@
 package com.github.cargoclean.infrastructure.adapter.db;
 
-import com.github.cargoclean.infrastructure.CargoCleanApplication;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
@@ -14,6 +13,7 @@ import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
+import com.github.cargoclean.infrastructure.CargoCleanApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

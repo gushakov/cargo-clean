@@ -4,7 +4,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.LegDto;
 import com.github.cargoclean.core.model.cargo.RouteDto;
-import com.github.cargoclean.core.port.presenter.routing.RoutingPresenterOutputPort;
+import com.github.cargoclean.core.usecase.routing.RoutingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;

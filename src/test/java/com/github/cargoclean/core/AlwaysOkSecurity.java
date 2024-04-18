@@ -1,6 +1,6 @@
 package com.github.cargoclean.core;
 
-import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.security.SecurityOutputPort;
 
 import java.util.Optional;
 

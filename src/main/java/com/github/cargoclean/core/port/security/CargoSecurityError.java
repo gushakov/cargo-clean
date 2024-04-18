@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.security;
+package com.github.cargoclean.core.port.security;
 
 
 import com.github.cargoclean.core.GenericCargoError;

@@ -13,7 +13,7 @@ package com.github.cargoclean.infrastructure.adapter.externalrouting;
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
 import com.github.cargoclean.core.model.cargo.TrackingId;
-import com.github.cargoclean.core.port.operation.routing.RoutingServiceOutputPort;
+import com.github.cargoclean.core.port.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.map.TransitPathMapper;
 import com.pathfinder.api.GraphTraversalService;
 import com.pathfinder.api.TransitPath;

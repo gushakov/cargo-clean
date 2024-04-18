@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.security;
+package com.github.cargoclean.core.port.security;
 
 /**
  * Error thrown if the authenticated user does not have a permission to route cargo

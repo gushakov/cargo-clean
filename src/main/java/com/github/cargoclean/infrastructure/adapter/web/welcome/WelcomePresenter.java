@@ -1,7 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.welcome;
 
 import com.github.cargoclean.core.model.cargo.CargoInfo;
-import com.github.cargoclean.core.port.presenter.welcome.WelcomePresenterOutputPort;
+import com.github.cargoclean.core.usecase.welcome.WelcomePresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import lombok.extern.slf4j.Slf4j;

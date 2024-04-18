@@ -3,7 +3,7 @@ package com.github.cargoclean.infrastructure.adapter.web.handling;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
-import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
+import com.github.cargoclean.core.usecase.handling.HandlingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractRestPresenter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

@@ -1,8 +1,8 @@
-package com.github.cargoclean.core.port.presenter.routing;
+package com.github.cargoclean.core.usecase.routing;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.Itinerary;
-import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 
 import java.util.List;
 

@@ -4,9 +4,8 @@ import com.github.cargoclean.core.model.location.DuplicateLocationError;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
-import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
-import com.github.cargoclean.core.port.presenter.editlocations.EditLocationsPresenterOutputPort;
+import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import lombok.RequiredArgsConstructor;
 
 import javax.transaction.Transactional;

@@ -1,9 +1,8 @@
 package com.github.cargoclean.core.usecase.welcome;
 
 import com.github.cargoclean.core.model.cargo.CargoInfo;
-import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
-import com.github.cargoclean.core.port.presenter.welcome.WelcomePresenterOutputPort;
+import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.persistence;
+package com.github.cargoclean.core.port.persistence;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;

@@ -10,10 +10,9 @@ import com.github.cargoclean.core.model.handling.HandlingEventType;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
-import com.github.cargoclean.core.port.operation.events.EventDispatcherOutputPort;
-import com.github.cargoclean.core.port.operation.persistence.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
-import com.github.cargoclean.core.port.presenter.handling.HandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.events.EventDispatcherOutputPort;
+import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import lombok.RequiredArgsConstructor;
 
 import javax.transaction.Transactional;

@@ -1,7 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.security;
 
-import com.github.cargoclean.core.port.operation.security.AuthenticationRequiredError;
-import com.github.cargoclean.core.port.operation.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.security.AuthenticationRequiredError;
+import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

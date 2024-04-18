@@ -22,7 +22,7 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
-import com.github.cargoclean.core.port.presenter.tracking.TrackingPresenterOutputPort;
+import com.github.cargoclean.core.usecase.tracking.TrackingPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;

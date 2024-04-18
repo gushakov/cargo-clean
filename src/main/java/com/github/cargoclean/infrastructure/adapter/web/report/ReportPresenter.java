@@ -1,7 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.report;
 
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
-import com.github.cargoclean.core.port.presenter.report.ReportPresenterOutputPort;
+import com.github.cargoclean.core.usecase.report.ReportPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import org.springframework.context.annotation.Scope;

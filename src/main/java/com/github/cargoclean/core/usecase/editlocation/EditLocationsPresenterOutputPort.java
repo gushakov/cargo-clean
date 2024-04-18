@@ -1,7 +1,7 @@
-package com.github.cargoclean.core.port.presenter.editlocations;
+package com.github.cargoclean.core.usecase.editlocation;
 
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 
 public interface EditLocationsPresenterOutputPort extends ErrorHandlingPresenterOutputPort {
 

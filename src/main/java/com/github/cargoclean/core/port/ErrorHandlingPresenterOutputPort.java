@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.error;
+package com.github.cargoclean.core.port;
 
 public interface ErrorHandlingPresenterOutputPort {
     void presentError(Exception e);

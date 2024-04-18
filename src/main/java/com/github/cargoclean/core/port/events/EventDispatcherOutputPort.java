@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.events;
+package com.github.cargoclean.core.port.events;
 
 import com.github.cargoclean.core.model.CargoEvent;
 

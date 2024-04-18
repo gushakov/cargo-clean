@@ -7,7 +7,8 @@ But using slightly different approach. I'll try to use ideas and principles behi
 - Clean architecture
 - Use case driven development
 
-Here is [an article on Medium](https://medium.com/@gushakov/revisiting-cargo-tracking-application-using-clean-ddd-4ed16c0e6ae1) 
+Here
+is [an article on Medium](https://medium.com/@gushakov/revisiting-cargo-tracking-application-using-clean-ddd-4ed16c0e6ae1)
 which will comment on the interesting points and decisions behind this implementation.
 
 ### Copyright notice
@@ -15,7 +16,8 @@ which will comment on the interesting points and decisions behind this implement
 This application is based heavily on the original [DDDSample](https://github.com/citerus/dddsample-core) application
 by [Citerus AB](http://www.citerus.se/) and [Domain Language](https://www.domainlanguage.com/).
 
-The original work is distributed under the MIT licence. I've included [the original licence](./original-license.txt) with 
+The original work is distributed under the MIT licence. I've included [the original licence](./original-license.txt)
+with
 this project.
 
 Wherever possible, I'll try to mention the original code which was consulted for any specific implementation point.
@@ -23,12 +25,13 @@ Wherever possible, I'll try to mention the original code which was consulted for
 ### How to run
 
 This application is a standard Spring Boot application. There is also a Docker compose file with a Postgres database,
-which should be started prior to the execution of the application. You may need to start the database for some 
+which should be started prior to the execution of the application. You may need to start the database for some
 integration tests as well.
 
 ### Exploring DDDSample DB
 
-To be able to explore the relational model used by DDDSample, we can add an embedded web server to the original application.
+To be able to explore the relational model used by DDDSample, we can add an embedded web server to the original
+application.
 There is an example configuration available here: [HsqlDbServerConfig.java](./etc/db/HsqlDbServerConfig.java).
 
 To launch the server, you need `hsqldb-2.4.0.jar` (available from Maven central):
@@ -41,5 +44,5 @@ or on Windows
 
 > java -cp %HOME%/.m2/repository/org/hsqldb/hsqldb/2.4.0/hsqldb-2.4.0.jar org.hsqldb.util.DatabaseManagerSwing
 
-This should start the UI of the DB viewer. The type of connection to use is "HSQL Database Engine WebServer" and JDBC 
+This should start the UI of the DB viewer. The type of connection to use is "HSQL Database Engine WebServer" and JDBC
 URL to use is `jdbc:hsqldb:hsql://localhost/dddsample`.

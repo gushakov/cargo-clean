@@ -1,7 +1,7 @@
-package com.github.cargoclean.core.port.presenter.welcome;
+package com.github.cargoclean.core.usecase.welcome;
 
 import com.github.cargoclean.core.model.cargo.CargoInfo;
-import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 
 import java.util.List;
 

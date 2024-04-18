@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.port.operation.security;
+package com.github.cargoclean.core.port.security;
 
 import com.github.cargoclean.core.model.cargo.Itinerary;
 import com.github.cargoclean.core.model.cargo.Leg;

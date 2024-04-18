@@ -1,7 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.events;
 
 import com.github.cargoclean.core.model.CargoEvent;
-import com.github.cargoclean.core.port.operation.events.EventDispatcherOutputPort;
+import com.github.cargoclean.core.port.events.EventDispatcherOutputPort;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 

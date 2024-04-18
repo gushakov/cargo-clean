@@ -1,8 +1,8 @@
-package com.github.cargoclean.core.port.presenter.booking;
+package com.github.cargoclean.core.usecase.booking;
 
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.port.error.ErrorHandlingPresenterOutputPort;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 
 import java.util.List;
 

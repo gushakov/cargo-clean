@@ -1,7 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.editlocations;
 
 import com.github.cargoclean.core.model.location.Location;
-import com.github.cargoclean.core.port.presenter.editlocations.EditLocationsPresenterOutputPort;
+import com.github.cargoclean.core.usecase.editlocation.EditLocationsPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
