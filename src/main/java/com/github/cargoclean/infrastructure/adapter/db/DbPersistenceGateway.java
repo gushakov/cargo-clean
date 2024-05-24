@@ -15,6 +15,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
     ----------
 
     1.  Hikari CP, connection timeout: https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby
+    2.  Spring, TransactionTemplate: source code and JavaDoc
  */
 
 import com.github.cargoclean.core.model.cargo.Cargo;
@@ -42,8 +43,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,17 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private final NamedParameterJdbcOperations queryTemplate;
 
     private final DbEntityMapper dbMapper;
+
+    private final TransactionTemplate transactionTemplate;
+
+    @Override
+    public void doInTransaction(Runnable runnable) {
+        try {
+            transactionTemplate.executeWithoutResult(transactionStatus -> runnable.run());
+        } catch (TransactionSystemException | Error e) {
+            throw new PersistenceOperationError("Error while executing transaction", e);
+        }
+    }
 
     @Override
     public TrackingId nextTrackingId() {
@@ -188,17 +200,6 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain handling history for cargo with tracking ID: %s"
                     .formatted(cargoId), e);
-        }
-    }
-
-    @Override
-    public void rollback() {
-        // roll back any transaction, if needed
-        // code from: https://stackoverflow.com/a/23502214
-        try {
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-        } catch (NoTransactionException e) {
-            // do nothing if not running in a transactional context
         }
     }
 

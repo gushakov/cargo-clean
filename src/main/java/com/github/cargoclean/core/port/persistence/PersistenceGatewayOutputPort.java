@@ -18,6 +18,18 @@ import java.util.stream.Collectors;
 
 public interface PersistenceGatewayOutputPort {
 
+    /**
+     * Executes provided {@linkplain Runnable} in a transaction configured
+     * with default propagation strategy and isolation level.
+     *
+     * @param runnable runnable to execute
+     * @throws PersistenceOperationError if there was a problem setting up or executing
+     *                                   a transaction, all other {@linkplain RuntimeException}s
+     *                                   which may be thrown by the {@code runnable} itself are
+     *                                   propagated to the caller
+     */
+    void doInTransaction(Runnable runnable);
+
     TrackingId nextTrackingId();
 
     EventId nextEventId();
@@ -65,8 +77,6 @@ public interface PersistenceGatewayOutputPort {
     void recordHandlingEvent(HandlingEvent event);
 
     HandlingHistory handlingHistory(TrackingId cargoId);
-
-    void rollback();
 
     default Map<UnLocode, Region> allRegionsMap() {
         return allLocations().stream()

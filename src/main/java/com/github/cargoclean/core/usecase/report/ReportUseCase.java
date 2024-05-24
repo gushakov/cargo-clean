@@ -16,19 +16,16 @@ public class ReportUseCase implements ReportInputPort {
     @Override
     public void reportExpectedArrivals() {
 
-        final List<ExpectedArrivals> expectedArrivals;
-
         try {
+            final List<ExpectedArrivals> expectedArrivals;
 
             // just query the gateway
             expectedArrivals = gatewayOps.queryForExpectedArrivals();
 
+            presenter.presentExpectedArrivals(expectedArrivals);
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
-
-        presenter.presentExpectedArrivals(expectedArrivals);
 
     }
 }
