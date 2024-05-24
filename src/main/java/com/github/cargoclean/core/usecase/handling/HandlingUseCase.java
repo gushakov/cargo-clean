@@ -15,7 +15,6 @@ import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import lombok.RequiredArgsConstructor;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -30,18 +29,17 @@ public class HandlingUseCase implements HandlingInputPort {
 
     private final EventDispatcherOutputPort eventsOps;
 
-    @Transactional
     @Override
     public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr,
                                     Instant completionTime, HandlingEventType type) {
 
-        TrackingId cargoId;
-        HandlingEvent handlingEvent;
-        EventId eventId;
-        VoyageNumber voyageNumber;
-        UnLocode location;
-        UtcDateTime completionDateTime;
         try {
+            TrackingId cargoId;
+            HandlingEvent handlingEvent;
+            EventId eventId;
+            VoyageNumber voyageNumber;
+            UnLocode location;
+            UtcDateTime completionDateTime;
 
             // make sure user is a manager
             securityOps.assertThatUserIsManager();
@@ -88,16 +86,14 @@ public class HandlingUseCase implements HandlingInputPort {
             // dispatch a domain event signaling that a new handling event was recorded for the cargo
             eventsOps.dispatch(handlingEvent);
 
+            presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
+
         } catch (Exception e) {
-            gatewayOps.rollback();
             presenter.presentError(e);
-            return;
         }
 
-        presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
     }
 
-    @Transactional
     @Override
     public void updateDeliveryAfterHandlingActivity(String cargoIdStr) {
 
@@ -124,7 +120,6 @@ public class HandlingUseCase implements HandlingInputPort {
             // save cargo aggregate
             gatewayOps.saveCargo(updatedCargo);
         } catch (Exception e) {
-            gatewayOps.rollback();
             presenter.presentError(e);
         }
     }

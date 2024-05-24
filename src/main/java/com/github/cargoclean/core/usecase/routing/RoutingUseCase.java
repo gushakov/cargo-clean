@@ -26,25 +26,23 @@ public class RoutingUseCase implements RoutingInputPort {
 
     @Override
     public void showCargo(String cargoTrackingId) {
-        final Cargo cargo;
         try {
+            final Cargo cargo;
             securityOps.assertThatUserIsAgent();
             cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
+            presenter.presentCargoDetails(cargo);
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
-
-        presenter.presentCargoDetails(cargo);
 
     }
 
     @Override
     public void selectItinerary(String cargoTrackingId) {
-        Cargo cargo;
-        List<Itinerary> itineraries;
-        TrackingId trackingId;
         try {
+            Cargo cargo;
+            List<Itinerary> itineraries;
+            TrackingId trackingId;
 
             securityOps.assertThatUserIsAgent();
 
@@ -63,12 +61,11 @@ public class RoutingUseCase implements RoutingInputPort {
             // get candidate itineraries from external service
             itineraries = routingServiceOps.fetchRoutesForSpecification(trackingId, routeSpecification);
 
+            presenter.presentCandidateRoutes(cargo, itineraries);
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
 
-        presenter.presentCandidateRoutes(cargo, itineraries);
     }
 
     @Transactional
@@ -115,13 +112,10 @@ public class RoutingUseCase implements RoutingInputPort {
             // persist updated cargo
             gatewayOps.saveCargo(updatedCargo);
 
+            presenter.presentResultOfAssigningRouteToCargo(trackingId);
         } catch (Exception e) {
-            gatewayOps.rollback();
             presenter.presentError(e);
-            return;
         }
-
-        presenter.presentResultOfAssigningRouteToCargo(trackingId);
 
     }
 }

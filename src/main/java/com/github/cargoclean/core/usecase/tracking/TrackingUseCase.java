@@ -20,7 +20,6 @@ public class TrackingUseCase implements TrackingInputPort {
 
     private final PersistenceGatewayOutputPort gatewayOps;
 
-
     @Override
     public void initializeCargoTrackingView() {
         try {
@@ -34,11 +33,11 @@ public class TrackingUseCase implements TrackingInputPort {
 
     @Override
     public void trackCargo(String cargoTrackingId) {
-        TrackingId trackingId;
-        Cargo cargo;
-        HandlingHistory handlingHistory;
-        Map<UnLocode, Location> allLocationsMap;
         try {
+            TrackingId trackingId;
+            Cargo cargo;
+            HandlingHistory handlingHistory;
+            Map<UnLocode, Location> allLocationsMap;
             securityOps.assertThatUserIsAgent();
 
             trackingId = TrackingId.of(cargoTrackingId);
@@ -64,11 +63,10 @@ public class TrackingUseCase implements TrackingInputPort {
             // load all locations and make a map of UnLocode to Locations
             allLocationsMap = gatewayOps.allLocationsMap();
 
+            presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocationsMap);
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
 
-        presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocationsMap);
     }
 }

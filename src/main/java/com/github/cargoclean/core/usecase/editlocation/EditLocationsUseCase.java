@@ -8,8 +8,6 @@ import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import lombok.RequiredArgsConstructor;
 
-import javax.transaction.Transactional;
-
 @RequiredArgsConstructor
 public class EditLocationsUseCase implements EditLocationsInputPort {
 
@@ -23,22 +21,22 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
     public void prepareAddNewLocationView() {
 
         try {
+
             // only manager can add locations
             securityOps.assertThatUserIsManager();
+
+            presenter.presentAddNewLocationForm();
+
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
-
-        presenter.presentAddNewLocationForm();
 
     }
 
     @Override
-    @Transactional
     public void registerNewLocation(String unLocodeText, String locationName, String regionName) {
-        Location savedLocation;
         try {
+            Location savedLocation;
             // only manager can add locations
             securityOps.assertThatUserIsManager();
 
@@ -60,12 +58,10 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
             // save new Location
             savedLocation = gatewayOps.saveLocation(location);
 
+            presenter.presentResultOfSuccessfulRegistrationOfNewLocation(savedLocation);
         } catch (Exception e) {
-            gatewayOps.rollback();
             presenter.presentError(e);
-            return;
         }
 
-        presenter.presentResultOfSuccessfulRegistrationOfNewLocation(savedLocation);
     }
 }

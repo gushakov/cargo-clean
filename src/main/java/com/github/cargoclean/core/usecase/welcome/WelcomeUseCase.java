@@ -18,19 +18,18 @@ public class WelcomeUseCase implements WelcomeInputPort {
 
     @Override
     public void welcome() {
-        final String username;
-        final List<CargoInfo> cargoes;
         try {
+            final String username;
+            final List<CargoInfo> cargoes;
 
             username = securityOps.username().orElse(null);
 
             cargoes = gatewayOps.allCargoes();
 
+            presenter.presentHomePage(username, cargoes);
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
 
-        presenter.presentHomePage(username, cargoes);
     }
 }
