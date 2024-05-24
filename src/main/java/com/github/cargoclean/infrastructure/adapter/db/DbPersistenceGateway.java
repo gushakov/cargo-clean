@@ -44,6 +44,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
@@ -107,6 +108,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         return EventId.of(System.currentTimeMillis());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Location> allLocations() {
         try {
@@ -117,6 +119,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
         try {
@@ -127,6 +130,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional
     @Override
     public Cargo saveCargo(Cargo cargoToSave) {
 
@@ -145,6 +149,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Cargo obtainCargoByTrackingId(TrackingId trackingId) {
         try {
@@ -157,6 +162,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     }
 
+    @Transactional
     @Override
     public void deleteCargo(TrackingId trackingId) {
         try {
@@ -167,6 +173,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ExpectedArrivals> queryForExpectedArrivals() {
 
@@ -180,6 +187,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional
     @Override
     public void recordHandlingEvent(HandlingEvent event) {
         try {
@@ -190,6 +198,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public HandlingHistory handlingHistory(TrackingId cargoId) {
         try {
@@ -203,6 +212,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean locationExists(Location location) {
 
@@ -218,6 +228,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     }
 
+    @Transactional
     @Override
     public Location saveLocation(Location location) {
         try {
@@ -229,6 +240,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<CargoInfo> allCargoes() {
 
