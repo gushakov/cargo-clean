@@ -6,10 +6,12 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -20,33 +22,37 @@ import java.util.List;
     1.  Convert Date to ZonedDateTime: https://stackoverflow.com/questions/25376242/java8-java-util-date-conversion-to-java-time-zoneddatetime
  */
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
 public class BookingUseCase implements BookingInputPort {
 
     // here is our Presenter
-    private final BookingPresenterOutputPort presenter;
+    BookingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps;
+    SecurityOutputPort securityOps;
 
     // here is our gateway
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void prepareNewCargoBooking() {
 
-        final List<Location> locations;
         try {
+            // start read-only transaction
+            txOps.doInTransaction(true, () -> {
+                // check if the user has the role of agent
+                securityOps.assertThatUserIsAgent();
 
-            // check if the user has the role of agent
-            securityOps.assertThatUserIsAgent();
+                // retrieve all locations from the gateway
+                final List<Location> locations = gatewayOps.allLocations();
 
-            // retrieve all locations from the gateway
+                // if everything is OK, present the list of locations
+                txOps.doAfterCommit(() -> presenter.presentNewCargoBookingView(locations));
 
-            locations = gatewayOps.allLocations();
-
-            // if everything is OK, present the list of locations
-            presenter.presentNewCargoBookingView(locations);
+            });
 
         } catch (Exception e) {
 
@@ -74,68 +80,82 @@ public class BookingUseCase implements BookingInputPort {
         Point of interest:
         -----------------
         UPDATE: 24.05.2024
-        We are no longer using "Transactional" annotations around the use cases (methods).
-        Instead, we are creating a transaction around each individual method of the
-        gateway. We also provide a method "doInTransaction()" in the gateway which
-        allows us to control the transactional (consistency) boundary of the code
-        in each use case with more granularity.
+        We are no longer using "javax.transaction.Transactional" annotations around
+        the use cases (methods). Instead, we are creating a transaction around each
+        individual method of the gateway. We also provide a method "doInTransaction()"
+        in the gateway which allows us to control the transactional (consistency)
+        boundary of the code in each use case with more granularity. In particular,
+        with this approach we can call Presenter outside the transactional boundary.
      */
-
-    @Transactional
     @Override
     public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
 
         try {
-            final TrackingId trackingId;
 
-            securityOps.assertThatUserIsAgent();
+            txOps.doInTransaction(() -> {
 
-            /*
-                Point of interest:
-                -----------------
-                Our value objects and entities will throw "InvalidDomainObjectError"
-                for any invalid input during construction. This is a part of our
-                validation strategy where validation is handled by the model itself.
-             */
+                // user must be an agent
+                securityOps.assertThatUserIsAgent();
 
-            UnLocode origin = UnLocode.of(originUnLocode);
-            UnLocode destination = UnLocode.of(destinationUnLocode);
-            UtcDateTime deliveryDeadlineDateTime = UtcDateTime.of(deliveryDeadline);
+                /*
+                    Point of interest:
+                    -----------------
+                    Our value objects and entities will throw "InvalidDomainObjectError"
+                    for any invalid input during construction. This is a part of our
+                    validation strategy where validation is handled by the model itself.
+                 */
 
-            RouteSpecification routeSpecification = RouteSpecification.builder()
-                    .origin(origin)
-                    .destination(destination)
-                    .arrivalDeadline(deliveryDeadlineDateTime)
-                    .build();
+                UnLocode origin = UnLocode.of(originUnLocode);
+                UnLocode destination = UnLocode.of(destinationUnLocode);
+                UtcDateTime deliveryDeadlineDateTime = UtcDateTime.of(deliveryDeadline);
 
-            // we create new Cargo object
+                RouteSpecification routeSpecification = RouteSpecification.builder()
+                        .origin(origin)
+                        .destination(destination)
+                        .arrivalDeadline(deliveryDeadlineDateTime)
+                        .build();
 
-            trackingId = gatewayOps.nextTrackingId();
-            final Cargo cargo = Cargo.builder()
-                    .origin(origin)
-                    .trackingId(trackingId)
-                    .delivery(Delivery.builder()
-                            .transportStatus(TransportStatus.NOT_RECEIVED)
-                            .routingStatus(RoutingStatus.NOT_ROUTED)
-                            .misdirected(false)
-                            .build())
-                    .routeSpecification(routeSpecification)
-                    .build();
+                // we create new Cargo object
 
-            // save Cargo to the database
-            gatewayOps.saveCargo(cargo);
+                final TrackingId trackingId = gatewayOps.nextTrackingId();
+                final Cargo cargo = Cargo.builder()
+                        .origin(origin)
+                        .trackingId(trackingId)
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.NOT_RECEIVED)
+                                .routingStatus(RoutingStatus.NOT_ROUTED)
+                                .misdirected(false)
+                                .build())
+                        .routeSpecification(routeSpecification)
+                        .build();
 
-            log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
+                // save Cargo to the database
+                gatewayOps.saveCargo(cargo);
 
-            /*
-                Point of interest:
-                -----------------
-                Use case is responsible for its own presentation. We are
-                not returning anything to the controller.
-            */
-            presenter.presentResultOfNewCargoBooking(trackingId);
+                log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
+
+                /*
+                    Point of interest:
+                    -----------------
+                    Use case is responsible for its own presentation. We are
+                    not returning anything to the controller. Note that we
+                    are calling the presenter after the commit of the transaction
+                    so that any potential errors in the presentation do not
+                    impact the result of the business operation (transactional
+                    state update) of the use case.
+                */
+                txOps.doAfterCommit(() -> presenter.presentResultOfNewCargoBooking(trackingId));
+
+            });
 
         } catch (Exception e) {
+
+            /*
+                Point of interest:
+                -----------------
+                Call to present any errors is done outside transactional boundary
+                of the use case.
+            */
             presenter.presentError(e);
         }
 

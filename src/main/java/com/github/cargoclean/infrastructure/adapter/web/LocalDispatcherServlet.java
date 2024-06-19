@@ -7,16 +7,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*
-    Notes:
-    -----
-
-    1.  We are overriding the default DispatcherServlet so that we can have
-    access to "render" (protected) method.
-
     References:
     ----------
 
     1.  Access DispatcherServlet: https://stackoverflow.com/questions/68376668/how-to-get-the-dispatcherservlet-from-spring-webapplicationcontext
+ */
+
+
+/*
+    Point of interest:
+    -----------------
+
+    We are overriding the default DispatcherServlet so that we can have
+    access to "render" (protected) method.
  */
 
 public class LocalDispatcherServlet extends DispatcherServlet {

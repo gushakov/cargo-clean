@@ -4,6 +4,7 @@ import com.github.cargoclean.core.port.events.EventDispatcherOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
@@ -42,16 +43,18 @@ public class UseCaseConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public WelcomeInputPort welcomeUseCase(WelcomePresenterOutputPort presenter,
                                            SecurityOutputPort securityOps,
-                                           PersistenceGatewayOutputPort gatewayOps) {
-        return new WelcomeUseCase(presenter, securityOps, gatewayOps);
+                                           PersistenceGatewayOutputPort gatewayOps,
+                                           TransactionOperationsOutputPort txOps) {
+        return new WelcomeUseCase(presenter, securityOps, gatewayOps, txOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public BookingInputPort bookingUseCase(BookingPresenterOutputPort presenter,
                                            SecurityOutputPort securityOps,
-                                           PersistenceGatewayOutputPort gatewayOps) {
-        return new BookingUseCase(presenter, securityOps, gatewayOps);
+                                           PersistenceGatewayOutputPort gatewayOps,
+                                           TransactionOperationsOutputPort txOps) {
+        return new BookingUseCase(presenter, securityOps, gatewayOps, txOps);
     }
 
     @Bean
@@ -59,23 +62,26 @@ public class UseCaseConfig {
     public RoutingInputPort routingUseCase(RoutingPresenterOutputPort presenter,
                                            SecurityOutputPort securityOps,
                                            PersistenceGatewayOutputPort gatewayOps,
-                                           RoutingServiceOutputPort routingServiceOps) {
-        return new RoutingUseCase(presenter, securityOps, gatewayOps, routingServiceOps);
+                                           RoutingServiceOutputPort routingServiceOps,
+                                           TransactionOperationsOutputPort txOps) {
+        return new RoutingUseCase(presenter, securityOps, gatewayOps, routingServiceOps, txOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ReportInputPort reportUseCase(ReportPresenterOutputPort presenter,
-                                         PersistenceGatewayOutputPort gatewayOps) {
-        return new ReportUseCase(presenter, gatewayOps);
+                                         PersistenceGatewayOutputPort gatewayOps,
+                                         TransactionOperationsOutputPort txOps) {
+        return new ReportUseCase(presenter, gatewayOps, txOps);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public TrackingInputPort trackingUseCase(TrackingPresenterOutputPort presenter,
                                              SecurityOutputPort securityOps,
-                                             PersistenceGatewayOutputPort gatewayOps) {
-        return new TrackingUseCase(presenter, securityOps, gatewayOps);
+                                             PersistenceGatewayOutputPort gatewayOps,
+                                             TransactionOperationsOutputPort txOps) {
+        return new TrackingUseCase(presenter, securityOps, gatewayOps, txOps);
     }
 
     @Bean
@@ -83,17 +89,18 @@ public class UseCaseConfig {
     public HandlingInputPort handlingUseCase(HandlingPresenterOutputPort presenter,
                                              SecurityOutputPort securityOps,
                                              PersistenceGatewayOutputPort gatewayOps,
-                                             EventDispatcherOutputPort eventsOps) {
-        return new HandlingUseCase(presenter, securityOps, gatewayOps, eventsOps);
+                                             EventDispatcherOutputPort eventsOps,
+                                             TransactionOperationsOutputPort txOps) {
+        return new HandlingUseCase(presenter, securityOps, gatewayOps, eventsOps, txOps);
     }
-
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public EditLocationsInputPort editLocationsUseCase(EditLocationsPresenterOutputPort presenter,
                                                        SecurityOutputPort securityOps,
-                                                       PersistenceGatewayOutputPort gatewayOps) {
-        return new EditLocationsUseCase(presenter, securityOps, gatewayOps);
+                                                       PersistenceGatewayOutputPort gatewayOps,
+                                                       TransactionOperationsOutputPort txOps) {
+        return new EditLocationsUseCase(presenter, securityOps, gatewayOps, txOps);
     }
 
 }

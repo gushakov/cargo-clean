@@ -2,27 +2,35 @@ package com.github.cargoclean.core.usecase.report;
 
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class ReportUseCase implements ReportInputPort {
 
-    private final ReportPresenterOutputPort presenter;
+    ReportPresenterOutputPort presenter;
 
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void reportExpectedArrivals() {
 
         try {
-            final List<ExpectedArrivals> expectedArrivals;
 
-            // just query the gateway
-            expectedArrivals = gatewayOps.queryForExpectedArrivals();
+            txOps.doInTransaction(true, () -> {
+                // just query the gateway
+                final List<ExpectedArrivals> expectedArrivals = gatewayOps.queryForExpectedArrivals();
 
-            presenter.presentExpectedArrivals(expectedArrivals);
+                txOps.doAfterCommit(() -> presenter.presentExpectedArrivals(expectedArrivals));
+            });
+
         } catch (Exception e) {
             presenter.presentError(e);
         }

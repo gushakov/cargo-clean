@@ -7,63 +7,69 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Map;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class TrackingUseCase implements TrackingInputPort {
 
-    private final TrackingPresenterOutputPort presenter;
+    TrackingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps;
+    SecurityOutputPort securityOps;
 
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void initializeCargoTrackingView() {
         try {
             securityOps.assertThatUserIsAgent();
+
+            presenter.presentInitialViewForCargoTracking();
         } catch (Exception e) {
             presenter.presentError(e);
-            return;
         }
-        presenter.presentInitialViewForCargoTracking();
     }
 
     @Override
     public void trackCargo(String cargoTrackingId) {
         try {
-            TrackingId trackingId;
-            Cargo cargo;
-            HandlingHistory handlingHistory;
-            Map<UnLocode, Location> allLocationsMap;
-            securityOps.assertThatUserIsAgent();
 
-            trackingId = TrackingId.of(cargoTrackingId);
+            txOps.doInTransaction(true, () -> {
+                securityOps.assertThatUserIsAgent();
 
-            // load cargo
-            cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
+                TrackingId trackingId = TrackingId.of(cargoTrackingId);
 
-            // load handling history of the cargo
-            handlingHistory = gatewayOps.handlingHistory(trackingId);
+                // load cargo
+                Cargo cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
-            /*
-                Point of interest:
-                -----------------
-                Since we have modeled "Cargo" aggregate with
-                "UnLocode"s (IDs), and not references to
-                "Location", we need to load all "Locations"
-                and pass them to the presenter.
-                In the original, "DDDSample", this is different since
-                "Cargo" aggregate directly references "Location",
-                which is loaded by the ORM.
-             */
+                // load handling history of the cargo
+                HandlingHistory handlingHistory = gatewayOps.handlingHistory(trackingId);
 
-            // load all locations and make a map of UnLocode to Locations
-            allLocationsMap = gatewayOps.allLocationsMap();
+                /*
+                    Point of interest:
+                    -----------------
+                    Since we have modeled "Cargo" aggregate with
+                    "UnLocode"s (IDs), and not references to
+                    "Location", we need to load all "Locations"
+                    and pass them to the presenter.
+                    In the original, "DDDSample", this is different since
+                    "Cargo" aggregate directly references "Location",
+                    which is loaded by the ORM.
+                 */
 
-            presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocationsMap);
+                // load all locations and make a map of UnLocode to Locations
+                Map<UnLocode, Location> allLocationsMap = gatewayOps.allLocationsMap();
+
+                txOps.doAfterCommit(() -> presenter.presentCargoTrackingInformation(cargo, handlingHistory, allLocationsMap));
+            });
+
         } catch (Exception e) {
             presenter.presentError(e);
         }

@@ -43,9 +43,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -77,17 +75,6 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     private final NamedParameterJdbcOperations queryTemplate;
 
     private final DbEntityMapper dbMapper;
-
-    private final TransactionTemplate transactionTemplate;
-
-    @Override
-    public void doInTransaction(Runnable runnable) {
-        try {
-            transactionTemplate.executeWithoutResult(transactionStatus -> runnable.run());
-        } catch (TransactionSystemException | Error e) {
-            throw new PersistenceOperationError("Error while executing transaction", e);
-        }
-    }
 
     @Override
     public TrackingId nextTrackingId() {

@@ -13,13 +13,20 @@ import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
-import com.github.cargoclean.infrastructure.CargoCleanApplication;
+import com.github.cargoclean.infrastructure.adapter.db.map.DefaultDbEntityMapper;
+import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 import java.util.Map;
@@ -38,23 +45,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 
 /*
-    Notes:
-    -----
+    Point of interest:
+    -----------------
 
-    1.  These are integrations tests intended to be run from the IDE to
-        verify the workings of the persistence gateway with the running
-        Postgres database (using local Docker instance).
-        IMPORTANT: some of these tests will attempt to modify the database.
+    These test require a running database (running in Docker using the provided
+    "docker-compose.yaml", for example). All changes will be rolled back after
+    the tests. To keep the changes, we can use "@Rollback(value=false)".
  */
-
-@SpringBootTest(classes = {CargoCleanApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@DataJdbcTest(includeFilters = @ComponentScan.Filter(classes = {DefaultDbEntityMapper.class,
+        CommonMapStructConverters.class, DbPersistenceGateway.class},
+        type = FilterType.ASSIGNABLE_TYPE))
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Rollback
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DbPersistenceGatewayTestIT {
 
     @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    private DbPersistenceGateway dbGateway;
+    DbPersistenceGateway dbGateway;
 
     @Test
     void should_process_flyway_initialization_scripts() {
@@ -94,6 +104,7 @@ public class DbPersistenceGatewayTestIT {
 
     @Test
     void should_query_for_number_of_arrivals_by_destination_city() {
+        dbGateway.saveCargo(cargo("8E062F47"));
         List<ExpectedArrivals> expectedArrivals = dbGateway.queryForExpectedArrivals();
         assertThat(expectedArrivals.stream()
                 .map(ExpectedArrivals::getNumberOfArrivals)
