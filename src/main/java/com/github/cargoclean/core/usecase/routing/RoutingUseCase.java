@@ -5,32 +5,44 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
 public class RoutingUseCase implements RoutingInputPort {
 
-    private final RoutingPresenterOutputPort presenter;
+    RoutingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps;
+    SecurityOutputPort securityOps;
 
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
 
     // output port for external routing service
-    private final RoutingServiceOutputPort routingServiceOps;
+    RoutingServiceOutputPort routingServiceOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void showCargo(String cargoTrackingId) {
         try {
-            final Cargo cargo;
-            securityOps.assertThatUserIsAgent();
-            cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
-            presenter.presentCargoDetails(cargo);
+
+            txOps.doInTransaction(true, () -> {
+
+                securityOps.assertThatUserIsAgent();
+
+                final Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
+
+                txOps.doAfterCommit(() -> presenter.presentCargoDetails(cargo));
+            });
+
         } catch (Exception e) {
             presenter.presentError(e);
         }
@@ -40,28 +52,29 @@ public class RoutingUseCase implements RoutingInputPort {
     @Override
     public void selectItinerary(String cargoTrackingId) {
         try {
-            Cargo cargo;
-            List<Itinerary> itineraries;
-            TrackingId trackingId;
 
-            securityOps.assertThatUserIsAgent();
+            txOps.doInTransaction(true, () -> {
 
-            trackingId = TrackingId.of(cargoTrackingId);
+                securityOps.assertThatUserIsAgent();
 
-            // load cargo
-            cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
+                TrackingId trackingId = TrackingId.of(cargoTrackingId);
 
-            if (cargo.isRouted()) {
-                throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId.toString()));
-            }
+                // load cargo
+                Cargo cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
 
-            // get route specification for cargo
-            RouteSpecification routeSpecification = cargo.getRouteSpecification();
+                if (cargo.isRouted()) {
+                    throw new RoutingError("Cargo <%s> is already routed.".formatted(trackingId.toString()));
+                }
 
-            // get candidate itineraries from external service
-            itineraries = routingServiceOps.fetchRoutesForSpecification(trackingId, routeSpecification);
+                // get route specification for cargo
+                RouteSpecification routeSpecification = cargo.getRouteSpecification();
 
-            presenter.presentCandidateRoutes(cargo, itineraries);
+                // get candidate itineraries from external service
+                List<Itinerary> itineraries = routingServiceOps.fetchRoutesForSpecification(trackingId, routeSpecification);
+
+                txOps.doAfterCommit(() -> presenter.presentCandidateRoutes(cargo, itineraries));
+            });
+
         } catch (Exception e) {
             presenter.presentError(e);
         }
@@ -74,21 +87,22 @@ public class RoutingUseCase implements RoutingInputPort {
 
         try {
 
-            securityOps.assertThatUserIsAgent();
+            txOps.doInTransaction(() -> {
+                securityOps.assertThatUserIsAgent();
 
-            // make sure we retrieved candidate route from the session successfully
-            if (selectedRoute == null) {
-                throw new RoutingError("Cannot route cargo <%s>: no route selected."
-                        .formatted(trackingId));
-            }
+                // make sure we retrieved candidate route from the session successfully
+                if (selectedRoute == null) {
+                    throw new RoutingError("Cannot route cargo <%s>: no route selected."
+                            .formatted(trackingId));
+                }
 
-            // convert selected route DTO to Itinerary
-            Itinerary itinerary = Itinerary.of(selectedRoute.getLegs().stream()
-                    .map(LegDto::toLeg)
-                    .toList());
+                // convert selected route DTO to Itinerary
+                Itinerary itinerary = Itinerary.of(selectedRoute.getLegs().stream()
+                        .map(LegDto::toLeg)
+                        .toList());
 
-            // load cargo
-            Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
+                // load cargo
+                Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
             /*
                 Point of interest:
@@ -98,21 +112,23 @@ public class RoutingUseCase implements RoutingInputPort {
                 the selected itinerary.
              */
 
-            securityOps.assertThatUserHasPermissionToRouteCargoThroughRegions(itinerary,
-                    gatewayOps.allRegionsMap());
+                securityOps.assertThatUserHasPermissionToRouteCargoThroughRegions(itinerary,
+                        gatewayOps.allRegionsMap());
 
-            // actually route this cargo
-            Cargo routedCargo = cargo.assignItinerary(itinerary);
+                // actually route this cargo
+                Cargo routedCargo = cargo.assignItinerary(itinerary);
 
-            // Update: 26.11.2022
-            // fixed: update delivery progress of the cargo (routing status, ETA),
-            // handling history is empty for newly routed cargo
-            Cargo updatedCargo = routedCargo.updateDeliveryProgress(HandlingHistory.EMPTY_HISTORY);
+                // Update: 26.11.2022
+                // fixed: update delivery progress of the cargo (routing status, ETA),
+                // handling history is empty for newly routed cargo
+                Cargo updatedCargo = routedCargo.updateDeliveryProgress(HandlingHistory.EMPTY_HISTORY);
 
-            // persist updated cargo
-            gatewayOps.saveCargo(updatedCargo);
+                // persist updated cargo
+                gatewayOps.saveCargo(updatedCargo);
 
-            presenter.presentResultOfAssigningRouteToCargo(trackingId);
+                txOps.doAfterCommit(() -> presenter.presentResultOfAssigningRouteToCargo(trackingId));
+            });
+
         } catch (Exception e) {
             presenter.presentError(e);
         }

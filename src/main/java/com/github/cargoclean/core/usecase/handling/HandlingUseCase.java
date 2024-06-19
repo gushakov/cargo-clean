@@ -13,80 +13,90 @@ import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.core.port.events.EventDispatcherOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 import java.util.Optional;
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class HandlingUseCase implements HandlingInputPort {
 
-    private final HandlingPresenterOutputPort presenter;
+    HandlingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps;
+    SecurityOutputPort securityOps;
 
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
 
-    private final EventDispatcherOutputPort eventsOps;
+    EventDispatcherOutputPort eventsOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void recordHandlingEvent(String voyageNumberStr, String locationStr, String cargoIdStr,
                                     Instant completionTime, HandlingEventType type) {
 
         try {
-            TrackingId cargoId;
-            HandlingEvent handlingEvent;
-            EventId eventId;
-            VoyageNumber voyageNumber;
-            UnLocode location;
-            UtcDateTime completionDateTime;
 
-            // make sure user is a manager
-            securityOps.assertThatUserIsManager();
+            txOps.doInTransaction(() -> {
 
-            eventId = gatewayOps.nextEventId();
+                // make sure user is a manager
+                securityOps.assertThatUserIsManager();
 
-            // parse identifiers and create value objects
-            try {
-                voyageNumber = Optional.ofNullable(voyageNumberStr)
-                        .map(VoyageNumber::of).orElse(null);
-                location = UnLocode.of(locationStr);
-                cargoId = TrackingId.of(cargoIdStr);
-                completionDateTime = UtcDateTime.of(completionTime);
-            } catch (InvalidDomainObjectError e) {
-                presenter.presentInvalidParametersError(e);
-                return;
-            }
+                EventId eventId = gatewayOps.nextEventId();
 
-            // construct new handling event
-            handlingEvent = HandlingEvent.builder()
-                    .eventId(eventId)
-                    .voyageNumber(voyageNumber)
-                    .location(location)
-                    .cargoId(cargoId)
-                    .completionTime(completionDateTime)
-                    .registrationTime(UtcDateTime.now())
-                    .type(type)
-                    .build();
+                // parse identifiers and create value objects
+                TrackingId cargoId;
+                VoyageNumber voyageNumber;
+                UnLocode location;
+                UtcDateTime completionDateTime;
+                try {
+                    voyageNumber = Optional.ofNullable(voyageNumberStr)
+                            .map(VoyageNumber::of).orElse(null);
+                    location = UnLocode.of(locationStr);
+                    cargoId = TrackingId.of(cargoIdStr);
+                    completionDateTime = UtcDateTime.of(completionTime);
+                } catch (InvalidDomainObjectError e) {
+                    txOps.doAfterRollback(() -> presenter.presentInvalidParametersError(e));
+                    return;
+                }
 
-            // record handling event
-            gatewayOps.recordHandlingEvent(handlingEvent);
+                // construct new handling event
+                HandlingEvent handlingEvent = HandlingEvent.builder()
+                        .eventId(eventId)
+                        .voyageNumber(voyageNumber)
+                        .location(location)
+                        .cargoId(cargoId)
+                        .completionTime(completionDateTime)
+                        .registrationTime(UtcDateTime.now())
+                        .type(type)
+                        .build();
 
-            /*
-                Point of interest:
-                -----------------
-                We a dispatching "HandlingEvent" as a domain event to be
-                processed by the primary adapter which will execute
-                (another) use case for updating delivery progress for
-                the cargo. Note that, in the current implementation,
-                event dispatch and event handling are performed synchronously
-                in the same thread.
-             */
+                // record handling event
+                gatewayOps.recordHandlingEvent(handlingEvent);
 
-            // dispatch a domain event signaling that a new handling event was recorded for the cargo
-            eventsOps.dispatch(handlingEvent);
+                /*
+                    Point of interest:
+                    -----------------
+                    We a dispatching "HandlingEvent" as a domain event to be
+                    processed by the primary adapter which will execute
+                    (another) use case for updating delivery progress for
+                    the cargo. Note that, in the current implementation,
+                    event dispatch and event handling are performed synchronously
+                    in the same thread. We also use "TransactionalEventListener"
+                    as an adapter listening to the events. This will guarantee that
+                    events are processed only after this transaction commits.
+                 */
 
-            presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent);
+                // dispatch a domain event signaling that a new handling event was recorded for the cargo
+                eventsOps.dispatch(handlingEvent);
+
+                txOps.doAfterCommit(() -> presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent));
+            });
+
 
         } catch (Exception e) {
             presenter.presentError(e);

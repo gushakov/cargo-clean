@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
  */
 public abstract class AbstractUseCaseTestSupport {
 
-
     protected SecurityOutputPort securityOps;
 
     @Mock

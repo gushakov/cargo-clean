@@ -41,13 +41,12 @@ public class BookingUseCase implements BookingInputPort {
     public void prepareNewCargoBooking() {
 
         try {
-
+            // start read-only transaction
             txOps.doInTransaction(true, () -> {
                 // check if the user has the role of agent
                 securityOps.assertThatUserIsAgent();
 
                 // retrieve all locations from the gateway
-
                 final List<Location> locations = gatewayOps.allLocations();
 
                 // if everything is OK, present the list of locations
@@ -93,57 +92,70 @@ public class BookingUseCase implements BookingInputPort {
 
         try {
 
+            txOps.doInTransaction(() -> {
 
-            final TrackingId trackingId;
+                // user must be an agent
+                securityOps.assertThatUserIsAgent();
 
-            securityOps.assertThatUserIsAgent();
+                /*
+                    Point of interest:
+                    -----------------
+                    Our value objects and entities will throw "InvalidDomainObjectError"
+                    for any invalid input during construction. This is a part of our
+                    validation strategy where validation is handled by the model itself.
+                 */
 
-            /*
-                Point of interest:
-                -----------------
-                Our value objects and entities will throw "InvalidDomainObjectError"
-                for any invalid input during construction. This is a part of our
-                validation strategy where validation is handled by the model itself.
-             */
+                UnLocode origin = UnLocode.of(originUnLocode);
+                UnLocode destination = UnLocode.of(destinationUnLocode);
+                UtcDateTime deliveryDeadlineDateTime = UtcDateTime.of(deliveryDeadline);
 
-            UnLocode origin = UnLocode.of(originUnLocode);
-            UnLocode destination = UnLocode.of(destinationUnLocode);
-            UtcDateTime deliveryDeadlineDateTime = UtcDateTime.of(deliveryDeadline);
+                RouteSpecification routeSpecification = RouteSpecification.builder()
+                        .origin(origin)
+                        .destination(destination)
+                        .arrivalDeadline(deliveryDeadlineDateTime)
+                        .build();
 
-            RouteSpecification routeSpecification = RouteSpecification.builder()
-                    .origin(origin)
-                    .destination(destination)
-                    .arrivalDeadline(deliveryDeadlineDateTime)
-                    .build();
+                // we create new Cargo object
 
-            // we create new Cargo object
+                final TrackingId trackingId = gatewayOps.nextTrackingId();
+                final Cargo cargo = Cargo.builder()
+                        .origin(origin)
+                        .trackingId(trackingId)
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.NOT_RECEIVED)
+                                .routingStatus(RoutingStatus.NOT_ROUTED)
+                                .misdirected(false)
+                                .build())
+                        .routeSpecification(routeSpecification)
+                        .build();
 
-            trackingId = gatewayOps.nextTrackingId();
-            final Cargo cargo = Cargo.builder()
-                    .origin(origin)
-                    .trackingId(trackingId)
-                    .delivery(Delivery.builder()
-                            .transportStatus(TransportStatus.NOT_RECEIVED)
-                            .routingStatus(RoutingStatus.NOT_ROUTED)
-                            .misdirected(false)
-                            .build())
-                    .routeSpecification(routeSpecification)
-                    .build();
+                // save Cargo to the database
+                gatewayOps.saveCargo(cargo);
 
-            // save Cargo to the database
-            gatewayOps.saveCargo(cargo);
+                log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
 
-            log.debug("[Booking] Booked new cargo: {}", cargo.getTrackingId());
+                /*
+                    Point of interest:
+                    -----------------
+                    Use case is responsible for its own presentation. We are
+                    not returning anything to the controller. Note that we
+                    are calling the presenter after the commit of the transaction
+                    so that any potential errors in the presentation do not
+                    impact the result of the business operation (transactional
+                    state update) of the use case.
+                */
+                txOps.doAfterCommit(() -> presenter.presentResultOfNewCargoBooking(trackingId));
 
-            /*
-                Point of interest:
-                -----------------
-                Use case is responsible for its own presentation. We are
-                not returning anything to the controller.
-            */
-            presenter.presentResultOfNewCargoBooking(trackingId);
+            });
 
         } catch (Exception e) {
+
+            /*
+                Point of interest:
+                -----------------
+                Call to present any errors is done outside transactional boundary
+                of the use case.
+            */
             presenter.presentError(e);
         }
 

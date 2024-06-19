@@ -9,18 +9,18 @@ import java.io.IOException;
 import java.util.Properties;
 
 /*
-
-    Notes:
-    -----
-
-    This configuration can be used to run an embedded web server to explore HSQL database
-    used by the original DDDSample. It should be added to the scan path of the application.
-
     References:
     ---------
 
     1.  How to start HSQL DB web server: https://stackoverflow.com/questions/40114231/how-to-start-hsqldb-in-server-mode-from-spring-boot-application
+ */
 
+/*
+    Point of interest:
+    -----------------
+
+    This configuration can be used to run an embedded web server to explore HSQL database
+    used by the original DDDSample. It should be added to the scan path of the application.
  */
 
 @Configuration

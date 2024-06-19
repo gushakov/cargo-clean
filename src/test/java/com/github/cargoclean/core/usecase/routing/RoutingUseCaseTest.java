@@ -47,7 +47,8 @@ public class RoutingUseCaseTest extends AbstractUseCaseTestSupport {
     @Test
     void should_assign_new_route_to_cargo() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService,
+                txOps);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -92,7 +93,8 @@ public class RoutingUseCaseTest extends AbstractUseCaseTestSupport {
 
     @Test
     void should_present_routing_error_if_selected_route_does_not_satisfy_specification() {
-        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService,
+                txOps);
 
         // get an example cargo
         String trackingId = "8E062F47";
@@ -114,7 +116,8 @@ public class RoutingUseCaseTest extends AbstractUseCaseTestSupport {
     @Test
     void should_present_routing_error_when_routing_cargo_with_existing_itinerary() {
 
-        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService);
+        RoutingInputPort useCase = new RoutingUseCase(presenter, securityOps, gatewayOps, externalRoutingService,
+                txOps);
 
         // create a spy of an existing cargo to simulate a cargo which has already been
         // routed
