@@ -6,10 +6,12 @@ import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
@@ -20,33 +22,38 @@ import java.util.List;
     1.  Convert Date to ZonedDateTime: https://stackoverflow.com/questions/25376242/java8-java-util-date-conversion-to-java-time-zoneddatetime
  */
 
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
 public class BookingUseCase implements BookingInputPort {
 
     // here is our Presenter
-    private final BookingPresenterOutputPort presenter;
+    BookingPresenterOutputPort presenter;
 
-    private final SecurityOutputPort securityOps;
+    SecurityOutputPort securityOps;
 
     // here is our gateway
-    private final PersistenceGatewayOutputPort gatewayOps;
+    PersistenceGatewayOutputPort gatewayOps;
+
+    TransactionOperationsOutputPort txOps;
 
     @Override
     public void prepareNewCargoBooking() {
 
-        final List<Location> locations;
         try {
 
-            // check if the user has the role of agent
-            securityOps.assertThatUserIsAgent();
+            txOps.doInTransaction(true, () -> {
+                // check if the user has the role of agent
+                securityOps.assertThatUserIsAgent();
 
-            // retrieve all locations from the gateway
+                // retrieve all locations from the gateway
 
-            locations = gatewayOps.allLocations();
+                final List<Location> locations = gatewayOps.allLocations();
 
-            // if everything is OK, present the list of locations
-            presenter.presentNewCargoBookingView(locations);
+                // if everything is OK, present the list of locations
+                txOps.doAfterCommit(() -> presenter.presentNewCargoBookingView(locations));
+
+            });
 
         } catch (Exception e) {
 
@@ -74,18 +81,19 @@ public class BookingUseCase implements BookingInputPort {
         Point of interest:
         -----------------
         UPDATE: 24.05.2024
-        We are no longer using "Transactional" annotations around the use cases (methods).
-        Instead, we are creating a transaction around each individual method of the
-        gateway. We also provide a method "doInTransaction()" in the gateway which
-        allows us to control the transactional (consistency) boundary of the code
-        in each use case with more granularity.
+        We are no longer using "javax.transaction.Transactional" annotations around
+        the use cases (methods). Instead, we are creating a transaction around each
+        individual method of the gateway. We also provide a method "doInTransaction()"
+        in the gateway which allows us to control the transactional (consistency)
+        boundary of the code in each use case with more granularity. In particular,
+        with this approach we can call Presenter outside the transactional boundary.
      */
-
-    @Transactional
     @Override
     public void bookCargo(String originUnLocode, String destinationUnLocode, Date deliveryDeadline) {
 
         try {
+
+
             final TrackingId trackingId;
 
             securityOps.assertThatUserIsAgent();

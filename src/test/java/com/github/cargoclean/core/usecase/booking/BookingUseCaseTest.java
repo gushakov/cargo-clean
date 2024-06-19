@@ -1,14 +1,14 @@
 package com.github.cargoclean.core.usecase.booking;
 
-import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.MockModels;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
-import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.usecase.AbstractUseCaseTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,11 +23,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class BookingUseCaseTest {
+public class BookingUseCaseTest extends AbstractUseCaseTestSupport {
     @Mock
     private BookingPresenterOutputPort presenter;
-
-    private SecurityOutputPort securityOps;
 
     @Mock
     private PersistenceGatewayOutputPort gatewayOps;
@@ -39,8 +37,7 @@ public class BookingUseCaseTest {
     @BeforeEach
     void setUp() {
 
-        // no-op security
-        securityOps = new AlwaysOkSecurity();
+        commonSetUp();
 
         lenient().when(gatewayOps.nextTrackingId()).thenReturn(trackingId);
 
@@ -50,7 +47,7 @@ public class BookingUseCaseTest {
                     return MockModels.location(unLocode.getCode());
                 });
 
-        useCase = new BookingUseCase(presenter, securityOps, gatewayOps);
+        useCase = new BookingUseCase(presenter, securityOps, gatewayOps, txOps);
 
     }
 
@@ -104,5 +101,10 @@ public class BookingUseCaseTest {
         verify(presenter, times(1)).presentError(errorArg.capture());
 
         assertThat(errorArg.getValue()).isInstanceOf(InvalidDomainObjectError.class);
+    }
+
+    @Override
+    protected ErrorHandlingPresenterOutputPort getPresenter() {
+        return presenter;
     }
 }

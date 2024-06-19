@@ -4,9 +4,12 @@ import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.location.UnLocode;
+import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
+import com.github.cargoclean.core.usecase.AbstractUseCaseTestSupport;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.ExternalRoutingService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RoutingUseCaseTest {
+public class RoutingUseCaseTest extends AbstractUseCaseTestSupport {
 
     @Mock
     private RoutingPresenterOutputPort presenter;
@@ -35,6 +38,11 @@ public class RoutingUseCaseTest {
 
     @Mock
     private ExternalRoutingService externalRoutingService;
+
+    @BeforeEach
+    void setUp() {
+        commonSetUp();
+    }
 
     @Test
     void should_assign_new_route_to_cargo() {
@@ -151,5 +159,10 @@ public class RoutingUseCaseTest {
                         .unloadTime(UtcDateTime.of("09-08-2022"))
                         .build()))
                 .build();
+    }
+
+    @Override
+    protected ErrorHandlingPresenterOutputPort getPresenter() {
+        return presenter;
     }
 }
