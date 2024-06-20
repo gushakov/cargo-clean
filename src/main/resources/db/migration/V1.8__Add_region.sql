@@ -8,7 +8,7 @@ UPDATE public."location"
 SET region='Europe'
 WHERE unlocode = 'NLRTM';
 UPDATE public."location"
-SET region='NorthAmerica'
+SET region='North America'
 WHERE unlocode = 'USDAL';
 UPDATE public."location"
 SET region='Europe'
@@ -26,13 +26,13 @@ UPDATE public."location"
 SET region='Europe'
 WHERE unlocode = 'SESTO';
 UPDATE public."location"
-SET region='NorthAmerica'
+SET region='North America'
 WHERE unlocode = 'USNYC';
 UPDATE public."location"
 SET region='Europe'
 WHERE unlocode = 'FIHEL';
 UPDATE public."location"
-SET region='NorthAmerica'
+SET region='North America'
 WHERE unlocode = 'USCHI';
 UPDATE public."location"
 SET region='Asia'

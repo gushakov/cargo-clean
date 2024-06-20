@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -81,7 +80,6 @@ public class RoutingUseCase implements RoutingInputPort {
 
     }
 
-    @Transactional
     @Override
     public void assignRoute(String trackingId, RouteDto selectedRoute) {
 
@@ -104,13 +102,13 @@ public class RoutingUseCase implements RoutingInputPort {
                 // load cargo
                 Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(trackingId));
 
-            /*
-                Point of interest:
-                -----------------
-                This is how we can do domain object security in the use case.
-                We check that user has permission to route the cargo through
-                the selected itinerary.
-             */
+                /*
+                    Point of interest:
+                    -----------------
+                    This is how we can do domain object security in the use case.
+                    We check that user has permission to route the cargo through
+                    the selected itinerary.
+                 */
 
                 securityOps.assertThatUserHasPermissionToRouteCargoThroughRegions(itinerary,
                         gatewayOps.allRegionsMap());

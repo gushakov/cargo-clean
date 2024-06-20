@@ -49,7 +49,7 @@ public class Itinerary {
     }
 
     public Leg last() {
-        return legs.stream().skip(legs.size() - 1).findFirst().orElse(null);
+        return legs.stream().skip(legs.size() - 1L).findFirst().orElse(null);
     }
 
     public List<Leg> intermediate() {
@@ -125,7 +125,7 @@ public class Itinerary {
             return (leg.getUnloadLocation().equals(event.getLocation()));
         }
 
-        //HandlingEventType.CUSTOMS;
+        // handling event type is HandlingEventType.CUSTOMS
         return true;
     }
 

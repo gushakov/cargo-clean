@@ -6,7 +6,7 @@ import lombok.Getter;
 public class DuplicateLocationError extends GenericCargoError {
 
     @Getter
-    private final Location duplicateLocation;
+    private transient final Location duplicateLocation;
 
     public DuplicateLocationError(Location duplicateLocation) {
         super("Location %s exists already".formatted(duplicateLocation));

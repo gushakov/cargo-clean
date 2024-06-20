@@ -3,6 +3,7 @@ package com.github.cargoclean.infrastructure.adapter.map;
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.EventId;
+import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import org.mapstruct.Mapper;
@@ -89,5 +90,19 @@ public class CommonMapStructConverters {
             return null;
         }
         return new UtcDateTime(instant);
+    }
+
+    public String convertRegionToString(Region region) {
+        if (region == null) {
+            return null;
+        }
+        return region.toString();
+    }
+
+    public Region convertStringToRegion(String regionName) {
+        if (regionName == null) {
+            return null;
+        }
+        return Region.of(regionName);
     }
 }

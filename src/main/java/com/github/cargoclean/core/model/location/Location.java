@@ -34,7 +34,7 @@ public class Location {
     public static final Location UNKNOWN = Location.builder()
             .name("UNKNOWN")
             .unlocode(UnLocode.of("XXXXX"))
-            .region(Region.Unknown)
+            .region(Region.UNKNOWN)
             .build();
 
     @EqualsAndHashCode.Include

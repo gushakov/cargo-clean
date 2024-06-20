@@ -36,7 +36,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("JNTKO")
                                 .build())
-                        .region(Region.Asia)
+                        .region(Region.ASIA)
                         .build(),
 
                 "NLRTM",
@@ -45,7 +45,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("NLRTM")
                                 .build())
-                        .region(Region.Europe)
+                        .region(Region.EUROPE)
                         .build(),
 
                 "USDAL",
@@ -54,7 +54,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("USDAL")
                                 .build())
-                        .region(Region.NorthAmerica)
+                        .region(Region.NORTH_AMERICA)
                         .build(),
 
                 "SEGOT",
@@ -63,7 +63,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("SEGOT")
                                 .build())
-                        .region(Region.Europe)
+                        .region(Region.EUROPE)
                         .build(),
 
                 "FIHEL",
@@ -72,7 +72,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("FIHEL")
                                 .build())
-                        .region(Region.Europe)
+                        .region(Region.EUROPE)
                         .build(),
 
                 "AUMEL",
@@ -81,7 +81,7 @@ public class MockModels {
                         .unlocode(UnLocode.builder()
                                 .code("AUMEL")
                                 .build())
-                        .region(Region.Oceania)
+                        .region(Region.OCEANIA)
                         .build()
 
         );

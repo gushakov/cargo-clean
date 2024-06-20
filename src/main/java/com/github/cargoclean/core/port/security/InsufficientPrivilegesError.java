@@ -8,7 +8,7 @@ import lombok.Getter;
 public class InsufficientPrivilegesError extends CargoSecurityError {
 
     @Getter
-    private final String missingRole;
+    private transient final String missingRole;
 
     /**
      * Constructs security error with the specified missing role. Assumes that user is authenticated.

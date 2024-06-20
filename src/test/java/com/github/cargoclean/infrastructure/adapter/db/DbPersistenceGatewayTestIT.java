@@ -80,7 +80,7 @@ public class DbPersistenceGatewayTestIT {
                 .extracting(Location::getUnlocode,
                         Location::getName,
                         Location::getRegion)
-                .contains(tuple(UnLocode.of("USNYC"), "New York", Region.NorthAmerica));
+                .contains(tuple(UnLocode.of("USNYC"), "New York", Region.NORTH_AMERICA));
 
         // locations should not be modifiable
 
@@ -94,7 +94,8 @@ public class DbPersistenceGatewayTestIT {
         dbGateway.deleteCargo(TrackingId.of(unlocode));
 
         final Cargo cargoToSave = cargo(unlocode);
-        final Cargo savedCargo = dbGateway.saveCargo(cargoToSave);
+        dbGateway.saveCargo(cargoToSave);
+        final Cargo savedCargo = dbGateway.obtainCargoByTrackingId(cargoToSave.getTrackingId());
         assertThat(savedCargo.exists()).isTrue();
         assertThat(savedCargo)
                 .extracting(Cargo::getTrackingId,
@@ -117,7 +118,8 @@ public class DbPersistenceGatewayTestIT {
         TrackingId trackingId = TrackingId.of("8E062F47");
         dbGateway.deleteCargo(trackingId);
         final Cargo cargo = cargo(trackingId.getId());
-        final Cargo savedCargo = dbGateway.saveCargo(cargo);
+        dbGateway.saveCargo(cargo);
+        final Cargo savedCargo = dbGateway.obtainCargoByTrackingId(cargo.getTrackingId());
 
         // update itinerary
         Cargo routedCargo = savedCargo.assignItinerary(itinerary(1, 2));
@@ -136,7 +138,8 @@ public class DbPersistenceGatewayTestIT {
                 .build();
 
         final Cargo updatedCargo = routedCargo.updateDeliveryProgress(handlingHistory);
-        Cargo savedAgainCargo = dbGateway.saveCargo(updatedCargo);
+        dbGateway.saveCargo(updatedCargo);
+        Cargo savedAgainCargo = dbGateway.obtainCargoByTrackingId(updatedCargo.getTrackingId());
         Cargo loadedAgainCargo = dbGateway.obtainCargoByTrackingId(savedAgainCargo.getTrackingId());
 
         assertThat(loadedAgainCargo.getDelivery().getTransportStatus())

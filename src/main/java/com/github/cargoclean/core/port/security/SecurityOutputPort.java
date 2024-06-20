@@ -8,7 +8,7 @@ import com.github.cargoclean.core.model.location.UnLocode;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.github.cargoclean.core.model.location.Region.Europe;
+import static com.github.cargoclean.core.model.location.Region.EUROPE;
 
 public interface SecurityOutputPort {
 
@@ -24,7 +24,7 @@ public interface SecurityOutputPort {
     String ROLE_CARGO_MANAGER = "CARGO_MANGER";
 
     // Special region used for routing permission check
-    Region SPECIAL_REGION = Europe;
+    Region SPECIAL_REGION = EUROPE;
 
     boolean hasRole(String role);
 

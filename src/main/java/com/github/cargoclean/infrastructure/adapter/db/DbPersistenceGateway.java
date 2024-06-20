@@ -119,16 +119,13 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Transactional
     @Override
-    public Cargo saveCargo(Cargo cargoToSave) {
+    public void saveCargo(Cargo cargoToSave) {
 
         try {
             final CargoDbEntity cargoDbEntity = dbMapper.convert(cargoToSave);
 
             // save cargo
             cargoRepository.save(cargoDbEntity);
-
-            // convert and load relations
-            return obtainCargoByTrackingId(cargoToSave.getTrackingId());
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot save cargo with tracking ID: <%s>"
                     .formatted(cargoToSave.getTrackingId()), e);

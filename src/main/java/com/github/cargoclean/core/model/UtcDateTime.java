@@ -18,7 +18,7 @@ public class UtcDateTime implements Comparable<UtcDateTime> {
     /*
         Converted from "se.citerus.dddsample.domain.model.cargo.Itinerary#END_OF_DAYS".
      */
-    public static UtcDateTime END_OF_DAYS = new UtcDateTime(Instant.ofEpochMilli(Long.MAX_VALUE).atZone(UTC));
+    public static final UtcDateTime END_OF_DAYS = new UtcDateTime(Instant.ofEpochMilli(Long.MAX_VALUE).atZone(UTC));
 
     /**
      * Creates an instance of {@link UtcDateTime} from the short date string. The start

@@ -1,23 +1,21 @@
 package com.github.cargoclean.core.model.location;
 
-import com.github.cargoclean.core.model.Assert;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 
+import java.util.Arrays;
+
 public enum Region {
-    Unknown("Unknown"),
-    Africa("Africa"),
-    Asia("Asia"),
-    Oceania("Oceania"),
-    Europe("Europe"),
-    NorthAmerica("North America"),
-    SouthAmerica("South America");
+    UNKNOWN("Unknown"),
+    AFRICA("Africa"),
+    ASIA("Asia"),
+    OCEANIA("Oceania"),
+    EUROPE("Europe"),
+    NORTH_AMERICA("North America"),
+    SOUTH_AMERICA("South America");
 
     public static Region of(String regionName) {
-        try {
-            return Region.valueOf(Assert.notBlank(regionName));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidDomainObjectError("Cannot parse region from %s".formatted(regionName));
-        }
+        return Arrays.stream(Region.values()).filter(region -> region.region.equals(regionName)).findAny()
+                .orElseThrow(() -> new InvalidDomainObjectError("Cannot parse region from %s".formatted(regionName)));
     }
 
     private final String region;
