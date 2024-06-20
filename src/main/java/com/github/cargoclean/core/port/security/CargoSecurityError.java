@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 public abstract class CargoSecurityError extends GenericCargoError {
     @Getter
-    private transient final boolean userAuthenticated;
+    private final transient boolean userAuthenticated;
 
     /**
      * Creates security error with provided {@code message}. Sets the
