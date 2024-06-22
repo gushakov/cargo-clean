@@ -1,6 +1,5 @@
-package com.github.cargoclean.infrastructure.adapter.web.routing;
+package com.github.cargoclean.core.port.routing;
 
-import com.github.cargoclean.core.model.cargo.RouteDto;
 import lombok.Builder;
 import lombok.Value;
 

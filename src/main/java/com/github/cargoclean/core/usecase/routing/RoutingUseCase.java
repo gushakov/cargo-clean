@@ -3,6 +3,8 @@ package com.github.cargoclean.core.usecase.routing;
 import com.github.cargoclean.core.model.cargo.*;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.routing.LegDto;
+import com.github.cargoclean.core.port.routing.RouteDto;
 import com.github.cargoclean.core.port.routing.RoutingServiceOutputPort;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;

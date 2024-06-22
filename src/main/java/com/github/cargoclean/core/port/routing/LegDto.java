@@ -1,6 +1,8 @@
-package com.github.cargoclean.core.model.cargo;
+package com.github.cargoclean.core.port.routing;
 
 import com.github.cargoclean.core.model.UtcDateTime;
+import com.github.cargoclean.core.model.cargo.Leg;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import lombok.Builder;

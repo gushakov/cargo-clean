@@ -1,4 +1,4 @@
-package com.github.cargoclean.core.model.cargo;
+package com.github.cargoclean.core.port.routing;
 
 import lombok.Builder;
 import lombok.Value;

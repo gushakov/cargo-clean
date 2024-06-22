@@ -2,10 +2,15 @@ package com.github.cargoclean.core.usecase.routing;
 
 import com.github.cargoclean.core.AlwaysOkSecurity;
 import com.github.cargoclean.core.model.UtcDateTime;
-import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.cargo.Cargo;
+import com.github.cargoclean.core.model.cargo.Leg;
+import com.github.cargoclean.core.model.cargo.RoutingError;
+import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.port.ErrorHandlingPresenterOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
+import com.github.cargoclean.core.port.routing.LegDto;
+import com.github.cargoclean.core.port.routing.RouteDto;
 import com.github.cargoclean.core.port.security.SecurityOutputPort;
 import com.github.cargoclean.core.usecase.AbstractUseCaseTestSupport;
 import com.github.cargoclean.infrastructure.adapter.externalrouting.ExternalRoutingService;
