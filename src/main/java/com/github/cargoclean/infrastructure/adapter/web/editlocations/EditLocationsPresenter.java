@@ -1,6 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.editlocations;
 
 import com.github.cargoclean.core.model.location.Location;
+import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -11,7 +12,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST)
@@ -27,6 +30,9 @@ public class EditLocationsPresenter extends AbstractWebPresenter implements Edit
                 .unLocode("")
                 .location("")
                 .region("")
+                .allRegions(Arrays.stream(Region.values())
+                        .filter(region -> region != Region.UNKNOWN)
+                        .map(Region::toString).collect(Collectors.joining(", ")))
                 .build();
         presentModelAndView(Map.of("addLocationForm", form), "add-location");
     }

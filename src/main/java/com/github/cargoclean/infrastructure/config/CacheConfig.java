@@ -42,12 +42,8 @@ public class CacheConfig {
 
         cacheManager.setCacheNames(Collections.emptyList());
 
-        // make cache for cargoes
-
-        cacheManager.registerCustomCache(CacheConstants.CARGO_CACHE_NAME, makeCache(CacheConstants.CARGO_CACHE_INITIAL_CAPACITY,
-                CacheConstants.CARGO_CACHE_MAXIMUM_SIZE, CacheConstants.CARGO_CACHE_EXPIRE_AFTER_WRITE_DURATION));
-
         // make cache for locations
+
         cacheManager.registerCustomCache(CacheConstants.LOCATION_CACHE_NAME, makeCache(CacheConstants.LOCATION_CACHE_INITIAL_CAPACITY,
                 CacheConstants.LOCATION_CACHE_MAXIMUM_SIZE, CacheConstants.LOCATION_CACHE_EXPIRE_AFTER_WRITE_DURATION));
 
@@ -61,6 +57,5 @@ public class CacheConfig {
                 .expireAfterWrite(expireAfterWrite)
                 .build();
     }
-
 
 }

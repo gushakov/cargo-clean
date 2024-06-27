@@ -37,13 +37,17 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row">
                 <label for="region" class="col-2 col-form-label">Region</label>
                 <div class="col-1">
                     <input id="region" type="text" class="form-label"
                            th:placeholder="*{hintRegion}"
                            th:field="*{region}">
                 </div>
+            </div>
+
+            <div class="row-cols-1 mb-3">
+                Available regions are: <span class="small fst-italic" th:text="*{allRegions}"/>
             </div>
         </div>
 

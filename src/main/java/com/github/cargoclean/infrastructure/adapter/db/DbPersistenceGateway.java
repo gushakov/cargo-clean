@@ -126,11 +126,6 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
-    private Cache getCache(String cacheName) {
-       return Optional.ofNullable(cacheManager.getCache(cacheName))
-                .orElseThrow(() -> new CacheOperationError("Cache: %s is null".formatted(cacheName)));
-    }
-
     @Transactional(readOnly = true)
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
@@ -248,7 +243,10 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     @Override
     public Location saveLocation(Location location) {
         try {
+            // save location and update the cache
             locationRepository.save(dbMapper.convert(location));
+            Cache locationCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
+            locationCache.put(new SimpleKey(location.getUnlocode()), location);
             return obtainLocationByUnLocode(location.getUnlocode());
         } catch (Exception e) {
             throw new PersistenceOperationError("Error when saving location %s"
@@ -272,5 +270,10 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     private <T> Stream<T> toStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
+    private Cache getCache(String cacheName) {
+        return Optional.ofNullable(cacheManager.getCache(cacheName))
+                .orElseThrow(() -> new CacheOperationError("Cache: %s is null".formatted(cacheName)));
     }
 }
