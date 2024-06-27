@@ -27,18 +27,26 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
+import com.github.cargoclean.core.port.cache.CacheOperationError;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceOperationError;
+import com.github.cargoclean.infrastructure.adapter.CacheConstants;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
+import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationExistsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -65,16 +73,15 @@ import java.util.stream.StreamSupport;
  */
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
-    private final LocationDbEntityRepository locationRepository;
-    private final CargoDbEntityRepository cargoRepository;
-
-    private final HandlingEventEntityRepository handlingEventRepository;
-
-    private final NamedParameterJdbcOperations queryTemplate;
-
-    private final DbEntityMapper dbMapper;
+    LocationDbEntityRepository locationRepository;
+    CargoDbEntityRepository cargoRepository;
+    HandlingEventEntityRepository handlingEventRepository;
+    NamedParameterJdbcOperations queryTemplate;
+    DbEntityMapper dbMapper;
+    CacheManager cacheManager;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -95,22 +102,47 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         return EventId.of(System.currentTimeMillis());
     }
 
+
+    /*
+        Point of interest:
+        -----------------
+
+        1.  We are loading all "LocationDbEntity" and converting
+            them to models only if they are not already in the cache.
+     */
+
     @Transactional(readOnly = true)
     @Override
     public List<Location> allLocations() {
         try {
-            return toStream(locationRepository.findAll())
-                    .map(dbMapper::convert).toList();
+            Iterable<LocationDbEntity> allLocationDbEntities = locationRepository.findAll();
+            Cache locationsCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
+            return toStream(allLocationDbEntities)
+                    .map(locationDbEntity -> locationsCache.get(new SimpleKey(locationDbEntity.getUnlocode()),
+                            () -> dbMapper.convert(locationDbEntity)))
+                    .toList();
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot retrieve all locations", e);
         }
+    }
+
+    private Cache getCache(String cacheName) {
+       return Optional.ofNullable(cacheManager.getCache(cacheName))
+                .orElseThrow(() -> new CacheOperationError("Cache: %s is null".formatted(cacheName)));
     }
 
     @Transactional(readOnly = true)
     @Override
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
         try {
-            return dbMapper.convert(locationRepository.findById(unLocode.getCode()).orElseThrow());
+            /*
+                Try to get the location from cache first. If it is not
+                there, load DB entity from the database and convert to
+                the model.
+             */
+            Cache locationsCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
+            return locationsCache.get(new SimpleKey(unLocode),
+                    () -> dbMapper.convert(locationRepository.findById(unLocode.getCode()).orElseThrow()));
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain location with unLocode: <%s>"
                     .formatted(unLocode), e);
