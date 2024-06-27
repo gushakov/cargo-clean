@@ -31,6 +31,14 @@ public class EditLocationsController {
                 addLocationForm.getRegion());
     }
 
+    @RequestMapping("/updateLocation")
+    @ResponseBody
+    public void showUpdateLocationForm() {
+
+        useCase().prepareUpdateLocationView();
+    }
+
+
     private EditLocationsInputPort useCase() {
         return appContext.getBean(EditLocationsInputPort.class);
     }

@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,5 +43,13 @@ public class EditLocationsPresenter extends AbstractWebPresenter implements Edit
         log.debug("[Edit Locations] Successfully registered new location: %s"
                 .formatted(location.toString()));
         redirect("/", Map.of());
+    }
+
+    @Override
+    public void presentUpdateLocationForm(List<Location> locations) {
+        UpdateLocationForm form = UpdateLocationForm.builder()
+                .locations(locations.stream().map(Location::toString).toList())
+                .build();
+        presentModelAndView(Map.of("updateLocationForm", form), "update-location");
     }
 }

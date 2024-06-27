@@ -11,6 +11,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class EditLocationsUseCase implements EditLocationsInputPort {
@@ -74,5 +76,23 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
             presenter.presentError(e);
         }
 
+    }
+
+    @Override
+    public void prepareUpdateLocationView() {
+        try {
+
+            // only manager can add locations
+            securityOps.assertThatUserIsManager();
+
+            // load all locations
+            List<Location> locations = gatewayOps.allLocations();
+
+            presenter.presentUpdateLocationForm(locations);
+
+        }
+        catch (Exception e) {
+            presenter.presentError(e);
+        }
     }
 }

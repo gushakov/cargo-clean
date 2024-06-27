@@ -6,4 +6,5 @@ public interface EditLocationsInputPort {
 
     void registerNewLocation(String unLocodeText, String locationName, String regionName);
 
+    void prepareUpdateLocationView();
 }
