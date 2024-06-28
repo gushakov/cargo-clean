@@ -15,6 +15,7 @@ import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.core.model.voyage.VoyageNumber;
 import com.github.cargoclean.infrastructure.adapter.db.map.DefaultDbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
+import com.github.cargoclean.infrastructure.config.TestCacheConfig;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +65,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@TestPropertySource(properties = {"cargo.slow-load.enabled=true"})
+@Import(TestCacheConfig.class)
 public class DbPersistenceGatewayTestIT {
+
+//    @TestConfiguration
+//    static class TestConfig {
+//
+//        /*
+//            Point of interest:
+//            -----------------
+//            For tests we need a bean of type "CacheManager" so
+//            it can be wired into our gateway. We declare a
+//            test-local context configuration with a bean of type
+//            "org.springframework.cache.concurrent.ConcurrentMapCacheManager"
+//            which will dynamically create an empty cache during
+//            the first call.
+//         */
+//
+//        @Bean
+//        public CacheManager cacheManager() {
+//            return new ConcurrentMapCacheManager();
+//        }
+//    }
 
     @Autowired
     NamedParameterJdbcTemplate jdbcTemplate;

@@ -4,6 +4,9 @@ import com.github.cargoclean.core.model.CargoEvent;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.usecase.handling.HandlingUseCase;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -20,15 +23,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 /**
  * Primary adapter processing domain events.
  */
-@Service
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 @Slf4j
+@Service
 public class CargoSpringEventProcessingAdapter {
 
-    private final ApplicationContext appContext;
+    ApplicationContext appContext;
 
-    public CargoSpringEventProcessingAdapter(ApplicationContext appContext) {
-        this.appContext = appContext;
-    }
 
     /*
         Point of interest:

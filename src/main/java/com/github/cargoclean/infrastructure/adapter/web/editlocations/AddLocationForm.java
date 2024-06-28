@@ -7,9 +7,11 @@ import lombok.Data;
 @Builder
 public class AddLocationForm {
 
-    private String unLocode;
-    private String location;
-    private String region;
+    String unLocode;
+    String location;
+    String region;
+    String city;
+    String allRegions;
 
     /*
         Point of interest:
@@ -19,14 +21,14 @@ public class AddLocationForm {
      */
 
     @Builder.Default
-    private String unLocodeReferenceUrl = "https://unece.org/trade/cefact/unlocode-code-list-country-and-territory";
+    String unLocodeReferenceUrl = "https://unece.org/trade/cefact/unlocode-code-list-country-and-territory";
 
     @Builder.Default
-    private String hintUnLocode = "AUADL";
+    String hintUnLocode = "AUADL";
 
     @Builder.Default
-    private String hintLocation = "Adelaide";
+    String hintLocation = "Adelaide";
 
     @Builder.Default
-    private String hintRegion = "Oceania";
+    String hintRegion = "Oceania";
 }

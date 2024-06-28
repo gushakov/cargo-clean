@@ -78,7 +78,7 @@ public interface PersistenceGatewayOutputPort {
 
     boolean locationExists(Location location);
 
-    Location saveLocation(Location location);
+    void saveLocation(Location location);
 
     List<CargoInfo> allCargoes();
 }

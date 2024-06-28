@@ -21,12 +21,6 @@ package com.github.cargoclean.core.port.transaction;
 public interface TransactionOperationsOutputPort {
 
     /**
-     * Rolls back any current transaction. Does nothing if not called in
-     * a transactional context.
-     */
-    void rollback();
-
-    /**
      * @see #doInTransaction(boolean, TransactionRunnableWithoutResult)
      */
     default void doInTransaction(TransactionRunnableWithoutResult runnableWithoutResult) {

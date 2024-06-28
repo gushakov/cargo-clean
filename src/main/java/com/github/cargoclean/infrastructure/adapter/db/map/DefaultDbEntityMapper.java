@@ -12,9 +12,11 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
 import com.github.cargoclean.infrastructure.adapter.map.IgnoreForMapping;
+import com.github.cargoclean.infrastructure.config.CargoCleanProperties;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
     References:
@@ -30,6 +32,9 @@ import org.mapstruct.Named;
  */
 @Mapper(componentModel = "spring", uses = CommonMapStructConverters.class)
 public abstract class DefaultDbEntityMapper implements DbEntityMapper {
+
+    @Autowired
+    protected CargoCleanProperties props;
 
     abstract Location map(LocationDbEntity locationDbEntity);
 
@@ -93,6 +98,15 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @IgnoreForMapping
     @Override
     public Location convert(LocationDbEntity locationDbEntity) {
+        if (props.getSlowLoad().isEnabled()) {
+            /*
+                Point of interest:
+                -----------------
+                We are simulating a scenario when Location aggregate
+                is costly to load and convert.
+             */
+            simulateSlowProcessing(props.getSlowLoad().getDelayMillis());
+        }
         return map(locationDbEntity);
     }
 
@@ -160,5 +174,13 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Override
     public CargoInfo convert(CargoInfoRow cargoInfoRow) {
         return map(cargoInfoRow);
+    }
+
+    private void simulateSlowProcessing(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
