@@ -11,5 +11,9 @@ public interface EditLocationsPresenterOutputPort extends ErrorHandlingPresenter
 
     void presentResultOfSuccessfulRegistrationOfNewLocation(Location location);
 
-    void presentUpdateLocationForm(List<Location> locations);
+    void presentUpdateLocationFormForLocationSelection(List<Location> locations);
+
+    void presentUpdateLocationFormWithSelectedLocation(Location location);
+
+    void presentResultOfSuccessfulRegistrationOfUpdatedLocation(Location location);
 }

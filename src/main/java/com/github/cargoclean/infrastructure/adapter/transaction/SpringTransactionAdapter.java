@@ -3,13 +3,14 @@ package com.github.cargoclean.infrastructure.adapter.transaction;
 import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
 import com.github.cargoclean.core.port.transaction.TransactionRunnableWithResult;
 import com.github.cargoclean.core.port.transaction.TransactionRunnableWithoutResult;
+import com.github.cargoclean.infrastructure.adapter.CacheUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.NoTransactionException;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -38,19 +39,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SpringTransactionAdapter implements TransactionOperationsOutputPort {
 
     TransactionTemplate transactionTemplate;
+    CacheManager cacheManager;
 
     @Qualifier("read-only")
     TransactionTemplate readOnlyTransactionTemplate;
-
-    @Override
-    public void rollback() {
-        try {
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-            log.debug("[Transaction] Will roll back current transaction");
-        } catch (NoTransactionException e) {
-            // do nothing if not in transaction
-        }
-    }
 
     @Override
     public void doInTransaction(boolean readOnly, TransactionRunnableWithoutResult runnableWithoutResult) {
@@ -58,7 +50,16 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
         if (readOnly) {
             readOnlyTransactionTemplate.executeWithoutResult(transactionStatus -> runnableWithoutResult.run());
         } else {
-            transactionTemplate.executeWithoutResult(transactionStatus -> runnableWithoutResult.run());
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                /*
+                    Point of interest:
+                    -----------------
+                    We need to register a callback which will clear
+                    caches in case of a rollback of the current transaction.
+                 */
+                registerCacheInvalidationOnRollback();
+                runnableWithoutResult.run();
+            });
         }
     }
 
@@ -68,7 +69,10 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
         if (readOnly) {
             return readOnlyTransactionTemplate.execute(transactionStatus -> runnableWithResult.run());
         } else {
-            return transactionTemplate.execute(transactionStatus -> runnableWithResult.run());
+            return transactionTemplate.execute(transactionStatus -> {
+                registerCacheInvalidationOnRollback();
+                return runnableWithResult.run();
+            });
         }
     }
 
@@ -156,4 +160,22 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
         return result.get();
     }
 
+    /**
+     * Registers a custom transaction synchronization callback which will
+     * clear all caches after a rollback of a transaction.
+     */
+    private void registerCacheInvalidationOnRollback() {
+        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+                    log.debug("[Transaction] [Cache] Clearing all caches on rollback");
+                    CacheUtils.clearAllCaches(cacheManager);
+                }
+            }
+        });
+    }
 }

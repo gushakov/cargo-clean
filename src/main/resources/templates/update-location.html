@@ -7,14 +7,64 @@
 
     <div th:replace="fragments :: header"></div>
 
+    <th:block th:replace="fragments :: footer"></th:block>
+
     <!--/*@thymesVar id="updateLocationForm" type="com.github.cargoclean.infrastructure.adapter.web.editlocations.UpdateLocationForm"*/-->
-    <form method="post" href="#" th:action="@{/registerUpadtedLocation}" th:object="${updateLocationForm}">
-        hello
-    </form>
+    <th:block th:object="${updateLocationForm}">
+
+        <form th:action="@{/updateLocation}" method="get" href="#" th:if="*{selectedUnlocode eq null}">
+            <div class="row mt-3">
+                <label for="locationsAll" class="col-2 col-form-label">Location</label>
+                <div class="col-1">
+                    <select id="locationsAll" class="form-select-sm" th:field="*{selectedUnlocode}">
+                        <option th:each="unlocode : *{locations}"
+                                th:value="${unlocode}"
+                                th:text="${unlocode}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-1">
+                    <button type="submit" class="btn btn-success">Select</button>
+                </div>
+            </div>
+        </form>
+
+        <form th:action="@{/registerUpdatedLocation}" method="post" href="#" th:if="*{selectedUnlocode ne null}">
+            <div class="row mt-3">
+                <label for="locationSelected" class="col-2 col-form-label">Location</label>
+                <div class="col-1">
+                    <select id="locationSelected" class="form-select-sm" th:field="*{selectedUnlocode}"
+                            readonly="readonly">
+                        <option th:value="*{selectedUnlocode}" th:text="*{selectedUnlocode}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <label for="city" class="col-2 col-form-label">City</label>
+                <div class="col-1">
+                    <input id="city" class="form-select-sm" th:field="*{city}">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <label for="region" class="col-2 col-form-label">Region</label>
+                <div class="col-1">
+                    <input id="region" class="form-select-sm" th:field="*{region}" disabled="disabled">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-1">
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+            </div>
+        </form>
+
+    </th:block>
 
 </div>
-
-<th:block th:replace="fragments :: footer"></th:block>
 
 </body>
 </html>

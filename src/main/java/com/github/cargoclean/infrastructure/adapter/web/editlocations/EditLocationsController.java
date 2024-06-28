@@ -4,10 +4,7 @@ import com.github.cargoclean.core.usecase.editlocation.EditLocationsInputPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,11 +30,20 @@ public class EditLocationsController {
 
     @RequestMapping("/updateLocation")
     @ResponseBody
-    public void showUpdateLocationForm() {
-
-        useCase().prepareUpdateLocationView();
+    public void showUpdateLocationForm(@RequestParam(name = "selectedUnlocode", required = false) String selectedUnlocode) {
+        if (selectedUnlocode == null) {
+            useCase().prepareUpdateLocationView();
+        } else {
+            useCase().selectLocationForUpdate(selectedUnlocode);
+        }
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/registerUpdatedLocation")
+    @ResponseBody
+    public void registerUpdatedLocation(@ModelAttribute UpdateLocationForm updateLocationForm) {
+        useCase().registerUpdatedLocation(updateLocationForm.getSelectedUnlocode(),
+                updateLocationForm.getCity());
+    }
 
     private EditLocationsInputPort useCase() {
         return appContext.getBean(EditLocationsInputPort.class);

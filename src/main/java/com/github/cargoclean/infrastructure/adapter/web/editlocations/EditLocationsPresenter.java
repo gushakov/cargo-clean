@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.web.editlocations;
 
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.Region;
+import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -46,10 +47,30 @@ public class EditLocationsPresenter extends AbstractWebPresenter implements Edit
     }
 
     @Override
-    public void presentUpdateLocationForm(List<Location> locations) {
+    public void presentUpdateLocationFormForLocationSelection(List<Location> locations) {
         UpdateLocationForm form = UpdateLocationForm.builder()
-                .locations(locations.stream().map(Location::toString).toList())
+                .locations(locations.stream()
+                        .map(Location::getUnlocode)
+                        .map(UnLocode::getCode)
+                        .toList())
                 .build();
         presentModelAndView(Map.of("updateLocationForm", form), "update-location");
+    }
+
+    @Override
+    public void presentUpdateLocationFormWithSelectedLocation(Location location) {
+        UpdateLocationForm form = UpdateLocationForm.builder()
+                .selectedUnlocode(location.getUnlocode().getCode())
+                .city(location.getName())
+                .region(location.getRegion().toString())
+                .build();
+        presentModelAndView(Map.of("updateLocationForm", form), "update-location");
+    }
+
+    @Override
+    public void presentResultOfSuccessfulRegistrationOfUpdatedLocation(Location location) {
+        log.debug("[Edit Locations] Successfully registered updated location: %s"
+                .formatted(location.toString()));
+        redirect("/", Map.of());
     }
 }

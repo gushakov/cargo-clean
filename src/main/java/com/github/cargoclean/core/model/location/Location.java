@@ -54,6 +54,18 @@ public class Location {
         this.version = version;
     }
 
+    public Location updateCity(String city) {
+        return newLocation().name(city).build();
+    }
+
+    LocationBuilder newLocation() {
+        return Location.builder()
+                .unlocode(unlocode)
+                .name(name)
+                .region(region)
+                .version(version);
+    }
+
     @Override
     public String toString() {
         return "%s (%s)".formatted(name, unlocode);

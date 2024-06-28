@@ -26,3 +26,13 @@ logging:
         data:
           jdbc: debug
         security: debug
+
+cargo:
+  location-cache:
+    name: "locationCache"
+    init-capacity: 10
+    maximum-size: 100
+    ttl: 1h
+  slow-load:
+    enabled: true
+    delay-millis: 150

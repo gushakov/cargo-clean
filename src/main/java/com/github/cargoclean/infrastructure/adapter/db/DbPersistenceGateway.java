@@ -27,20 +27,19 @@ import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
-import com.github.cargoclean.core.port.cache.CacheOperationError;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
 import com.github.cargoclean.core.port.persistence.PersistenceOperationError;
-import com.github.cargoclean.infrastructure.adapter.CacheConstants;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
-import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.location.AllUnlocodesQueryRow;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationExistsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
+import com.github.cargoclean.infrastructure.config.CargoCleanProperties;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -57,8 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Default implementation of the persistence gateway. It uses one Spring Data JDBC
@@ -82,6 +79,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     NamedParameterJdbcOperations queryTemplate;
     DbEntityMapper dbMapper;
     CacheManager cacheManager;
+    CargoCleanProperties props;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -115,12 +113,33 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     @Override
     public List<Location> allLocations() {
         try {
-            Iterable<LocationDbEntity> allLocationDbEntities = locationRepository.findAll();
-            Cache locationsCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
-            return toStream(allLocationDbEntities)
-                    .map(locationDbEntity -> locationsCache.get(new SimpleKey(locationDbEntity.getUnlocode()),
-                            () -> dbMapper.convert(locationDbEntity)))
+
+            /*
+                Point of interest:
+                -----------------
+                Query for UnLocode (IDs) of all locations, without loading
+                Location aggregates themselves.
+             */
+
+            List<UnLocode> unlocodes = queryTemplate.query(AllUnlocodesQueryRow.SQL,
+                            new BeanPropertyRowMapper<>(AllUnlocodesQueryRow.class))
+                    .stream().map(AllUnlocodesQueryRow::getUnlocode)
+                    .map(UnLocode::of)
                     .toList();
+
+            /*
+                For each UnLocode, first see if there is a corresponding Location
+                already in the cache, if not, then load Location DB entity and
+                covert it to Location model updating the cache in the process.
+             */
+            Cache cache = getLocationCache();
+            return unlocodes.stream()
+                    .map(unLocode -> cache.get(new SimpleKey(unLocode),
+                            () -> locationRepository.findById(unLocode.getCode())
+                                    .map(dbMapper::convert)
+                                    .orElseThrow(() -> new PersistenceOperationError(
+                                            "No location found for %s in the database".formatted(unLocode)))
+                    )).toList();
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot retrieve all locations", e);
         }
@@ -131,13 +150,14 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     public Location obtainLocationByUnLocode(UnLocode unLocode) {
         try {
             /*
-                Try to get the location from cache first. If it is not
+                Try to get the location from the cache first. If it is not
                 there, load DB entity from the database and convert to
                 the model.
              */
-            Cache locationsCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
-            return locationsCache.get(new SimpleKey(unLocode),
-                    () -> dbMapper.convert(locationRepository.findById(unLocode.getCode()).orElseThrow()));
+            return getLocationCache().get(new SimpleKey(unLocode),
+                    () -> dbMapper.convert(locationRepository.findById(unLocode.getCode())
+                            .orElseThrow(() -> new PersistenceOperationError(
+                                    "No location found for %s in the database".formatted(unLocode)))));
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot obtain location with unLocode: <%s>"
                     .formatted(unLocode), e);
@@ -241,13 +261,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Transactional
     @Override
-    public Location saveLocation(Location location) {
+    public void saveLocation(Location location) {
         try {
             // save location and update the cache
             locationRepository.save(dbMapper.convert(location));
-            Cache locationCache = getCache(CacheConstants.LOCATION_CACHE_NAME);
-            locationCache.put(new SimpleKey(location.getUnlocode()), location);
-            return obtainLocationByUnLocode(location.getUnlocode());
+            getLocationCache().put(new SimpleKey(location.getUnlocode()), location);
         } catch (Exception e) {
             throw new PersistenceOperationError("Error when saving location %s"
                     .formatted(location.getUnlocode()), e);
@@ -268,12 +286,9 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         }
     }
 
-    private <T> Stream<T> toStream(Iterable<T> iterable) {
-        return StreamSupport.stream(iterable.spliterator(), false);
-    }
-
-    private Cache getCache(String cacheName) {
+    private Cache getLocationCache() {
+        String cacheName = props.getLocationCache().getName();
         return Optional.ofNullable(cacheManager.getCache(cacheName))
-                .orElseThrow(() -> new CacheOperationError("Cache: %s is null".formatted(cacheName)));
+                .orElseThrow(() -> new IllegalStateException("Cache %s not found".formatted(cacheName)));
     }
 }

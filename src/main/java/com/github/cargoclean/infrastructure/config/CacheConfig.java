@@ -2,7 +2,6 @@ package com.github.cargoclean.infrastructure.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.cargoclean.infrastructure.adapter.CacheConstants;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import java.time.Duration;
 import java.util.Collections;
 
 /*
@@ -27,16 +25,16 @@ public class CacheConfig {
     /*
         Point of interest:
         -----------------
-
-        1.  We are creating "CacheManager" (Spring abstraction) bean backed by Caffeine cache
-            as our cache provider.
+        We are creating "CacheManager" (Spring abstraction) bean backed
+        by Caffeine cache as our cache provider. Then we register a cache
+        for each model (aggregate root) which we want to cache.
      */
 
 
     @Bean("cacheManager")
     @Qualifier("caffeine")
     @Primary
-    public CacheManager caffeineCacheManager() {
+    public CacheManager caffeineCacheManager(CargoCleanProperties props) {
 
         final CaffeineCacheManager cacheManager = new CaffeineCacheManager();
 
@@ -44,17 +42,17 @@ public class CacheConfig {
 
         // make cache for locations
 
-        cacheManager.registerCustomCache(CacheConstants.LOCATION_CACHE_NAME, makeCache(CacheConstants.LOCATION_CACHE_INITIAL_CAPACITY,
-                CacheConstants.LOCATION_CACHE_MAXIMUM_SIZE, CacheConstants.LOCATION_CACHE_EXPIRE_AFTER_WRITE_DURATION));
+        cacheManager.registerCustomCache(props.getLocationCache().getName(),
+                makeCache(props));
 
         return cacheManager;
     }
 
-    private Cache<Object, Object> makeCache(int initialCapacity, long maximumSize, Duration expireAfterWrite) {
+    private Cache<Object, Object> makeCache(CargoCleanProperties props) {
         return Caffeine.newBuilder()
-                .initialCapacity(initialCapacity)
-                .maximumSize(maximumSize)
-                .expireAfterWrite(expireAfterWrite)
+                .initialCapacity(props.getLocationCache().getInitCapacity())
+                .maximumSize(props.getLocationCache().getMaximumSize())
+                .expireAfterWrite(props.getLocationCache().getTtl())
                 .build();
     }
 

@@ -13,8 +13,11 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationD
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
+import com.github.cargoclean.infrastructure.config.CargoCleanProperties;
+import com.github.cargoclean.infrastructure.config.TestCacheConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
@@ -31,7 +34,8 @@ import static org.assertj.core.groups.Tuple.tuple;
 
  */
 
-@SpringJUnitConfig(classes = {DefaultDbEntityMapperImpl.class, CommonMapStructConverters.class})
+@SpringJUnitConfig(classes = {TestCacheConfig.class, DefaultDbEntityMapperImpl.class, CommonMapStructConverters.class})
+@EnableConfigurationProperties(CargoCleanProperties.class)
 public class DefaultDbEntityMapperTest {
 
     @Autowired

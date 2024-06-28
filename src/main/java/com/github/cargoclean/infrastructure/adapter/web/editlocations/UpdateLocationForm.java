@@ -10,5 +10,8 @@ import java.util.List;
 public class UpdateLocationForm {
 
     List<String> locations;
+    String selectedUnlocode;
+    String city;
+    String region;
 
 }
