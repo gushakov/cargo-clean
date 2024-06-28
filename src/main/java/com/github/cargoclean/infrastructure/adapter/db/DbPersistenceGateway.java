@@ -130,7 +130,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             /*
                 For each UnLocode, first see if there is a corresponding Location
                 already in the cache, if not, then load Location DB entity and
-                covert it to Location model updating the cache in the process.
+                convert it to Location model updating the cache in the process.
              */
             Cache cache = getLocationCache();
             return unlocodes.stream()
