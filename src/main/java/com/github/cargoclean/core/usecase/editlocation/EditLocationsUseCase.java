@@ -61,8 +61,17 @@ public class EditLocationsUseCase implements EditLocationsInputPort {
 
                 // check if Location exists already
                 if (gatewayOps.locationExists(location)) {
-                    // present error after rollback
-                    txOps.doAfterRollback(() -> presenter.presentError(new DuplicateLocationError(location)));
+
+                    /*
+                        UPDATE 26.02.2025
+                        -----------------
+                        Fixed "DuplicateLocationError" was not processed correctly. We need
+                        to present the error after the commit of the transaction, since there
+                        is no rollback when "locationExists()" of the gateway executes.
+                     */
+
+                    // present error after commit
+                    txOps.doAfterCommit(() -> presenter.presentError(new DuplicateLocationError(location)));
                     return;
                 }
 
