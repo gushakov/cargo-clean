@@ -51,7 +51,7 @@ public abstract class AbstractUseCaseTestSupport {
         }).when(txOps).doInTransaction(any(TransactionRunnableWithoutResult.class));
 
         lenient().doAnswer(invocation -> {
-            ((TransactionRunnableWithoutResult) invocation.getArgument(0)).run();
+            ((TransactionRunnableWithoutResult) invocation.getArgument(1)).run();
             return null;
         }).when(txOps).doInTransaction(anyBoolean(), any(TransactionRunnableWithoutResult.class));
 
