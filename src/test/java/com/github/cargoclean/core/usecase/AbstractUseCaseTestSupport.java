@@ -8,6 +8,7 @@ import com.github.cargoclean.core.port.transaction.TransactionRunnableWithResult
 import com.github.cargoclean.core.port.transaction.TransactionRunnableWithoutResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -41,13 +42,18 @@ public abstract class AbstractUseCaseTestSupport {
     protected void commonSetUp() {
 
         // mock security
-        securityOps = new AlwaysOkSecurity();
+        securityOps = Mockito.spy(new AlwaysOkSecurity());
 
         // mock transaction operations
         lenient().doAnswer(invocation -> {
             ((TransactionRunnableWithoutResult) invocation.getArgument(0)).run();
             return null;
         }).when(txOps).doInTransaction(any(TransactionRunnableWithoutResult.class));
+
+        lenient().doAnswer(invocation -> {
+            ((TransactionRunnableWithoutResult) invocation.getArgument(0)).run();
+            return null;
+        }).when(txOps).doInTransaction(anyBoolean(), any(TransactionRunnableWithoutResult.class));
 
         lenient().when(txOps.doInTransactionWithResult(any(TransactionRunnableWithResult.class)))
                 .thenAnswer(invocation -> ((TransactionRunnableWithResult<?>) invocation.getArgument(0)).run());
