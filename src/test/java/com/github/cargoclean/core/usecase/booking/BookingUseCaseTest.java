@@ -85,6 +85,8 @@ public class BookingUseCaseTest extends AbstractUseCaseTestSupport {
         verify(presenter, times(1)).presentResultOfNewCargoBooking(trackingIdArg.capture());
 
         assertThat(trackingIdArg.getValue()).isEqualTo(trackingId);
+
+        verify(securityOps, times(1)).assertThatUserIsAgent();
     }
 
     @Test
