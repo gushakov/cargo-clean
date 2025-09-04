@@ -3,7 +3,7 @@
 When designing domain entities, adhere to the following principles to ensure immutability and data integrity:
 
 1.  **Immutability:**
-    *   All entity fields MUST be `private` and `final`.
+    *   All entity fields MUST be `private` and `final`, ommit if using Lombok's `@Value` annotation.
     *   The entity MUST NOT have any public setter methods.
     *   Any method that conceptually modifies the entity's state MUST return a *new* instance of the entity with the updated state, rather than modifying the existing instance.
 
@@ -20,7 +20,6 @@ When designing domain entities, adhere to the following principles to ensure imm
 
 ```java
 @Value // Lombok annotation for immutability
-@Builder
 public class MyEntity {
 
     String id; //MUST be final and private

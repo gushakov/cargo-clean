@@ -9,11 +9,10 @@ import org.springframework.util.Assert;
  * This is an aggregate root.
  */
 @Value
-@Builder
 public class Consignment {
 
-    private final ConsignmentId consignmentId;
-    private final int quantityInContainers;
+    ConsignmentId consignmentId;
+    int quantityInContainers;
 
     @Builder
     private Consignment(ConsignmentId consignmentId, int quantityInContainers) {
