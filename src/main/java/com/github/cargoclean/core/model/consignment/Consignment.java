@@ -1,8 +1,8 @@
 package com.github.cargoclean.core.model.consignment;
 
+import com.github.cargoclean.core.model.Assert;
 import lombok.Builder;
 import lombok.Value;
-import org.springframework.util.Assert;
 
 /**
  * Represents a consignment, the unit of goods being shipped.
@@ -16,10 +16,8 @@ public class Consignment {
 
     @Builder
     private Consignment(ConsignmentId consignmentId, int quantityInContainers) {
-        Assert.notNull(consignmentId, "ConsignmentId cannot be null");
-        Assert.isTrue(quantityInContainers > 0, "Quantity must be positive");
-        this.consignmentId = consignmentId;
-        this.quantityInContainers = quantityInContainers;
+        this.consignmentId = Assert.notNull(consignmentId);
+        this.quantityInContainers = Assert.positive(quantityInContainers);
     }
 
     public Consignment withQuantityInContainers(int newQuantity) {

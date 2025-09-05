@@ -19,4 +19,11 @@ public class Assert {
         return something;
     }
 
+    public static int positive(int value) {
+        if (value <= 0) {
+            throw new InvalidDomainObjectError("Value must be positive");
+        }
+        return value;
+    }
+
 }
