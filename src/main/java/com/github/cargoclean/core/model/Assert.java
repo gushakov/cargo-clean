@@ -1,5 +1,6 @@
 package com.github.cargoclean.core.model;
 
+import java.util.List;
 import java.util.Optional;
 
 public class Assert {
@@ -24,6 +25,18 @@ public class Assert {
             throw new InvalidDomainObjectError("Value must be positive");
         }
         return value;
+    }
+
+    /**
+     * Returns a defensive immutable copy of the provided list.
+     * Returns an empty list if the parameter is null.
+     *
+     * @param list the list to copy, can be null
+     * @param <T> the type of elements in the list
+     * @return immutable copy of the list, never null
+     */
+    public static <T> List<T> defensiveCopy(List<T> list) {
+        return list != null ? List.copyOf(list) : List.of();
     }
 
 }

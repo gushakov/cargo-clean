@@ -11,6 +11,7 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
+import com.github.cargoclean.core.model.Assert;import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.AccessLevel;
@@ -18,6 +19,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.cargoclean.core.model.Assert.notNull;
 
@@ -51,6 +55,9 @@ public class Cargo {
     // itinerary is null before cargo is routed
     Itinerary itinerary;
 
+    // consignments associated with this cargo
+    List<Consignment> consignments;
+
     /**
      * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
      * which will be used by Spring Data JDBC to determine the state (new, existing) of
@@ -65,7 +72,8 @@ public class Cargo {
      */
     @Builder
     public Cargo(TrackingId trackingId, UnLocode origin, Delivery delivery,
-                 RouteSpecification routeSpecification, Itinerary itinerary, Integer version) {
+                 RouteSpecification routeSpecification, Itinerary itinerary,
+                 List<Consignment> consignments, Integer version) {
 
         /*
            These are mandatory always non-null attributes. We do
@@ -80,6 +88,9 @@ public class Cargo {
         // these can be null for some instances of Cargo, i.e. initially before routing
         this.itinerary = itinerary;
         this.version = version;
+
+        // consignments list - never null, but can be empty
+        this.consignments = Assert.defensiveCopy(consignments);
     }
 
     public boolean exists() {
@@ -111,6 +122,75 @@ public class Cargo {
         return newCargo().itinerary(itinerary).build();
     }
 
+    /**
+     * Adds a consignment to this cargo.
+     *
+     * @param consignment the consignment to add
+     * @return new {@code Cargo} instance with the added consignment
+     * @throws ConsignmentError if consignment cannot be added (e.g., cargo already received)
+     */
+    public Cargo addConsignment(Consignment consignment) {
+        notNull(consignment);
+
+        // Business rule: consignments can only be added before cargo is received
+        if (delivery.getTransportStatus() != TransportStatus.NOT_RECEIVED) {
+            throw new ConsignmentError("Cannot add consignment to cargo <%s>: cargo has already been received (status: %s)."
+                    .formatted(trackingId, delivery.getTransportStatus()));
+        }
+
+        List<Consignment> updatedConsignments = new ArrayList<>(this.consignments);
+        updatedConsignments.add(consignment);
+
+        return newCargo().consignments(updatedConsignments).build();
+    }
+
+    /**
+     * Removes a consignment from this cargo.
+     *
+     * @param consignment the consignment to remove
+     * @return new {@code Cargo} instance with the consignment removed
+     * @throws ConsignmentError if consignment cannot be removed (e.g., cargo already received or consignment not found)
+     */
+    public Cargo removeConsignment(Consignment consignment) {
+        notNull(consignment);
+
+        // Business rule: consignments can only be removed before cargo is received
+        if (delivery.getTransportStatus() != TransportStatus.NOT_RECEIVED) {
+            throw new ConsignmentError("Cannot remove consignment from cargo <%s>: cargo has already been received (status: %s)."
+                    .formatted(trackingId, delivery.getTransportStatus()));
+        }
+
+        if (!consignments.contains(consignment)) {
+            throw new ConsignmentError("Consignment <%s> not found in cargo <%s>."
+                    .formatted(consignment.getConsignmentId(), trackingId));
+        }
+
+        List<Consignment> updatedConsignments = new ArrayList<>(this.consignments);
+        updatedConsignments.remove(consignment);
+
+        return newCargo().consignments(updatedConsignments).build();
+    }
+
+    /**
+     * Returns the total quantity of all consignments in containers.
+     *
+     * @return total quantity in containers
+     */
+    public int getTotalQuantityInContainers() {
+        return consignments.stream()
+                .mapToInt(Consignment::getQuantityInContainers)
+                .sum();
+    }
+
+    /**
+     * Checks if this cargo has any consignments.
+     *
+     * @return true if cargo has consignments, false otherwise
+     */
+    public boolean hasConsignments() {
+        return !consignments.isEmpty();
+    }
+
     /*
         Point of interest:
         -----------------
@@ -127,6 +207,7 @@ public class Cargo {
                 .delivery(delivery)
                 .routeSpecification(routeSpecification)
                 .itinerary(itinerary)
+                .consignments(consignments)
                 .version(version);
     }
 
@@ -134,6 +215,7 @@ public class Cargo {
     public String toString() {
         return "Cargo{" +
                 "trackingId=" + trackingId +
+                ", consignments=" + consignments.size() +
                 '}';
     }
 
