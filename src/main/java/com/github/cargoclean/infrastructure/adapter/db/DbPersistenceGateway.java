@@ -21,6 +21,7 @@ package com.github.cargoclean.infrastructure.adapter.db;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -284,6 +285,11 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
         } catch (DataAccessException e) {
             throw new PersistenceOperationError("Error when querying for information about all cargoes", e);
         }
+    }
+
+    @Override
+    public void saveConsignment(Consignment consignment) {
+        // TODO: implement
     }
 
     private Cache getLocationCache() {

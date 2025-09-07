@@ -3,6 +3,7 @@ package com.github.cargoclean.core.port.persistence;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -81,4 +82,6 @@ public interface PersistenceGatewayOutputPort {
     void saveLocation(Location location);
 
     List<CargoInfo> allCargoes();
+
+    void saveConsignment(Consignment consignment);
 }
