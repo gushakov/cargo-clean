@@ -2,6 +2,8 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.consignment.Consignment;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.location.UnLocode;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -10,6 +12,7 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.LegDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.adapter.map.CommonMapStructConverters;
@@ -240,5 +243,27 @@ public class DefaultDbEntityMapperTest {
                         UnLocode.of("USDAL"), UnLocode.of("AUMEL"),
                         UtcDateTime.of("05-07-2022"),
                         UtcDateTime.of("05-08-2022")));
+    }
+
+    @Test
+    void should_map_consignment_to_db_entity() {
+        final Consignment consignment = consignment("9723");
+
+        final ConsignmentDbEntity consignmentDbEntity = mapper.convert(consignment);
+
+        assertThat(consignmentDbEntity.getConsignmentId())
+                .as("Consignment id")
+                .isEqualTo("9723");
+
+        assertThat(consignmentDbEntity.getQuantityInContainers())
+                .as("Quantity in containers")
+                .isEqualTo(5);
+    }
+
+    private Consignment consignment(String id) {
+        return Consignment.builder()
+                .consignmentId(ConsignmentId.of(id))
+                .quantityInContainers(5)
+                .build();
     }
 }
