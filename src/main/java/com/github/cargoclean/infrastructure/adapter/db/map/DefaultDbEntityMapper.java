@@ -3,10 +3,12 @@ package com.github.cargoclean.infrastructure.adapter.db.map;
 import com.github.cargoclean.core.GenericCargoError;
 import com.github.cargoclean.core.model.InvalidDomainObjectError;
 import com.github.cargoclean.core.model.cargo.*;
+import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.*;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
@@ -73,6 +75,12 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     abstract HandlingActivity map(HandlingActivityDbEntity handlingActivityDbEntity);
 
     abstract HandlingActivityDbEntity map(HandlingActivity handlingActivity);
+
+    @Mapping(target = "consignmentId", source = "consignmentId.id")
+    abstract ConsignmentDbEntity map(Consignment consignment);
+
+    @Mapping(target = "consignmentId", source = "consignmentId")
+    abstract Consignment map(ConsignmentDbEntity consignmentDbEntity);
 
     @Mapping(target = "routed", source = "routingStatus", qualifiedByName = "convertRoutingStatusStringToBoolean")
     abstract CargoInfo map(CargoInfoRow cargoInfoRow);
@@ -174,6 +182,18 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
     @Override
     public CargoInfo convert(CargoInfoRow cargoInfoRow) {
         return map(cargoInfoRow);
+    }
+
+    @IgnoreForMapping
+    @Override
+    public Consignment convert(ConsignmentDbEntity consignmentDbEntity) {
+        return map(consignmentDbEntity);
+    }
+
+    @IgnoreForMapping
+    @Override
+    public ConsignmentDbEntity convert(Consignment consignment) {
+        return map(consignment);
     }
 
     private void simulateSlowProcessing(int milliseconds) {

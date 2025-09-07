@@ -4,6 +4,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.Delivery;
 import com.github.cargoclean.core.model.cargo.RouteSpecification;
+import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.location.Location;
 import com.github.cargoclean.core.model.report.ExpectedArrivals;
@@ -11,6 +12,7 @@ import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.DeliveryDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.RouteSpecificationDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.location.LocationDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
@@ -38,6 +40,10 @@ public interface DbEntityMapper {
     HandlingEvent convert(HandlingEventEntity handlingEventEntity);
 
     HandlingEventEntity convert(HandlingEvent handlingEvent);
+
+    Consignment convert(ConsignmentDbEntity consignmentDbEntity);
+
+    ConsignmentDbEntity convert(Consignment consignment);
 
     CargoInfo convert(CargoInfoRow cargoInfoRow);
 }
