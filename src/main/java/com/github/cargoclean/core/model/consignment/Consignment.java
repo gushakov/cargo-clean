@@ -13,11 +13,13 @@ public class Consignment {
 
     ConsignmentId consignmentId;
     int quantityInContainers;
+    //CargoId cargoId;  //Optional: Add a reference to Cargo if needed for querying
 
     @Builder
     private Consignment(ConsignmentId consignmentId, int quantityInContainers) {
         this.consignmentId = Assert.notNull(consignmentId);
         this.quantityInContainers = Assert.positive(quantityInContainers);
+        //this.cargoId = cargoId;
     }
 
     public Consignment withQuantityInContainers(int newQuantity) {
@@ -25,6 +27,8 @@ public class Consignment {
     }
 
     private ConsignmentBuilder newEntity() {
-        return Consignment.builder().consignmentId(consignmentId).quantityInContainers(quantityInContainers);
+        return Consignment.builder()
+                .consignmentId(consignmentId)
+                .quantityInContainers(quantityInContainers);//.cargoId(cargoId);
     }
 }
