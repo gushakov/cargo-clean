@@ -76,10 +76,8 @@ public abstract class DefaultDbEntityMapper implements DbEntityMapper {
 
     abstract HandlingActivityDbEntity map(HandlingActivity handlingActivity);
 
-    @Mapping(target = "consignmentId", source = "consignmentId.id")
     abstract ConsignmentDbEntity map(Consignment consignment);
 
-    @Mapping(target = "consignmentId", source = "consignmentId")
     abstract Consignment map(ConsignmentDbEntity consignmentDbEntity);
 
     @Mapping(target = "routed", source = "routingStatus", qualifiedByName = "convertRoutingStatusStringToBoolean")

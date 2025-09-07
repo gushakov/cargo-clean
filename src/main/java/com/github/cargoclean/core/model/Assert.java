@@ -2,6 +2,7 @@ package com.github.cargoclean.core.model;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class Assert {
 
@@ -37,6 +38,18 @@ public class Assert {
      */
     public static <T> List<T> defensiveCopy(List<T> list) {
         return list != null ? List.copyOf(list) : List.of();
+    }
+
+    /**
+     * Returns a defensive immutable copy of the provided set.
+     * Returns an empty set if the parameter is null.
+     *
+     * @param set the set to copy, can be null
+     * @param <T> the type of elements in the set
+     * @return immutable copy of the set, never null
+     */
+    public static <T> Set<T> defensiveCopy(Set<T> set) {
+        return set != null ? Set.copyOf(set) : Set.of();
     }
 
 }

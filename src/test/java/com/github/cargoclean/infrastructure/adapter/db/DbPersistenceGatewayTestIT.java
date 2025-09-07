@@ -4,6 +4,8 @@ import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.cargo.TransportStatus;
+import com.github.cargoclean.core.model.consignment.Consignment;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingEventType;
@@ -179,4 +181,41 @@ public class DbPersistenceGatewayTestIT {
                 .isEqualTo(UnLocode.of("JNTKO"));
     }
 
+    @Test
+    void should_save_cargo_with_consignments() {
+        TrackingId trackingId = TrackingId.of("115A00BB");
+        dbGateway.deleteCargo(trackingId);
+//
+        Cargo cargo = cargo(trackingId.getId());
+        dbGateway.saveCargo(cargo);
+
+        /*ConsignmentId consignmentId1 = ConsignmentId.of("56444C06");
+        Consignment consignment1 = Consignment.builder()
+                .consignmentId(consignmentId1)
+                .cargoTrackingId(trackingId)
+                .quantityInContainers(10)
+                .build();
+        dbGateway.saveConsignment(consignment1);*/
+
+//        ConsignmentId consignmentId2 = ConsignmentId.of("5B91A8E9");
+//        Consignment consignment2 = Consignment.builder()
+//                .consignmentId(consignmentId2)
+//                .quantityInContainers(20)
+//                .cargoTrackingId(cargo.getTrackingId())
+//                .build();
+//
+//        dbGateway.saveConsignment(consignment2);
+
+
+        /*
+
+        cargo = cargo.addConsignmentId(consignmentId1);
+        cargo = cargo.addConsignmentId(consignmentId2);
+
+
+        Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(trackingId);
+
+        assertThat(loadedCargo.getConsignmentIds())
+                .containsExactly(consignmentId1, consignmentId2);*/
+    }
 }

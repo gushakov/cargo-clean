@@ -165,9 +165,25 @@ public class MockModels {
                                 .destination(UnLocode.of("USNYC"))
                                 .arrivalDeadline(UtcDateTime.of("16-12-2022"))
                                 .build())
+                        .build(),
+
+                "115A00BB",
+                Cargo.builder()
+                        .trackingId(TrackingId.builder()
+                                .id("115A00BB")
+                                .build())
+                        .origin(UnLocode.of("USDAL"))
+                        .delivery(Delivery.builder()
+                                .transportStatus(TransportStatus.NOT_RECEIVED)
+                                .routingStatus(RoutingStatus.ROUTED)
+                                .eta(UtcDateTime.of("24-08-2022"))
+                                .misdirected(false)
+                                .build())
+                        .routeSpecification(routeSpecification())
                         .build()
 
-        );
+
+                );
     }
 
     public static final Map<Integer, Leg> allLegs = Map.of(

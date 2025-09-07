@@ -21,8 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.github.cargoclean.core.model.Assert.notNull;
 
@@ -56,7 +56,7 @@ public class Cargo {
     Itinerary itinerary;
 
     // consignments associated with this cargo
-    List<ConsignmentId> consignmentIds;
+    Set<ConsignmentId> consignmentsIds;
 
     /**
      * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
@@ -73,7 +73,7 @@ public class Cargo {
     @Builder
     public Cargo(TrackingId trackingId, UnLocode origin, Delivery delivery,
                  RouteSpecification routeSpecification, Itinerary itinerary,
-                 List<ConsignmentId> consignmentIds, Integer version) {
+                 Set<ConsignmentId> consignmentsIds, Integer version) {
 
         /*
            These are mandatory always non-null attributes. We do
@@ -90,7 +90,7 @@ public class Cargo {
         this.version = version;
 
         // consignments list - never null, but can be empty
-        this.consignmentIds = Assert.defensiveCopy(consignmentIds);
+        this.consignmentsIds = Assert.defensiveCopy(consignmentsIds);
     }
 
     public boolean exists() {
@@ -130,10 +130,10 @@ public class Cargo {
                     .formatted(trackingId, delivery.getTransportStatus()));
         }
 
-        List<ConsignmentId> updatedConsignmentIds = new ArrayList<>(this.consignmentIds);
+        Set<ConsignmentId> updatedConsignmentIds = new HashSet<>(this.consignmentsIds);
         updatedConsignmentIds.add(consignmentId);
 
-        return newCargo().consignmentIds(updatedConsignmentIds).build();
+        return newCargo().consignmentsIds(updatedConsignmentIds).build();
     }
 
     public Cargo removeConsignmentId(ConsignmentId consignmentId) {
@@ -144,15 +144,15 @@ public class Cargo {
                     .formatted(trackingId, delivery.getTransportStatus()));
         }
 
-        if (!consignmentIds.contains(consignmentId)) {
+        if (!consignmentsIds.contains(consignmentId)) {
             throw new ConsignmentError("Consignment <%s> not found in cargo <%s>."
                     .formatted(consignmentId, trackingId));
         }
 
-        List<ConsignmentId> updatedConsignmentIds = new ArrayList<>(this.consignmentIds);
+        Set<ConsignmentId> updatedConsignmentIds = new HashSet<>(this.consignmentsIds);
         updatedConsignmentIds.remove(consignmentId);
 
-        return newCargo().consignmentIds(updatedConsignmentIds).build();
+        return newCargo().consignmentsIds(updatedConsignmentIds).build();
     }
 
     private CargoBuilder newCargo() {
@@ -163,7 +163,7 @@ public class Cargo {
                 .delivery(delivery)
                 .routeSpecification(routeSpecification)
                 .itinerary(itinerary)
-                .consignmentIds(consignmentIds)
+                .consignmentsIds(consignmentsIds)
                 .version(version);
     }
 
@@ -171,7 +171,7 @@ public class Cargo {
     public String toString() {
         return "Cargo{" +
                 "trackingId=" + trackingId +
-                ", consignmentIds=" + consignmentIds.size() +
+                ", consignmentIds=" + consignmentsIds.size() +
                 '}';
     }
 
@@ -196,7 +196,7 @@ public class Cargo {
     }
 
     public boolean hasConsignments() {
-        return !consignmentIds.isEmpty();
+        return !consignmentsIds.isEmpty();
     }
 
 }

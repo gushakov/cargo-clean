@@ -41,6 +41,8 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationExistsQu
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.config.CargoCleanProperties;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntityRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -81,6 +83,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     DbEntityMapper dbMapper;
     CacheManager cacheManager;
     CargoCleanProperties props;
+    ConsignmentDbEntityRepository consignmentRepository;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -289,7 +292,15 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
 
     @Override
     public void saveConsignment(Consignment consignment) {
-        // TODO: implement
+        try {
+            final ConsignmentDbEntity consignmentDbEntity = dbMapper.convert(consignment);
+
+            // save consignment
+            consignmentRepository.save(consignmentDbEntity);
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot save consignment with ID: <%s>"
+                    .formatted(consignment.getConsignmentId()), e);
+        }
     }
 
     private Cache getLocationCache() {

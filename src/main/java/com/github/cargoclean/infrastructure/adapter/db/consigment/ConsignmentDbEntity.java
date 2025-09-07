@@ -2,6 +2,8 @@ package com.github.cargoclean.infrastructure.adapter.db.consigment;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -10,13 +12,17 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("consignment")
 public class ConsignmentDbEntity {
 
+    @Id
     @Column("consignment_id")
     private String consignmentId;
 
     @Column("quantity_in_containers")
     private int quantityInContainers;
 
-    @Column("cargo_tracking_id")
-    private String cargoTrackingId;
+    /**
+     * Needed by Spring Data JDBC, see {@code Cargo}.
+     */
+    @Version
+    private Integer version;
 
 }
