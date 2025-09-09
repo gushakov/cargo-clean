@@ -16,12 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
-public class AddConsignmentUseCase implements AddConsignmentInputPort {
+public class ConsignmentUseCase implements ConsignmentInputPort{
 
-    AddConsignmentPresenterOutputPort presenter;
+    ConsignmentPresenterOutputPort presenter;
     SecurityOutputPort securityOps;
     PersistenceGatewayOutputPort gatewayOps;
     TransactionOperationsOutputPort txOps;
+
+    @Override
+    public void agentInitializesConsignmentEntry(String cargoTrackingId) {
+        // Present the view for entering consignment details
+        presenter.presentConsignmentEntryForm(cargoTrackingId);
+    }
 
     @Override
     public void addConsignmentToCargo(String cargoTrackingId, String consignmentId, int quantityInContainers) {
