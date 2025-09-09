@@ -13,8 +13,11 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ConsignmentDbEntity {
 
     @Id
-    @Column("consignment_id")
-    private String consignmentId;
+    @Column("id")
+    private String id;
+
+    @Column("cargo_tracking_id")
+    private String cargoTrackingId;
 
     @Column("quantity_in_containers")
     private int quantityInContainers;

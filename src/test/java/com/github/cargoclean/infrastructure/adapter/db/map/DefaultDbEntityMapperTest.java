@@ -251,7 +251,7 @@ public class DefaultDbEntityMapperTest {
 
         final ConsignmentDbEntity consignmentDbEntity = mapper.convert(consignment);
 
-        assertThat(consignmentDbEntity.getConsignmentId())
+        assertThat(consignmentDbEntity.getId())
                 .as("Consignment id")
                 .isEqualTo("9723");
 
@@ -262,7 +262,7 @@ public class DefaultDbEntityMapperTest {
 
     private Consignment consignment(String id) {
         return Consignment.builder()
-                .consignmentId(ConsignmentId.of(id))
+                .id(ConsignmentId.of(id))
                 .quantityInContainers(5)
                 .build();
     }

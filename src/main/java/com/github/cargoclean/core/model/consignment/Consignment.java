@@ -12,33 +12,29 @@ import lombok.Value;
 @Value
 public class Consignment {
 
-    ConsignmentId consignmentId;
+    ConsignmentId id;
+    TrackingId cargoTrackingId;
     int quantityInContainers;
     Integer version;
-    TrackingId trackingId;
 
     @Builder
-    private Consignment(ConsignmentId consignmentId, int quantityInContainers, Integer version, TrackingId trackingId) {
-        this.consignmentId = Assert.notNull(consignmentId);
+    private Consignment(ConsignmentId id, int quantityInContainers, Integer version, TrackingId cargoTrackingId) {
+        this.id = Assert.notNull(id);
         this.quantityInContainers = Assert.positive(quantityInContainers);
         this.version = version;
-        this.trackingId = trackingId;
-    }
-
-    public Consignment withQuantityInContainers(int newQuantity) {
-        return newEntity().quantityInContainers(newQuantity).build();
+        this.cargoTrackingId = cargoTrackingId;
     }
 
     public Consignment assignToCargo(TrackingId trackingId) {
-        return newEntity().trackingId(trackingId).build();
+        return newEntity().cargoTrackingId(trackingId).build();
     }
 
     private ConsignmentBuilder newEntity() {
         return Consignment.builder()
-                .consignmentId(consignmentId)
+                .id(id)
+                .cargoTrackingId(cargoTrackingId)
                 .quantityInContainers(quantityInContainers)
                 .version(version)
-                .trackingId(trackingId)
                 ;
     }
 }

@@ -11,7 +11,6 @@ package com.github.cargoclean.core.model.cargo;
  */
 
 
-import com.github.cargoclean.core.model.Assert;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.AccessLevel;

@@ -33,6 +33,8 @@ import com.github.cargoclean.core.port.persistence.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.AllUnlocodesQueryRow;
@@ -41,8 +43,6 @@ import com.github.cargoclean.infrastructure.adapter.db.location.LocationExistsQu
 import com.github.cargoclean.infrastructure.adapter.db.map.DbEntityMapper;
 import com.github.cargoclean.infrastructure.adapter.db.report.ExpectedArrivalsQueryRow;
 import com.github.cargoclean.infrastructure.config.CargoCleanProperties;
-import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
-import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntityRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -299,7 +299,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             consignmentRepository.save(consignmentDbEntity);
         } catch (Exception e) {
             throw new PersistenceOperationError("Cannot save consignment with ID: <%s>"
-                    .formatted(consignment.getConsignmentId()), e);
+                    .formatted(consignment.getId()), e);
         }
     }
 

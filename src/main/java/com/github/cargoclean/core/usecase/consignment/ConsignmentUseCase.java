@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
-public class ConsignmentUseCase implements ConsignmentInputPort{
+public class ConsignmentUseCase implements ConsignmentInputPort {
 
     ConsignmentPresenterOutputPort presenter;
     SecurityOutputPort securityOps;
@@ -30,7 +30,7 @@ public class ConsignmentUseCase implements ConsignmentInputPort{
     }
 
     @Override
-    public void addConsignmentToCargo(String cargoTrackingId, String consignmentId, int quantityInContainers) {
+    public void agentAssignsConsignmentToCargo(String cargoTrackingId, String consignmentId, int quantityInContainers) {
         try {
             // Security check outside the transaction
             securityOps.assertThatUserIsAgent();
@@ -40,7 +40,7 @@ public class ConsignmentUseCase implements ConsignmentInputPort{
 
             // Create a new Consignment outside the transaction
             Consignment consignment = Consignment.builder()
-                    .consignmentId(ConsignmentId.of(consignmentId))
+                    .id(ConsignmentId.of(consignmentId))
                     .quantityInContainers(quantityInContainers)
                     .build();
 

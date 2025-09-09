@@ -101,6 +101,5 @@ class ReportUseCaseTest extends AbstractUseCaseTestSupport {
         verify(gatewayOps, times(1)).queryForExpectedArrivals();
         verify(presenter, times(1)).presentError(any(RuntimeException.class));
 
-        noErrorsWerePresented();
     }
 }

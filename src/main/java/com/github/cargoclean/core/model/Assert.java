@@ -33,7 +33,7 @@ public class Assert {
      * Returns an empty list if the parameter is null.
      *
      * @param list the list to copy, can be null
-     * @param <T> the type of elements in the list
+     * @param <T>  the type of elements in the list
      * @return immutable copy of the list, never null
      */
     public static <T> List<T> defensiveCopy(List<T> list) {

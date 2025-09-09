@@ -107,7 +107,7 @@ public class CommonMapStructConverters {
         return Region.of(regionName);
     }
 
-   public String mapConsignmentIdToString(ConsignmentId consignmentId) {
+    public String mapConsignmentIdToString(ConsignmentId consignmentId) {
         if (consignmentId == null) {
             return null;
         }
