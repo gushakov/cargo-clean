@@ -91,4 +91,9 @@ public interface TransactionOperationsOutputPort {
      * @return object returned by the runnable
      */
     <R> R doAfterRollbackWithResult(TransactionRunnableWithResult<R> runnableWithResult);
+
+    /**
+     * Rolls back currently active transaction.
+     */
+    void rollback();
 }

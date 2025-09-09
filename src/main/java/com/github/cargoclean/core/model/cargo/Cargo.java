@@ -12,7 +12,6 @@ package com.github.cargoclean.core.model.cargo;
 
 
 import com.github.cargoclean.core.model.Assert;
-import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
 import com.github.cargoclean.core.model.location.UnLocode;
 import lombok.AccessLevel;
@@ -20,9 +19,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static com.github.cargoclean.core.model.Assert.notNull;
 
@@ -55,9 +51,6 @@ public class Cargo {
     // itinerary is null before cargo is routed
     Itinerary itinerary;
 
-    // consignments associated with this cargo
-    Set<ConsignmentId> consignmentsIds;
-
     /**
      * Should not be modified. Maps to a {@literal @Version} field in {@code CargoDbEntity}
      * which will be used by Spring Data JDBC to determine the state (new, existing) of
@@ -73,8 +66,7 @@ public class Cargo {
     @Builder
     public Cargo(TrackingId trackingId, UnLocode origin, Delivery delivery,
                  RouteSpecification routeSpecification, Itinerary itinerary,
-                 Set<ConsignmentId> consignmentsIds, Integer version) {
-
+                 Integer version) {
         /*
            These are mandatory always non-null attributes. We do
            not need to see if these value objects are valid (themselves),
@@ -88,9 +80,6 @@ public class Cargo {
         // these can be null for some instances of Cargo, i.e. initially before routing
         this.itinerary = itinerary;
         this.version = version;
-
-        // consignments list - never null, but can be empty
-        this.consignmentsIds = Assert.defensiveCopy(consignmentsIds);
     }
 
     public boolean exists() {
@@ -122,39 +111,6 @@ public class Cargo {
         return newCargo().itinerary(itinerary).build();
     }
 
-    public Cargo addConsignmentId(ConsignmentId consignmentId) {
-        notNull(consignmentId);
-        // Business rule: consignments can only be added before cargo is received
-        if (delivery.getTransportStatus() != TransportStatus.NOT_RECEIVED) {
-            throw new ConsignmentError("Cannot add consignment to cargo <%s>: cargo has already been received (status: %s)."
-                    .formatted(trackingId, delivery.getTransportStatus()));
-        }
-
-        Set<ConsignmentId> updatedConsignmentIds = new HashSet<>(this.consignmentsIds);
-        updatedConsignmentIds.add(consignmentId);
-
-        return newCargo().consignmentsIds(updatedConsignmentIds).build();
-    }
-
-    public Cargo removeConsignmentId(ConsignmentId consignmentId) {
-        notNull(consignmentId);
-        // Business rule: consignments can only be removed before cargo is received
-        if (delivery.getTransportStatus() != TransportStatus.NOT_RECEIVED) {
-            throw new ConsignmentError("Cannot remove consignment from cargo <%s>: cargo has already been received (status: %s)."
-                    .formatted(trackingId, delivery.getTransportStatus()));
-        }
-
-        if (!consignmentsIds.contains(consignmentId)) {
-            throw new ConsignmentError("Consignment <%s> not found in cargo <%s>."
-                    .formatted(consignmentId, trackingId));
-        }
-
-        Set<ConsignmentId> updatedConsignmentIds = new HashSet<>(this.consignmentsIds);
-        updatedConsignmentIds.remove(consignmentId);
-
-        return newCargo().consignmentsIds(updatedConsignmentIds).build();
-    }
-
     private CargoBuilder newCargo() {
 
         return Cargo.builder()
@@ -163,7 +119,6 @@ public class Cargo {
                 .delivery(delivery)
                 .routeSpecification(routeSpecification)
                 .itinerary(itinerary)
-                .consignmentsIds(consignmentsIds)
                 .version(version);
     }
 
@@ -171,7 +126,6 @@ public class Cargo {
     public String toString() {
         return "Cargo{" +
                 "trackingId=" + trackingId +
-                ", consignmentIds=" + consignmentsIds.size() +
                 '}';
     }
 
@@ -193,10 +147,6 @@ public class Cargo {
         return newCargo()
                 .delivery(Delivery.derivedFrom(routeSpecification, itinerary, handlingHistory))
                 .build();
-    }
-
-    public boolean hasConsignments() {
-        return !consignmentsIds.isEmpty();
     }
 
 }

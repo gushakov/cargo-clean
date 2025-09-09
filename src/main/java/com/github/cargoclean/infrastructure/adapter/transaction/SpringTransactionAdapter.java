@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.NoTransactionException;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -158,6 +159,16 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
             }
         });
         return result.get();
+    }
+
+    @Override
+    public void rollback() {
+        try {
+            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
+            log.debug("[Transaction] Will roll back current transaction");
+        } catch (NoTransactionException e) {
+            // do nothing if not in transaction
+        }
     }
 
     /**

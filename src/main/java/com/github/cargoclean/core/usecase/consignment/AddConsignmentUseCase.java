@@ -1,8 +1,8 @@
 package com.github.cargoclean.core.usecase.consignment;
 
 import com.github.cargoclean.core.model.cargo.Cargo;
-import com.github.cargoclean.core.model.cargo.ConsignmentError;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.cargo.TransportStatus;
 import com.github.cargoclean.core.model.consignment.Consignment;
 import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.port.persistence.PersistenceGatewayOutputPort;
@@ -38,29 +38,16 @@ public class AddConsignmentUseCase implements AddConsignmentInputPort {
                     .quantityInContainers(quantityInContainers)
                     .build();
 
+            if (cargo.getDelivery().getTransportStatus() != TransportStatus.NOT_RECEIVED) {
+                presenter.presentErrorWhenConsignmentCouldNotBeAdded(consignmentId, cargoTrackingId,
+                        "Cannot add consignment to cargo with transport status: " + cargo.getDelivery().getTransportStatus());
+                return;
+            }
+
             txOps.doInTransaction(() -> {
-                // Save the new Consignment
-                gatewayOps.saveConsignment(consignment);
-
-                //Add consignment id to cargo
-                Cargo updatedCargo;
-                try {
-                    updatedCargo = cargo.addConsignmentId(consignment.getConsignmentId());
-                } catch (ConsignmentError e) {
-                    // problem with adding new consignment
-                    txOps.doAfterRollback(() ->
-                            presenter.presentErrorWhenConsignmentCouldNotBeAdded(consignmentId, cargoTrackingId, e.getMessage()));
-                    return;
-                }
-
-                // Save the updated Cargo
-                gatewayOps.saveCargo(updatedCargo);
-
-                // do on success, i.e. when transactional lambda commits successfully
-                txOps.doAfterCommit(() -> {
-                    log.debug("[Consignment] Added consignment {} to cargo {}", consignmentId, cargoTrackingId);
-                    presenter.presentConsignmentAdded(cargoTrackingId, consignmentId);
-                });
+                Consignment updatedConsignment = consignment.assignToCargo(cargo.getTrackingId());
+                gatewayOps.saveConsignment(updatedConsignment);
+                txOps.doAfterCommit(() -> presenter.presentConsignmentAdded(consignmentId, cargoTrackingId));
             });
 
 
