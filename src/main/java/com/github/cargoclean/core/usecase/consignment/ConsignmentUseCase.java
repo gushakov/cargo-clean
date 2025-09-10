@@ -61,4 +61,9 @@ public class ConsignmentUseCase implements ConsignmentInputPort {
             presenter.presentError(e);
         }
     }
+
+    @Override
+    public void agentAddsNewConsignment() {
+
+    }
 }
