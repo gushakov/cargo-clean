@@ -58,6 +58,16 @@
             </div>
         </div>
 
+        <div class="row mb-3">
+            <label for="addConsignment" class="col-2 col-form-label">Consignments</label>
+            <div class="col-1">
+                <form method="get" th:action="@{/addNewConsignment}">
+                    <input type="hidden" name="trackingId" th:field="*{trackingId}"/>
+                    <button id="addConsignment" type="submit" class="btn btn-primary form-control">Add</button>
+                </form>
+            </div>
+        </div>
+
         <th:block th:if="*{isRouted()}">
 
             <div class="row">

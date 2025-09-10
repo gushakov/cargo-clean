@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+
+<!--
+
+    Notice on COPYRIGHT:
+    ===================
+
+    Some code in this file is based on, copied from, and or modified from
+    the code in the original DDDSample application. Please, see the copyright
+    notice in "README.md" and the copy of the original licence in
+    "original-license.txt", as well.
+-->
+
+<!--
+
+    References:
+    ==========
+
+    1.  Based on the similar Thymeleaf view: "admin/registrationForm" in the original DDDSample.
+    2.  Thymeleaf iteration: https://www.baeldung.com/thymeleaf-iteration
+    3.  Handling collections with @thymesVar: https://stackoverflow.com/questions/48511677/how-do-i-handle-collections-with-thymesvar
+-->
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="container-fluid">
+
+    <div th:replace="fragments :: header"></div>
+
+    <div class="row-cols-1 mt-3">
+
+        <!--/*@thymesVar id="consignmentEntryForm" type="com.github.cargoclean.infrastructure.adapter.web.consignment.ConsignmentEntryForm"*/-->
+
+        <form method="post" action="#" th:action="@{/consignments/register}" th:object="${consignmentEntryForm}">
+            <div class="row mb-3">
+                <label for="cargoTrackingId" class="col-2 col-form-label">Cargo Tracking ID</label>
+                <div class="col-1">
+                    <input id="cargoTrackingId" type="text" class="form-control-sm"
+                           th:field="*{cargoTrackingId}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label for="quantityInContainers" class="col-2 col-form-label">Quantity in Containers</label>
+                <div class="col-1">
+                    <input id="quantityInContainers" type="number" class="form-control-sm"
+                           th:field="*{quantityInContainers}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Register Consignment</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<th:block th:replace="fragments :: footer"></th:block>
+
+</body>
+</html>
