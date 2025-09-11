@@ -26,6 +26,7 @@ public class ConsignmentController extends AbstractWebController {
     /**
      * Handles the POST request from the register-new-consignment.html form.
      * It retrieves the ConsignmentInputPort and calls the agentAssignsConsignmentToCargo method.
+     *
      * @param consignmentEntryForm The form data submitted by the user.
      */
     @PostMapping("/registerConsignment")
