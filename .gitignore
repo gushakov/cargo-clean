@@ -6,4 +6,4 @@
 *.dtmp
 target
 /etc/doc/*.drawio
-/.copilot/explore/
+/.copilot/explore
