@@ -23,13 +23,17 @@ public class ConsignmentPresenter extends AbstractWebPresenter implements Consig
 
     @Override
     public void presentConsignmentAdded(ConsignmentId consignmentId, TrackingId cargoTrackingId) {
+        // Store success message in session
+        storeInSession("successMessage", "Consignment " + consignmentId.getId() + " added successfully for cargo " + cargoTrackingId.getId() + "!");
+
         // redirect to cargo routing (show details of the cargo)
         redirect("/showCargoDetails", Map.of("trackingId", cargoTrackingId.getId()));
     }
 
     @Override
     public void presentErrorWhenConsignmentCouldNotBeAdded(ConsignmentId consignmentId, TrackingId cargoTrackingId, String message) {
-
+        // Store the error message in the session and redirect to the error page
+        redirectError(message);
     }
 
     @Override
