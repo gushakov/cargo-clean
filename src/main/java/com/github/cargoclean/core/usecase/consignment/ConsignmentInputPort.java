@@ -5,5 +5,4 @@ public interface ConsignmentInputPort {
 
     void agentAssignsNewConsignmentToCargo(String cargoTrackingId, int quantityInContainers);
 
-
 }
