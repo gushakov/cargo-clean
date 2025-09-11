@@ -22,7 +22,6 @@ import lombok.experimental.FieldDefaults;
 import static com.github.cargoclean.core.model.Assert.notNull;
 
 
-
 /*
     References:
     ----------
@@ -65,8 +64,8 @@ public class Cargo {
      */
     @Builder
     public Cargo(TrackingId trackingId, UnLocode origin, Delivery delivery,
-                 RouteSpecification routeSpecification, Itinerary itinerary, Integer version) {
-
+                 RouteSpecification routeSpecification, Itinerary itinerary,
+                 Integer version) {
         /*
            These are mandatory always non-null attributes. We do
            not need to see if these value objects are valid (themselves),
@@ -111,14 +110,6 @@ public class Cargo {
         return newCargo().itinerary(itinerary).build();
     }
 
-    /*
-        Point of interest:
-        -----------------
-        This helper is used to create a copy of this instance so
-        that we can return a new (modified) copy after each method
-        which changes the state of "Cargo". This renders "Cargo"
-        entity effectively immutable.
-     */
     private CargoBuilder newCargo() {
 
         return Cargo.builder()

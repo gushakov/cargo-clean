@@ -137,5 +137,6 @@ When creating a new presenter:
 6. ✅ Use `presentModelAndView()` for view rendering
 7. ✅ Use `redirect()` for post-processing navigation
 8. ✅ Handle errors appropriately via inherited `presentError()`
+9. ✅ For controller methods where the presenter handles the HTTP response (e.g., by performing a redirect), ensure the method is void and annotated with @ResponseBody to prevent Spring from attempting view resolution.
 
 This pattern maintains Clean Architecture principles while providing full control over presentation logic within Spring Web MVC constraints.

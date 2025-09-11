@@ -21,6 +21,8 @@ package com.github.cargoclean.infrastructure.adapter.db;
 import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.consignment.Consignment;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -32,6 +34,8 @@ import com.github.cargoclean.core.port.persistence.PersistenceOperationError;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntity;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.cargo.CargoInfoRow;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntity;
+import com.github.cargoclean.infrastructure.adapter.db.consigment.ConsignmentDbEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntity;
 import com.github.cargoclean.infrastructure.adapter.db.handling.HandlingEventEntityRepository;
 import com.github.cargoclean.infrastructure.adapter.db.location.AllUnlocodesQueryRow;
@@ -80,6 +84,7 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
     DbEntityMapper dbMapper;
     CacheManager cacheManager;
     CargoCleanProperties props;
+    ConsignmentDbEntityRepository consignmentRepository;
 
     @Override
     public TrackingId nextTrackingId() {
@@ -90,6 +95,15 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
          */
         final String uuid = UUID.randomUUID().toString();
         return TrackingId.of(uuid.substring(0, uuid.indexOf("-")).toUpperCase());
+    }
+
+    @Override
+    public ConsignmentId nextConsignmentId() {
+        /*
+            Generates a new unique ConsignmentId, similar to how TrackingId is generated.
+         */
+        final String uuid = UUID.randomUUID().toString();
+        return ConsignmentId.of(uuid.substring(0, uuid.indexOf("-")).toUpperCase());
     }
 
     @Override
@@ -283,6 +297,19 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
             return rows.stream().map(dbMapper::convert).toList();
         } catch (DataAccessException e) {
             throw new PersistenceOperationError("Error when querying for information about all cargoes", e);
+        }
+    }
+
+    @Override
+    public void saveConsignment(Consignment consignment) {
+        try {
+            final ConsignmentDbEntity consignmentDbEntity = dbMapper.convert(consignment);
+
+            // save consignment
+            consignmentRepository.save(consignmentDbEntity);
+        } catch (Exception e) {
+            throw new PersistenceOperationError("Cannot save consignment with ID: <%s>"
+                    .formatted(consignment.getId()), e);
         }
     }
 

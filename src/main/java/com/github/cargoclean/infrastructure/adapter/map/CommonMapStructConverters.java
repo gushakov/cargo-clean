@@ -2,6 +2,7 @@ package com.github.cargoclean.infrastructure.adapter.map;
 
 import com.github.cargoclean.core.model.UtcDateTime;
 import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.location.Region;
 import com.github.cargoclean.core.model.location.UnLocode;
@@ -104,5 +105,19 @@ public class CommonMapStructConverters {
             return null;
         }
         return Region.of(regionName);
+    }
+
+    public String mapConsignmentIdToString(ConsignmentId consignmentId) {
+        if (consignmentId == null) {
+            return null;
+        }
+        return consignmentId.getId();
+    }
+
+    public ConsignmentId mapStringToConsignmentId(String consignmentId) {
+        if (consignmentId == null) {
+            return null;
+        }
+        return ConsignmentId.of(consignmentId);
     }
 }

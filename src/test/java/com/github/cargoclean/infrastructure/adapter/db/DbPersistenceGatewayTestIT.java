@@ -24,10 +24,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
@@ -179,4 +175,41 @@ public class DbPersistenceGatewayTestIT {
                 .isEqualTo(UnLocode.of("JNTKO"));
     }
 
+    @Test
+    void should_save_cargo_with_consignments() {
+        TrackingId trackingId = TrackingId.of("115A00BB");
+        dbGateway.deleteCargo(trackingId);
+//
+        Cargo cargo = cargo(trackingId.getId());
+        dbGateway.saveCargo(cargo);
+
+        /*ConsignmentId consignmentId1 = ConsignmentId.of("56444C06");
+        Consignment consignment1 = Consignment.builder()
+                .consignmentId(consignmentId1)
+                .cargoTrackingId(trackingId)
+                .quantityInContainers(10)
+                .build();
+        dbGateway.saveConsignment(consignment1);*/
+
+//        ConsignmentId consignmentId2 = ConsignmentId.of("5B91A8E9");
+//        Consignment consignment2 = Consignment.builder()
+//                .consignmentId(consignmentId2)
+//                .quantityInContainers(20)
+//                .cargoTrackingId(cargo.getTrackingId())
+//                .build();
+//
+//        dbGateway.saveConsignment(consignment2);
+
+
+        /*
+
+        cargo = cargo.addConsignmentId(consignmentId1);
+        cargo = cargo.addConsignmentId(consignmentId2);
+
+
+        Cargo loadedCargo = dbGateway.obtainCargoByTrackingId(trackingId);
+
+        assertThat(loadedCargo.getConsignmentIds())
+                .containsExactly(consignmentId1, consignmentId2);*/
+    }
 }
