@@ -25,27 +25,39 @@ public class ConsignmentUseCase implements ConsignmentInputPort {
 
     @Override
     public void agentInitializesConsignmentEntry(String cargoTrackingId) {
-        // Present the view for entering consignment details
-        presenter.presentConsignmentEntryForm(cargoTrackingId);
+
+        try {
+            // Security check outside the transaction
+            securityOps.assertThatUserIsAgent();
+
+            // Present the view for entering consignment details
+            presenter.presentConsignmentEntryForm(cargoTrackingId);
+        } catch (Exception e) {
+            presenter.presentError(e);
+        }
     }
 
     @Override
-    public void agentAssignsConsignmentToCargo(String cargoTrackingId, String consignmentId, int quantityInContainers) {
+    public void agentAssignsNewConsignmentToCargo(String cargoTrackingId, int quantityInContainers) {
         try {
             // Security check outside the transaction
             securityOps.assertThatUserIsAgent();
 
             // Load the Cargo aggregate outside the transaction
-            Cargo cargo = gatewayOps.obtainCargoByTrackingId(TrackingId.of(cargoTrackingId));
+            TrackingId trackingId = TrackingId.of(cargoTrackingId);
+            Cargo cargo = gatewayOps.obtainCargoByTrackingId(trackingId);
+
+            // Generate a new Consignment ID
+            ConsignmentId consignmentId = gatewayOps.nextConsignmentId();
 
             // Create a new Consignment outside the transaction
             Consignment consignment = Consignment.builder()
-                    .id(ConsignmentId.of(consignmentId))
+                    .id(consignmentId)
                     .quantityInContainers(quantityInContainers)
                     .build();
 
             if (cargo.getDelivery().getTransportStatus() != TransportStatus.NOT_RECEIVED) {
-                presenter.presentErrorWhenConsignmentCouldNotBeAdded(consignmentId, cargoTrackingId,
+                presenter.presentErrorWhenConsignmentCouldNotBeAdded(consignmentId, trackingId,
                         "Cannot add consignment to cargo with transport status: " + cargo.getDelivery().getTransportStatus());
                 return;
             }
@@ -53,7 +65,7 @@ public class ConsignmentUseCase implements ConsignmentInputPort {
             txOps.doInTransaction(() -> {
                 Consignment updatedConsignment = consignment.assignToCargo(cargo.getTrackingId());
                 gatewayOps.saveConsignment(updatedConsignment);
-                txOps.doAfterCommit(() -> presenter.presentConsignmentAdded(consignmentId, cargoTrackingId));
+                txOps.doAfterCommit(() -> presenter.presentConsignmentAdded(consignmentId, trackingId));
             });
 
 
@@ -62,8 +74,4 @@ public class ConsignmentUseCase implements ConsignmentInputPort {
         }
     }
 
-    @Override
-    public void agentAddsNewConsignment() {
-
-    }
 }

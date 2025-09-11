@@ -1,5 +1,7 @@
 package com.github.cargoclean.infrastructure.adapter.web.consignment;
 
+import com.github.cargoclean.core.model.cargo.TrackingId;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.usecase.consignment.ConsignmentPresenterOutputPort;
 import com.github.cargoclean.infrastructure.adapter.web.AbstractWebPresenter;
 import com.github.cargoclean.infrastructure.adapter.web.LocalDispatcherServlet;
@@ -20,12 +22,13 @@ public class ConsignmentPresenter extends AbstractWebPresenter implements Consig
     }
 
     @Override
-    public void presentConsignmentAdded(String consignmentId, String cargoTrackingId) {
-
+    public void presentConsignmentAdded(ConsignmentId consignmentId, TrackingId cargoTrackingId) {
+        // redirect to cargo routing (show details of the cargo)
+        redirect("/showCargoDetails", Map.of("trackingId", cargoTrackingId.getId()));
     }
 
     @Override
-    public void presentErrorWhenConsignmentCouldNotBeAdded(String consignmentId, String cargoTrackingId, String message) {
+    public void presentErrorWhenConsignmentCouldNotBeAdded(ConsignmentId consignmentId, TrackingId cargoTrackingId, String message) {
 
     }
 

@@ -32,12 +32,12 @@
 
         <!--/*@thymesVar id="consignmentEntryForm" type="com.github.cargoclean.infrastructure.adapter.web.consignment.ConsignmentEntryForm"*/-->
 
-        <form method="post" action="#" th:action="@{/consignments/register}" th:object="${consignmentEntryForm}">
+        <form method="post" action="#" th:action="@{/registerConsignment}" th:object="${consignmentEntryForm}">
             <div class="row mb-3">
                 <label for="cargoTrackingId" class="col-2 col-form-label">Cargo Tracking ID</label>
                 <div class="col-1">
                     <input id="cargoTrackingId" type="text" class="form-control-sm"
-                           th:field="*{cargoTrackingId}">
+                           th:field="*{cargoTrackingId}" readonly="readonly">
                 </div>
             </div>
 

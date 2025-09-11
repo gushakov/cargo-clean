@@ -22,6 +22,7 @@ import com.github.cargoclean.core.model.cargo.Cargo;
 import com.github.cargoclean.core.model.cargo.CargoInfo;
 import com.github.cargoclean.core.model.cargo.TrackingId;
 import com.github.cargoclean.core.model.consignment.Consignment;
+import com.github.cargoclean.core.model.consignment.ConsignmentId;
 import com.github.cargoclean.core.model.handling.EventId;
 import com.github.cargoclean.core.model.handling.HandlingEvent;
 import com.github.cargoclean.core.model.handling.HandlingHistory;
@@ -94,6 +95,15 @@ public class DbPersistenceGateway implements PersistenceGatewayOutputPort {
          */
         final String uuid = UUID.randomUUID().toString();
         return TrackingId.of(uuid.substring(0, uuid.indexOf("-")).toUpperCase());
+    }
+
+    @Override
+    public ConsignmentId nextConsignmentId() {
+        /*
+            Generates a new unique ConsignmentId, similar to how TrackingId is generated.
+         */
+        final String uuid = UUID.randomUUID().toString();
+        return ConsignmentId.of(uuid.substring(0, uuid.indexOf("-")).toUpperCase());
     }
 
     @Override

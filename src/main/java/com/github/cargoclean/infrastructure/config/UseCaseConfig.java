@@ -8,6 +8,9 @@ import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPo
 import com.github.cargoclean.core.usecase.booking.BookingInputPort;
 import com.github.cargoclean.core.usecase.booking.BookingPresenterOutputPort;
 import com.github.cargoclean.core.usecase.booking.BookingUseCase;
+import com.github.cargoclean.core.usecase.consignment.ConsignmentInputPort;
+import com.github.cargoclean.core.usecase.consignment.ConsignmentPresenterOutputPort;
+import com.github.cargoclean.core.usecase.consignment.ConsignmentUseCase;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsInputPort;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsPresenterOutputPort;
 import com.github.cargoclean.core.usecase.editlocation.EditLocationsUseCase;
@@ -101,6 +104,15 @@ public class UseCaseConfig {
                                                        PersistenceGatewayOutputPort gatewayOps,
                                                        TransactionOperationsOutputPort txOps) {
         return new EditLocationsUseCase(presenter, securityOps, gatewayOps, txOps);
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public ConsignmentInputPort consignmentUseCase(ConsignmentPresenterOutputPort presenter,
+                                                   SecurityOutputPort securityOps,
+                                                   PersistenceGatewayOutputPort gatewayOps,
+                                                   TransactionOperationsOutputPort txOps) {
+        return new ConsignmentUseCase(presenter, securityOps, gatewayOps, txOps);
     }
 
 }
