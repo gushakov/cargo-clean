@@ -51,7 +51,7 @@ CRG ..> HST: "derive delivery\nhistory"
 
 ITN *--> LEG: "consist of"
 ITN ..> LCT: "initial departure,\nfinal destination"
-ITN ..> VYG: "is expected"
+ITN ...> EVT: "is expected"
 
 VYG *--> SCH
 VYG ..> MVT: "builder"
