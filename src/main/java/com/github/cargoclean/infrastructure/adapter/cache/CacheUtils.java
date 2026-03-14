@@ -1,4 +1,4 @@
-package com.github.cargoclean.infrastructure.adapter;
+package com.github.cargoclean.infrastructure.adapter.cache;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -7,7 +7,6 @@ import java.util.Optional;
 
 /**
  * Helper class with static methods to work with {@linkplain CacheManager}.
- * May be shared by several adapters.
  */
 public class CacheUtils {
 

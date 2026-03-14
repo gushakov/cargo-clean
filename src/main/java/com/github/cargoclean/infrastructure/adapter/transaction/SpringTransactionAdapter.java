@@ -3,21 +3,16 @@ package com.github.cargoclean.infrastructure.adapter.transaction;
 import com.github.cargoclean.core.port.transaction.TransactionOperationsOutputPort;
 import com.github.cargoclean.core.port.transaction.TransactionRunnableWithResult;
 import com.github.cargoclean.core.port.transaction.TransactionRunnableWithoutResult;
-import com.github.cargoclean.infrastructure.adapter.CacheUtils;
+import com.github.cargoclean.infrastructure.adapter.cache.CacheInvalidationOnRollback;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 /*
     References:
@@ -30,7 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * transaction SPI.
  *
  * @see TransactionTemplate
- * @see TransactionInterceptor
  * @see TransactionSynchronizationManager
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -40,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SpringTransactionAdapter implements TransactionOperationsOutputPort {
 
     TransactionTemplate transactionTemplate;
-    CacheManager cacheManager;
+    CacheInvalidationOnRollback cacheInvalidationOnRollback;
 
     @Qualifier("read-only")
     TransactionTemplate readOnlyTransactionTemplate;
@@ -52,13 +46,7 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
             readOnlyTransactionTemplate.executeWithoutResult(transactionStatus -> runnableWithoutResult.run());
         } else {
             transactionTemplate.executeWithoutResult(transactionStatus -> {
-                /*
-                    Point of interest:
-                    -----------------
-                    We need to register a callback which will clear
-                    caches in case of a rollback of the current transaction.
-                 */
-                registerCacheInvalidationOnRollback();
+                cacheInvalidationOnRollback.register();
                 runnableWithoutResult.run();
             });
         }
@@ -71,7 +59,7 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
             return readOnlyTransactionTemplate.execute(transactionStatus -> runnableWithResult.run());
         } else {
             return transactionTemplate.execute(transactionStatus -> {
-                registerCacheInvalidationOnRollback();
+                cacheInvalidationOnRollback.register();
                 return runnableWithResult.run();
             });
         }
@@ -98,34 +86,10 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
     }
 
     @Override
-    public <R> R doAfterCommitWithResult(TransactionRunnableWithResult<R> runnableWithResult) {
-        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-            // not in transaction, just execute the runnable
-            log.debug("[Transaction] Not in transaction, executing runnable (with a result) from \"doAfterCommitWithResult\" directly");
-            return runnableWithResult.run();
-        }
-
-        final AtomicReference<R> result = new AtomicReference<>();
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-
-            @Override
-            public void afterCompletion(int status) {
-                if (status == TransactionSynchronization.STATUS_COMMITTED) {
-                    log.debug("[Transaction][After commit] Executing runnable (with a result) after commit");
-                    result.set(runnableWithResult.run());
-                }
-            }
-
-        });
-        return result.get();
-    }
-
-    @Override
     public void doAfterRollback(TransactionRunnableWithoutResult runnableWithoutResult) {
         if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-            // not in transaction, just execute the runnable
-            log.debug("[Transaction] Not in transaction, executing runnable (without a result) from \"doAfterRollback\" directly");
-            runnableWithoutResult.run();
+            // no active transaction means no rollback to react to: no-op
+            log.debug("[Transaction] No active transaction, ignoring doAfterRollback callback");
             return;
         }
 
@@ -135,56 +99,6 @@ public class SpringTransactionAdapter implements TransactionOperationsOutputPort
                 if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
                     log.debug("[Transaction][After rollback] Executing runnable (without a result) after rollback");
                     runnableWithoutResult.run();
-                }
-            }
-        });
-    }
-
-    @Override
-    public <R> R doAfterRollbackWithResult(TransactionRunnableWithResult<R> runnableWithResult) {
-        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-            // not in transaction, just execute the runnable
-            log.debug("[Transaction] Not in transaction, executing runnable (with a result) from \"doAfterRollbackWithResult\" directly");
-            return runnableWithResult.run();
-        }
-
-        final AtomicReference<R> result = new AtomicReference<>();
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCompletion(int status) {
-                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
-                    log.debug("[Transaction] Executing runnable (with a result) after rollback");
-                    result.set(runnableWithResult.run());
-                }
-            }
-        });
-        return result.get();
-    }
-
-    @Override
-    public void rollback() {
-        try {
-            TransactionInterceptor.currentTransactionStatus().setRollbackOnly();
-            log.debug("[Transaction] Will roll back current transaction");
-        } catch (NoTransactionException e) {
-            // do nothing if not in transaction
-        }
-    }
-
-    /**
-     * Registers a custom transaction synchronization callback which will
-     * clear all caches after a rollback of a transaction.
-     */
-    private void registerCacheInvalidationOnRollback() {
-        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-            return;
-        }
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCompletion(int status) {
-                if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
-                    log.debug("[Transaction] [Cache] Clearing all caches on rollback");
-                    CacheUtils.clearAllCaches(cacheManager);
                 }
             }
         });

@@ -41,62 +41,55 @@ public class HandlingUseCase implements HandlingInputPort {
 
         try {
 
+            // make sure user is a manager
+            securityOps.assertThatUserIsManager();
+
+            EventId eventId = gatewayOps.nextEventId();
+
+            // parse identifiers and create value objects: outside the transaction
+            // since validation does not require a consistency boundary
+            VoyageNumber voyageNumber;
+            UnLocode location;
+            TrackingId cargoId;
+            UtcDateTime completionDateTime;
+            try {
+                voyageNumber = Optional.ofNullable(voyageNumberStr)
+                        .map(VoyageNumber::of).orElse(null);
+                location = UnLocode.of(locationStr);
+                cargoId = TrackingId.of(cargoIdStr);
+                completionDateTime = UtcDateTime.of(completionTime);
+            } catch (InvalidDomainObjectError e) {
+                presenter.presentInvalidParametersError(e);
+                return;
+            }
+
+            // construct new handling event
+            HandlingEvent handlingEvent = HandlingEvent.builder()
+                    .eventId(eventId)
+                    .voyageNumber(voyageNumber)
+                    .location(location)
+                    .cargoId(cargoId)
+                    .completionTime(completionDateTime)
+                    .registrationTime(UtcDateTime.now())
+                    .type(type)
+                    .build();
+
+            /*
+                Point of interest:
+                -----------------
+                Only persistence and event dispatch are wrapped in a transaction:
+                a "poor man's outbox" pattern ensuring that the handling event
+                is recorded and the domain event is dispatched atomically.
+                Event handling is performed synchronously in the same thread
+                via "TransactionalEventListener" which guarantees that events
+                are processed only after this transaction commits.
+             */
+
             txOps.doInTransaction(() -> {
-
-                // make sure user is a manager
-                securityOps.assertThatUserIsManager();
-
-                EventId eventId = gatewayOps.nextEventId();
-
-                // parse identifiers and create value objects
-                TrackingId cargoId;
-                VoyageNumber voyageNumber;
-                UnLocode location;
-                UtcDateTime completionDateTime;
-                try {
-                    voyageNumber = Optional.ofNullable(voyageNumberStr)
-                            .map(VoyageNumber::of).orElse(null);
-                    location = UnLocode.of(locationStr);
-                    cargoId = TrackingId.of(cargoIdStr);
-                    completionDateTime = UtcDateTime.of(completionTime);
-                } catch (InvalidDomainObjectError e) {
-                    txOps.doAfterRollback(() -> presenter.presentInvalidParametersError(e));
-                    return;
-                }
-
-                // construct new handling event
-                HandlingEvent handlingEvent = HandlingEvent.builder()
-                        .eventId(eventId)
-                        .voyageNumber(voyageNumber)
-                        .location(location)
-                        .cargoId(cargoId)
-                        .completionTime(completionDateTime)
-                        .registrationTime(UtcDateTime.now())
-                        .type(type)
-                        .build();
-
-                // record handling event
                 gatewayOps.recordHandlingEvent(handlingEvent);
-
-                /*
-                    Point of interest:
-                    -----------------
-                    We a dispatching "HandlingEvent" as a domain event to be
-                    processed by the primary adapter which will execute
-                    (another) use case for updating delivery progress for
-                    the cargo. Note that, in the current implementation,
-                    event dispatch and event handling are performed synchronously
-                    in the same thread. We also use "TransactionalEventListener"
-                    as an adapter listening to the events. This will guarantee that
-                    events are processed only after this transaction commits.
-                 */
-
-                // dispatch a domain event signaling that a new handling event was recorded for the cargo
                 eventsOps.dispatch(handlingEvent);
-
                 txOps.doAfterCommit(() -> presenter.presentResultOfRegisteringHandlingEvent(cargoId, handlingEvent));
             });
-
 
         } catch (Exception e) {
             presenter.presentError(e);
