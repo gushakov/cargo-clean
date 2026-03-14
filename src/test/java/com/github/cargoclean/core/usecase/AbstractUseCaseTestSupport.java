@@ -66,11 +66,6 @@ public abstract class AbstractUseCaseTestSupport {
             return null;
         }).when(txOps).doAfterCommit(any(TransactionRunnableWithoutResult.class));
 
-        lenient().doAnswer(invocation -> {
-            ((TransactionRunnableWithoutResult) invocation.getArgument(0)).run();
-            return null;
-        }).when(txOps).doAfterRollback(any(TransactionRunnableWithoutResult.class));
-
     }
 
     protected abstract ErrorHandlingPresenterOutputPort getPresenter();
